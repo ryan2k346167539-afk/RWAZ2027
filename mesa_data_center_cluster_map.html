@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mesa Data Center Cluster Map — Verification Prototype</title>
+<style>
+  :root{
+    --parchment:#efe3c6;
+    --parchment-deep:#e6d6b0;
+    --land-tan:#d9c599;
+    --land-green:#c1cd9f;
+    --land-beige:#e3d5ac;
+    --ink:#3f2a16;
+    --ink-soft:#5b4326;
+    --road:#9a774a;
+    --road-ink:#5b4326;
+    --marker:#2f5d86;
+    --marker-deep:#244a6c;
+    --rule:#a98c5d;
+    --green:#3f6b3a;
+    --amber:#9a6b1e;
+    --slate:#42607d;
+    --rust:#9a5a2e;
+    --card:#f6efdc;
+    --serif:"Iowan Old Style","Palatino Linotype","Palatino","Book Antiqua",Georgia,"Times New Roman",serif;
+    --label:"Optima","Gill Sans","Gill Sans MT",Georgia,serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(120% 90% at 50% -10%, #f4ead0 0%, var(--parchment) 45%, var(--parchment-deep) 100%);
+    color:var(--ink);
+    font-family:var(--serif);
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+    padding:24px 16px 56px;
+  }
+  .frame{
+    max-width:1120px;
+    margin:0 auto;
+    border:2px solid var(--ink);
+    box-shadow:0 0 0 5px var(--parchment), 0 0 0 6px var(--rule), 0 18px 40px rgba(63,42,22,.18);
+    background:linear-gradient(180deg, #f4ead2, var(--parchment));
+    padding:26px 30px 34px;
+    position:relative;
+  }
+  .frame::after{
+    /* faint paper grain */
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.05;
+    background-image:radial-gradient(circle at 20% 30%, #000 0.5px, transparent 0.6px),
+                     radial-gradient(circle at 70% 60%, #000 0.5px, transparent 0.6px);
+    background-size:7px 7px, 11px 11px;
+    mix-blend-mode:multiply;
+  }
+
+  /* ---------- Header ---------- */
+  header{text-align:center;border-bottom:1px double var(--rule);padding-bottom:16px;margin-bottom:18px;}
+  .eyebrow{
+    font-family:var(--label);letter-spacing:.32em;text-transform:uppercase;
+    font-size:11px;color:var(--ink-soft);margin-bottom:8px;
+  }
+  h1{
+    font-family:var(--serif);font-weight:700;color:var(--ink);
+    font-size:clamp(28px,4.4vw,46px);margin:0 0 4px;letter-spacing:.01em;
+  }
+  .subtitle{font-style:italic;color:var(--ink-soft);font-size:clamp(14px,1.8vw,18px);margin:0;}
+  .proto-note{
+    display:inline-block;margin-top:12px;font-family:var(--label);
+    font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--rust);border:1px solid var(--rust);border-radius:2px;
+    padding:4px 12px;background:rgba(154,90,46,.06);
+  }
+
+  /* ---------- Legend ---------- */
+  .legend{
+    display:flex;flex-wrap:wrap;gap:8px 22px;justify-content:center;
+    margin:14px 0 10px;font-family:var(--label);font-size:11.5px;color:var(--ink-soft);
+    letter-spacing:.04em;
+  }
+  .legend span{display:inline-flex;align-items:center;gap:7px;}
+  .swatch{width:16px;height:16px;border-radius:50%;display:inline-block;border:2px solid var(--parchment);}
+  .swatch.op{background:var(--green);}
+  .swatch.partial{background:var(--amber);}
+  .swatch.constr{background:var(--marker);}
+  .swatch.planned{background:transparent;border:2px dashed var(--slate);}
+
+  /* ---------- Map ---------- */
+  .map-wrap{position:relative;width:100%;border:1px solid var(--rule);background:var(--parchment);}
+  svg.map{display:block;width:100%;height:auto;}
+
+  .road-line{stroke:var(--road);stroke-width:7;stroke-linecap:round;opacity:.8;}
+  .road-line.minor{stroke-width:4;opacity:.55;stroke-dasharray:1 0;}
+  .road-label{font-family:var(--label);fill:var(--road-ink);font-size:13px;letter-spacing:.12em;text-transform:uppercase;}
+  .region{opacity:.55;}
+  .loop{fill:none;stroke:var(--road);stroke-width:9;opacity:.45;}
+  .compass{fill:var(--ink-soft);font-family:var(--label);}
+
+  .marker{cursor:pointer;outline:none;}
+  .marker .mk-hit{fill:transparent;}
+  .marker .mk-circle{fill:var(--marker);stroke:var(--parchment);stroke-width:3;transition:transform .15s ease, fill .15s ease;transform-origin:center;transform-box:fill-box;}
+  .marker .mk-ring{fill:none;stroke:var(--slate);stroke-width:2.5;stroke-dasharray:5 4;}
+  .marker .mk-num{fill:#fff;font-family:var(--label);font-weight:700;font-size:16px;text-anchor:middle;dominant-baseline:central;pointer-events:none;}
+  .marker:hover .mk-circle,.marker:focus-visible .mk-circle{fill:var(--marker-deep);transform:scale(1.14);}
+  .marker.active .mk-circle{fill:var(--rust);transform:scale(1.18);}
+  .marker:focus-visible{outline:2px solid var(--marker-deep);outline-offset:3px;}
+
+  /* ---------- Reference list ---------- */
+  .reference{margin-top:22px;}
+  .ref-head{
+    font-family:var(--label);text-transform:uppercase;letter-spacing:.24em;font-size:12px;
+    color:var(--ink-soft);border-bottom:1px solid var(--rule);padding-bottom:6px;margin-bottom:12px;
+  }
+  ol.ref-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 28px;}
+  ol.ref-list li{
+    display:flex;align-items:flex-start;gap:12px;padding:9px 10px;border-radius:3px;cursor:pointer;
+    transition:background .12s ease;border:1px solid transparent;
+  }
+  ol.ref-list li:hover{background:rgba(169,140,93,.14);}
+  ol.ref-list li.active{background:rgba(154,90,46,.12);border-color:var(--rust);}
+  .ref-num{
+    flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:var(--marker);color:#fff;
+    font-family:var(--label);font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;margin-top:1px;
+  }
+  li.planned .ref-num{background:transparent;color:var(--slate);border:2px dashed var(--slate);}
+  .ref-text strong{font-size:15.5px;color:var(--ink);display:block;line-height:1.25;}
+  .ref-text small{font-family:var(--label);font-size:11px;letter-spacing:.06em;color:var(--ink-soft);text-transform:uppercase;}
+
+  /* ---------- Detail panel ---------- */
+  .backdrop{position:fixed;inset:0;background:rgba(40,28,14,.42);opacity:0;visibility:hidden;transition:opacity .2s ease;z-index:40;}
+  .backdrop.show{opacity:1;visibility:visible;}
+  .panel{
+    position:fixed;top:0;right:0;height:100%;width:min(440px,92vw);background:var(--card);
+    border-left:2px solid var(--ink);box-shadow:-14px 0 36px rgba(63,42,22,.28);
+    transform:translateX(105%);transition:transform .26s cubic-bezier(.4,0,.2,1);
+    z-index:50;display:flex;flex-direction:column;
+  }
+  .panel.show{transform:translateX(0);}
+  .panel-head{padding:20px 24px 16px;border-bottom:1px double var(--rule);position:relative;}
+  .panel-head .pnum{
+    font-family:var(--label);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--marker);margin-bottom:6px;
+  }
+  .panel-head h2{margin:0;font-size:21px;color:var(--ink);line-height:1.25;padding-right:30px;}
+  .panel-head .cat{font-style:italic;color:var(--ink-soft);font-size:14px;margin-top:5px;}
+  .close{
+    position:absolute;top:16px;right:18px;background:none;border:none;font-size:26px;line-height:1;
+    color:var(--ink-soft);cursor:pointer;font-family:var(--serif);
+  }
+  .close:hover{color:var(--rust);}
+  .panel-body{padding:18px 24px 28px;overflow-y:auto;}
+  .row{margin-bottom:15px;}
+  .row .k{
+    font-family:var(--label);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:3px;
+  }
+  .row .v{font-size:14.5px;color:var(--ink);}
+  .badges{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 16px;}
+  .badge{
+    font-family:var(--label);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;
+    padding:5px 11px;border-radius:2px;border:1px solid;display:inline-flex;align-items:center;gap:6px;
+  }
+  .badge.op{color:var(--green);border-color:var(--green);background:rgba(63,107,58,.08);}
+  .badge.partial{color:var(--amber);border-color:var(--amber);background:rgba(154,107,30,.08);}
+  .badge.constr{color:var(--marker);border-color:var(--marker);background:rgba(47,93,134,.08);}
+  .badge.planned{color:var(--slate);border-color:var(--slate);background:rgba(66,96,125,.08);border-style:dashed;}
+  .badge.fact{color:var(--ink-soft);border-color:var(--rule);background:rgba(169,140,93,.1);}
+  .badge.conf-high{color:var(--green);border-color:var(--green);}
+  .badge.conf-med{color:var(--amber);border-color:var(--amber);}
+  .badge.conf-low{color:var(--rust);border-color:var(--rust);}
+  .why{
+    font-style:italic;font-size:15px;color:var(--ink);background:rgba(169,140,93,.1);
+    border-left:3px solid var(--rule);padding:11px 14px;border-radius:0 3px 3px 0;
+  }
+  .caveat{
+    font-size:13.5px;color:var(--rust);background:rgba(154,90,46,.07);
+    border:1px solid rgba(154,90,46,.4);border-radius:3px;padding:11px 13px;
+  }
+  .caveat .k{color:var(--rust);}
+  .links{display:flex;flex-direction:column;gap:9px;margin:6px 0 18px;}
+  .links a{
+    font-family:var(--label);font-size:12.5px;letter-spacing:.04em;text-decoration:none;
+    color:var(--marker-deep);border:1px solid var(--marker);border-radius:3px;padding:9px 13px;
+    display:flex;align-items:center;justify-content:space-between;background:rgba(47,93,134,.05);transition:background .12s;
+  }
+  .links a:hover{background:rgba(47,93,134,.13);}
+  .links a .arr{font-family:var(--serif);}
+
+  .footer-note{
+    text-align:center;margin-top:24px;padding-top:14px;border-top:1px solid var(--rule);
+    font-family:var(--label);font-size:10.5px;letter-spacing:.1em;color:var(--ink-soft);line-height:1.7;
+  }
+
+  @media (max-width:720px){
+    .frame{padding:18px 14px 26px;}
+    ol.ref-list{grid-template-columns:1fr;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important;}
+  }
+</style>
+</head>
+<body>
+<div class="frame">
+  <header>
+    <div class="eyebrow">Greater Phoenix &middot; Arizona</div>
+    <h1>Mesa Data Center Cluster Map</h1>
+    <p class="subtitle">AI Infrastructure &amp; Data Center Sites</p>
+    <span class="proto-note">Prototype for verification — not final print map</span>
+  </header>
+
+  <div class="legend" aria-hidden="true">
+    <span><i class="swatch op"></i>Operational</span>
+    <span><i class="swatch partial"></i>Partially operational</span>
+    <span><i class="swatch constr"></i>Under construction</span>
+    <span><i class="swatch planned"></i>Planned / proposed</span>
+  </div>
+
+  <div class="map-wrap">
+    <svg class="map" viewBox="0 0 1000 660" role="img" aria-label="Schematic map of Mesa data center sites along the Elliot Road corridor">
+      <!-- background regions (muted parcels) -->
+      <rect x="0" y="0" width="1000" height="660" fill="var(--parchment)"/>
+      <path class="region" fill="var(--land-green)" d="M40,60 L420,60 L440,300 L70,330 Z"/>
+      <path class="region" fill="var(--land-tan)" d="M440,55 L860,70 L880,300 L460,300 Z"/>
+      <path class="region" fill="var(--land-beige)" d="M70,340 L470,320 L520,520 L90,540 Z"/>
+      <path class="region" fill="var(--land-tan)" d="M480,320 L900,310 L900,560 L540,560 Z"/>
+      <path class="region" fill="var(--land-green)" d="M90,548 L900,575 L900,640 L110,640 Z" opacity="0.4"/>
+
+      <!-- Loop 202 (schematic arc, SE Mesa) -->
+      <path class="loop" d="M120,440 Q520,610 900,470"/>
+      <text class="road-label" x="150" y="470" opacity="0.7">LOOP 202</text>
+
+      <!-- E-W roads -->
+      <line class="road-line" x1="40" y1="130" x2="940" y2="130"/>
+      <text class="road-label" x="48" y="120">Elliot Road Corridor</text>
+      <line class="road-line" x1="40" y1="360" x2="940" y2="360"/>
+      <text class="road-label" x="48" y="350">Warner Road</text>
+      <line class="road-line" x1="40" y1="560" x2="940" y2="560"/>
+      <text class="road-label" x="48" y="550">Pecos Road</text>
+
+      <!-- N-S roads -->
+      <line class="road-line" x1="250" y1="55" x2="250" y2="610"/>
+      <text class="road-label" x="200" y="635">Sossaman Rd</text>
+      <line class="road-line" x1="500" y1="55" x2="500" y2="610"/>
+      <text class="road-label" x="452" y="635">Ellsworth Rd</text>
+      <line class="road-line minor" x1="565" y1="180" x2="565" y2="430"/>
+      <text class="road-label" x="572" y="455" font-size="11">Everton Ter</text>
+      <line class="road-line" x1="780" y1="55" x2="780" y2="610"/>
+      <text class="road-label" x="720" y="635">Signal Butte Rd</text>
+
+      <!-- compass rose -->
+      <g transform="translate(905,605)">
+        <circle r="22" fill="none" stroke="var(--rule)" stroke-width="1.5"/>
+        <path d="M0,-20 L5,0 L0,20 L-5,0 Z" fill="var(--ink-soft)"/>
+        <path d="M-20,0 L0,5 L20,0 L0,-5 Z" fill="var(--rule)"/>
+        <text class="compass" x="0" y="-26" text-anchor="middle" font-size="11">N</text>
+      </g>
+
+      <!-- markers injected by JS -->
+      <g id="markers"></g>
+    </svg>
+  </div>
+
+  <section class="reference">
+    <div class="ref-head">Numbered Site Reference</div>
+    <ol class="ref-list" id="refList"></ol>
+  </section>
+
+  <div class="footer-note">
+    Schematic — relative positions only, not GIS-accurate &middot; All sites verified against public sources; review each card for status &amp; caveats<br>
+    Prototype for Steve Hsu — Arizona Real Estate / Industry Cluster project &middot; Verify before final print
+  </div>
+</div>
+
+<!-- Detail panel -->
+<div class="backdrop" id="backdrop"></div>
+<aside class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="panelTitle">
+  <div class="panel-head">
+    <button class="close" id="closeBtn" aria-label="Close detail panel">&times;</button>
+    <div class="pnum" id="panelNum"></div>
+    <h2 id="panelTitle"></h2>
+    <div class="cat" id="panelCat"></div>
+  </div>
+  <div class="panel-body" id="panelBody"></div>
+</aside>
+
+<script>
+/* ---- Verified site data (transcribed faithfully from source table; status & caveats preserved) ---- */
+const SITES = [
+  {
+    num:1, name:"Apple Data Center / Global Command Center", planned:false,
+    category:"Data center / operations facility (described as global command/data center)",
+    address:"3740 S Signal Butte Rd, Mesa, AZ 85212",
+    mesa:"Yes — address resolves to Mesa",
+    statusType:"op", statusLabel:"Operational",
+    fact:"≈1.3M sq ft (secondary); \u201Cglobal command center\u201D per secondary coverage",
+    why:"Anchors Mesa\u2019s Elliot Road tech corridor with a long-running Apple data/operations facility, validating the area for hyperscale-grade infrastructure.",
+    maps:"https://www.google.com/maps/search/3740+S+Signal+Butte+Rd,+Mesa,+AZ+85212",
+    mapsLabel:"Google Maps — address search",
+    source:"https://www.waze.com/live-map/directions/apple-data-center-s-signal-butte-rd-3740-mesa?to=place.w.162791757.1627917575.736150",
+    sourceLabel:"Waze business listing (secondary)",
+    confidence:"High (location/operation) · Medium (size/role)", confClass:"conf-med",
+    caveat:"Apple does not publish specs; the 1.3M sq ft and \u201Cglobal command center\u201D descriptions come from secondary coverage, not an Apple primary source. Source link is a database listing — upgrade to an official source before print.",
+    markers:[{x:780,y:185}]
+  },
+  {
+    num:2, name:"Google Mesa Campus (\u201CProject Red Hawk\u201D)", planned:false,
+    category:"Hyperscale data center campus",
+    address:"NW corner E Elliot Rd & S Sossaman Rd, Mesa, AZ 85212 (approx. 7400 E Elliot Rd)",
+    mesa:"Yes — multiple sources place campus in Mesa",
+    statusType:"constr", statusLabel:"Under construction / early ops",
+    fact:"≈750,000 sq ft total buildout (DCD); billion-dollar investment",
+    why:"A billion-dollar Google campus cements Mesa as a core Southwest cloud and AI compute hub, attracting suppliers and complementary investment.",
+    maps:"https://www.google.com/maps/search/Elliot+Rd+%26+Sossaman+Rd,+Mesa,+AZ+85212",
+    mapsLabel:"Google Maps — Elliot & Sossaman",
+    source:"https://www.datacenterdynamics.com/en/news/google-breaks-ground-on-mesa-data-center-campus-in-arizona/",
+    sourceLabel:"Data Center Dynamics",
+    confidence:"High (location/presence) · Medium (2026 ops)", confClass:"conf-med",
+    caveat:"No precise street number published. Phase 1 was projected to go live July 2025; 2026 operational status is inferred from schedule, not a specific commissioning announcement.",
+    markers:[{x:230,y:105}]
+  },
+  {
+    num:3, name:"Meta Mesa Data Center", planned:false,
+    category:"Hyperscale multi-building data center campus",
+    address:"3841 S Ellsworth Rd, Mesa, AZ 85212",
+    mesa:"Yes — address is explicitly in Mesa",
+    statusType:"partial", statusLabel:"Partially operational",
+    fact:"≈2.5M sq ft campus (DCD projection); first two buildings operational Jan 2025",
+    why:"Meta\u2019s multibillion-dollar campus showcases Mesa as a strategic node for global social, AI, and metaverse workloads, driving long-term digital-infrastructure growth.",
+    maps:"https://www.google.com/maps/search/3841+S+Ellsworth+Rd,+Mesa,+AZ+85212",
+    mapsLabel:"Google Maps — address search",
+    source:"https://www.bizjournals.com/phoenix/news/2025/01/30/meta-mesa-data-center-open-more-under-construction.html",
+    sourceLabel:"Phoenix Business Journal",
+    confidence:"High (location/partial op) · Medium (final scale/timing)", confClass:"conf-med",
+    caveat:"Total campus size and full-build timing (2.5M sq ft by 2026) come from earlier projections; later scope, phasing, or land sales to EdgeCore may have shifted details.",
+    markers:[{x:500,y:235}]
+  },
+  {
+    num:4, name:"NTT Phoenix PH1 / Elliot Road Campus", planned:false,
+    category:"Colocation / wholesale data center — 102-acre campus, 240MW planned",
+    address:"10256 E Elliot Rd, Mesa, AZ 85212",
+    mesa:"Yes — campus address is in Mesa",
+    statusType:"partial", statusLabel:"PH1 operational · campus build-out",
+    fact:"102 acres, 240MW planned total; 36MW PH1 facility",
+    why:"A live, carrier-neutral NTT campus gives enterprises and cloud providers scalable colocation options in Mesa, diversifying the hyperscale-dominated corridor.",
+    maps:"https://www.google.com/maps/search/10256+E+Elliot+Rd,+Mesa,+AZ+85212",
+    mapsLabel:"Google Maps — address search",
+    source:"https://www.datacenterdynamics.com/en/news/ntt-acquires-173-acre-planned-data-center-park-in-mesa-arizona-for-300m/",
+    sourceLabel:"Data Center Dynamics",
+    confidence:"High (location, PH1 live, scale) · Medium (building count)", confClass:"conf-med",
+    caveat:"The \u201C7 planned data centers\u201D count is from secondary summaries; 102-acre / 240MW figures are well-supported but the total building count is not from a primary filing. (Note: cited DCD article references a 173-acre / $300M deal — reconcile acreage before print.)",
+    markers:[{x:640,y:120}]
+  },
+  {
+    num:5, name:"EdgeCore Phoenix / Mesa Campus", planned:false,
+    category:"Hyperscale / build-to-suit data center campus",
+    address:"3856 S Everton Terrace, Mesa, AZ 85212",
+    mesa:"Yes — listed as EdgeCore campus in Mesa",
+    statusType:"constr", statusLabel:"Under development",
+    fact:"≈2.7M sq ft / 496MW target (marketing/secondary); first building ≈2023",
+    why:"EdgeCore adds another institutional-grade hyperscale option in Mesa, expanding power-dense capacity for cloud, AI, and large-enterprise tenants.",
+    maps:"https://www.google.com/maps/search/3856+S+Everton+Terrace,+Mesa,+AZ+85212",
+    mapsLabel:"Google Maps — address search",
+    source:"https://www.datacenterdynamics.com/en/news/meta-sells-land-in-mesa-arizona-to-data-center-developer-edgecore/",
+    sourceLabel:"Data Center Dynamics",
+    confidence:"High (location/existence) · Medium (MW/sq-ft, phase)", confClass:"conf-med",
+    caveat:"The 2.7M sq ft and 496MW figures are from marketing / secondary databases, not a single definitive EdgeCore or City of Mesa filing; some portions may still be in early build stages.",
+    markers:[{x:565,y:270}]
+  },
+  {
+    num:6, name:"Edged Phoenix (Edged Mesa — PHX01-1)", planned:false,
+    category:"Single-site AI-ready data center (36MW), waterless-cooled",
+    address:"8811 E Warner Rd, Mesa, AZ 85212 (variant: 8807)",
+    mesa:"Yes — Edged release cites Mesa address",
+    statusType:"op", statusLabel:"Launched 2026 (per secondary)",
+    fact:"36MW; waterless / zero-water cooling for high-density AI racks",
+    why:"This next-generation waterless AI facility demonstrates Mesa\u2019s leadership in sustainable, high-density compute infrastructure.",
+    maps:"https://www.google.com/maps/search/8811+E+Warner+Rd,+Mesa,+AZ+85212",
+    mapsLabel:"Google Maps — address search",
+    source:"https://www.edged.es/news/edged-breaks-ground-in-mesa-arizona",
+    sourceLabel:"Edged press release",
+    confidence:"High (location, 36MW) · Medium (opening month, address variant)", confClass:"conf-med",
+    caveat:"\u201COpened April 2026\u201D comes from an industry database (Baxtel), not yet mirrored in a follow-up Edged press release; street number appears as 8807 vs 8811 across third-party listings. Confirm operational status before implying it is live.",
+    markers:[{x:700,y:360}]
+  },
+  {
+    num:7, name:"Novva Mesa Campus (\u201CProject Borealis\u201D)", planned:true,
+    category:"Planned 300MW multi-building data center campus",
+    address:"NW alignment of S Ellsworth Rd & E Warner Rd, outside Loop 202, Mesa (≈160 acres)",
+    mesa:"Yes — Novva states a campus in southeast Mesa",
+    statusType:"planned", statusLabel:"Planned / early site dev",
+    fact:"300MW, 160 acres, ≈$3B scale; first 96MW phase targeted late 2026",
+    why:"If built as planned, this $3B-scale campus would significantly expand Mesa\u2019s available hyperscale power and attract additional ecosystem tenants.",
+    maps:"https://www.google.com/maps/search/E+Warner+Rd+%26+S+Ellsworth+Rd,+Mesa,+AZ",
+    mapsLabel:"Google Maps — Warner & Ellsworth",
+    source:"https://www.novva.com/media-center/novva-data-centers-announces-new-campus-in-mesa/",
+    sourceLabel:"Novva announcement",
+    confidence:"High (location, scale/intent) · Medium (timing)", confClass:"conf-med",
+    caveat:"Site is in planning / early works — no operational buildings yet. Late-2026 timing is forward-looking and could slip with permitting, power, or market conditions. Do not depict as operational.",
+    markers:[{x:465,y:330}]
+  },
+  {
+    num:8, name:"AWS / Amazon Mesa Sites (Elliot & Pecos)", planned:true,
+    category:"Planned / proposed data center buildings (two two-building sites)",
+    address:"1) ≈42.9-acre site off E Elliot Rd, next to Apple (3740 S Signal Butte Rd);  2) ≈10464 E Pecos Rd, east of Legacy Park (≈71.3 acres)",
+    mesa:"Yes — both sites described as in Mesa",
+    statusType:"planned", statusLabel:"Planned / pre-submittal",
+    fact:"Two sites, each planned for two ≈227,000 sq ft buildings",
+    why:"Potential AWS campuses would add a top-tier cloud provider to Mesa\u2019s roster, deepening the region\u2019s role in global cloud and AI infrastructure.",
+    maps:"https://www.google.com/maps/search/10464+E+Pecos+Rd,+Mesa,+AZ",
+    mapsLabel:"Google Maps — Pecos Rd site",
+    maps2:"https://www.google.com/maps/search/Elliot+Rd+near+3740+S+Signal+Butte+Rd,+Mesa,+AZ",
+    maps2Label:"Google Maps — Elliot Rd site",
+    source:"https://www.datacenterdynamics.com/en/news/aws-plots-four-data-centers-in-mesa-arizona/",
+    sourceLabel:"Data Center Dynamics",
+    confidence:"High (Mesa locations/intent) · Low–Medium (future build)", confClass:"conf-low",
+    caveat:"Pre-submittal / early planning concepts (reported ≈2023) with no confirmed construction start or operational date; AWS has not publicly branded named Mesa regions. Two map markers below share this one record.",
+    markers:[{x:720,y:160,sub:"Elliot"},{x:690,y:560,sub:"Pecos"}]
+  }
+];
+
+const statusText = {op:"Operational",partial:"Partially operational",constr:"Under construction",planned:"Planned / proposed"};
+
+/* ---- Render markers ---- */
+const mg = document.getElementById('markers');
+const NS = "http://www.w3.org/2000/svg";
+SITES.forEach(s=>{
+  s.markers.forEach((m,i)=>{
+    const g = document.createElementNS(NS,'g');
+    g.setAttribute('class','marker'+(s.planned?' planned':''));
+    g.setAttribute('tabindex','0');
+    g.setAttribute('role','button');
+    g.setAttribute('aria-label',`Site ${s.num}: ${s.name}${m.sub?' ('+m.sub+')':''}, ${statusText[s.statusType]}`);
+    g.dataset.id = s.num;
+    const hit = document.createElementNS(NS,'circle');
+    hit.setAttribute('class','mk-hit');hit.setAttribute('cx',m.x);hit.setAttribute('cy',m.y);hit.setAttribute('r',26);
+    g.appendChild(hit);
+    if(s.planned){
+      const ring = document.createElementNS(NS,'circle');
+      ring.setAttribute('class','mk-ring');ring.setAttribute('cx',m.x);ring.setAttribute('cy',m.y);ring.setAttribute('r',20);
+      g.appendChild(ring);
+    }
+    const c = document.createElementNS(NS,'circle');
+    c.setAttribute('class','mk-circle');c.setAttribute('cx',m.x);c.setAttribute('cy',m.y);c.setAttribute('r',15);
+    if(s.planned){c.setAttribute('fill','var(--slate)');c.setAttribute('opacity','0.85');}
+    g.appendChild(c);
+    const t = document.createElementNS(NS,'text');
+    t.setAttribute('class','mk-num');t.setAttribute('x',m.x);t.setAttribute('y',m.y+0.5);t.textContent=s.num;
+    g.appendChild(t);
+    g.addEventListener('click',()=>openPanel(s.num));
+    g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openPanel(s.num);}});
+    mg.appendChild(g);
+  });
+});
+
+/* ---- Render reference list ---- */
+const refList = document.getElementById('refList');
+SITES.forEach(s=>{
+  const li = document.createElement('li');
+  li.className = s.planned?'planned':'';
+  li.dataset.id = s.num;
+  li.setAttribute('tabindex','0');
+  li.innerHTML = `<span class="ref-num">${s.num}</span>
+    <span class="ref-text"><strong>${s.name}</strong><small>${statusText[s.statusType]}</small></span>`;
+  li.addEventListener('click',()=>openPanel(s.num));
+  li.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openPanel(s.num);}});
+  refList.appendChild(li);
+});
+
+/* ---- Panel logic ---- */
+const panel=document.getElementById('panel'), backdrop=document.getElementById('backdrop');
+function setActive(id){
+  document.querySelectorAll('.marker').forEach(m=>m.classList.toggle('active', m.dataset.id==id));
+  document.querySelectorAll('#refList li').forEach(l=>l.classList.toggle('active', l.dataset.id==id));
+}
+function linkRow(href,label){
+  return `<a href="${href}" target="_blank" rel="noopener">${label}<span class="arr">↗</span></a>`;
+}
+function openPanel(id){
+  const s = SITES.find(x=>x.num===id); if(!s) return;
+  document.getElementById('panelNum').textContent = `Site ${s.num}`;
+  document.getElementById('panelTitle').textContent = s.name;
+  document.getElementById('panelCat').textContent = s.category;
+  let mapsLinks = linkRow(s.maps, s.mapsLabel);
+  if(s.maps2) mapsLinks += linkRow(s.maps2, s.maps2Label);
+  document.getElementById('panelBody').innerHTML = `
+    <div class="badges">
+      <span class="badge ${s.statusType}">${s.statusLabel}</span>
+      <span class="badge fact">${s.fact}</span>
+      <span class="badge ${s.confClass}">Confidence: ${s.confidence}</span>
+    </div>
+    <div class="row"><div class="k">Address / nearest intersection</div><div class="v">${s.address}</div></div>
+    <div class="row"><div class="k">In Mesa, AZ?</div><div class="v">${s.mesa}</div></div>
+    <div class="row"><div class="k">Why it matters</div><div class="why">${s.why}</div></div>
+    <div class="row"><div class="k">Map &amp; source links</div>
+      <div class="links">${mapsLinks}${linkRow(s.source, "Source — "+s.sourceLabel)}</div>
+    </div>
+    <div class="row"><div class="caveat"><div class="k">Caveat</div>${s.caveat}</div></div>
+  `;
+  panel.classList.add('show'); backdrop.classList.add('show');
+  setActive(id);
+  document.getElementById('closeBtn').focus();
+}
+function closePanel(){
+  panel.classList.remove('show'); backdrop.classList.remove('show'); setActive(null);
+}
+document.getElementById('closeBtn').addEventListener('click',closePanel);
+backdrop.addEventListener('click',closePanel);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closePanel();});
+</script>
+</body>
+</html>
