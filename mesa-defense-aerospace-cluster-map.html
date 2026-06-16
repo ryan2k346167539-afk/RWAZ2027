@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mesa Defense &amp; Aerospace Cluster Map — Verification Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --parchment:    #f1e6cf;
+    --parchment-2:  #e9dab9;
+    --parchment-3:  #e1cfa8;
+    --ink:          #3d2c18;
+    --ink-soft:     #6a543a;
+    --ink-faint:    #8a7252;
+    --region-beige: #ded0ad;
+    --region-tan:   #d4c193;
+    --region-green: #c2cba1;
+    --region-water: #b9c7bc;
+    --line-road:    #9a7f59;
+    --atlas-blue:   #2f5a78;
+    --atlas-blue-d: #234657;
+    --rule:         #b79e74;
+    --green:        #4f7a3f;
+    --amber:        #b07c1e;
+    --slate:        #5a6b78;
+    --paper-shadow: rgba(61,44,24,0.18);
+  }
+
+  *{ box-sizing:border-box; }
+
+  html,body{ margin:0; padding:0; }
+
+  body{
+    background:
+      radial-gradient(120% 90% at 50% -10%, #f6eed9 0%, var(--parchment) 55%, #e7d6b3 100%);
+    color:var(--ink);
+    font-family:"EB Garamond", Georgia, "Times New Roman", serif;
+    font-size:17px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+
+  .sheet{
+    max-width:1140px;
+    margin:0 auto;
+    padding:30px 26px 0;
+  }
+
+  /* ---------- Header / cartouche ---------- */
+  header.masthead{
+    text-align:center;
+    padding:22px 18px 18px;
+    border:2px solid var(--ink);
+    background:linear-gradient(180deg, rgba(255,255,255,0.18), rgba(0,0,0,0.015));
+    position:relative;
+  }
+  header.masthead::after{
+    content:"";
+    position:absolute; inset:5px;
+    border:1px solid var(--rule);
+    pointer-events:none;
+  }
+  .eyebrow{
+    font-size:12.5px;
+    letter-spacing:0.34em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    margin:0 0 10px;
+    font-weight:600;
+  }
+  h1{
+    font-family:"Playfair Display", Georgia, serif;
+    font-weight:700;
+    color:var(--ink);
+    font-size:clamp(27px, 4.6vw, 46px);
+    line-height:1.04;
+    margin:0;
+  }
+  .subtitle{
+    font-style:italic;
+    color:var(--ink-soft);
+    font-size:clamp(15px,2.1vw,20px);
+    margin:9px 0 0;
+  }
+  .draft-tag{
+    display:inline-block;
+    margin-top:14px;
+    font-family:"EB Garamond",serif;
+    font-size:12px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--atlas-blue-d);
+    border:1px solid var(--atlas-blue);
+    border-radius:2px;
+    padding:4px 12px;
+    background:rgba(47,90,120,0.06);
+  }
+
+  /* ---------- Legend ---------- */
+  .legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px 26px;
+    justify-content:center;
+    align-items:center;
+    margin:18px 0 8px;
+    font-size:14px;
+    color:var(--ink-soft);
+  }
+  .legend .lg{ display:inline-flex; align-items:center; gap:9px; }
+  .swatch{ width:24px; height:24px; flex:none; }
+
+  /* ---------- Map ---------- */
+  .map-frame{
+    margin:6px 0 0;
+    border:2px solid var(--ink);
+    background:var(--parchment);
+    position:relative;
+  }
+  .map-frame::after{
+    content:"";
+    position:absolute; inset:6px;
+    border:1px solid var(--rule);
+    pointer-events:none;
+    z-index:3;
+  }
+  svg.map{ display:block; width:100%; height:auto; }
+
+  /* marker interaction */
+  .marker{ cursor:pointer; outline:none; }
+  .marker .hit{ fill:transparent; }
+  .marker circle.dot{ transition:transform .15s ease; transform-origin:center; transform-box:fill-box; }
+  .marker:hover circle.dot,
+  .marker:focus-visible circle.dot{ transform:scale(1.12); }
+  .marker:focus-visible circle.ring{ stroke:var(--ink); }
+  .marker .mlabel{
+    font-family:"EB Garamond",serif;
+    font-size:13px;
+    fill:var(--ink);
+    opacity:0;
+    transition:opacity .14s ease;
+    paint-order:stroke;
+    stroke:var(--parchment);
+    stroke-width:4px;
+    stroke-linejoin:round;
+    pointer-events:none;
+  }
+  .marker:hover .mlabel,
+  .marker:focus-visible .mlabel{ opacity:1; }
+
+  .road-label, .orient-label{
+    font-family:"EB Garamond",serif;
+    fill:var(--ink-soft);
+  }
+  .road-label{ font-size:13px; letter-spacing:0.04em; }
+  .orient-label{
+    font-size:19px; letter-spacing:0.14em; text-transform:uppercase;
+    fill:var(--ink); font-weight:600;
+  }
+  .field-label{
+    font-family:"Playfair Display",serif; font-style:italic;
+    fill:var(--ink-soft); font-size:15px;
+  }
+
+  /* ---------- Reference list ---------- */
+  .reference{ padding:30px 0 12px; }
+  .ref-head{
+    display:flex; align-items:baseline; gap:14px;
+    border-bottom:2px solid var(--ink);
+    padding-bottom:7px; margin-bottom:18px;
+  }
+  .ref-head h2{
+    font-family:"Playfair Display",serif; font-weight:600;
+    font-size:22px; margin:0; color:var(--ink);
+  }
+  .ref-head .hint{ font-style:italic; color:var(--ink-faint); font-size:14.5px; }
+
+  .ref-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(330px,1fr));
+    gap:10px 26px;
+  }
+  .ref-item{
+    display:flex; gap:13px; align-items:flex-start;
+    background:none; border:none; text-align:left;
+    font-family:inherit; color:inherit;
+    padding:9px 10px; cursor:pointer;
+    border-radius:3px;
+    transition:background .13s ease;
+    width:100%;
+  }
+  .ref-item:hover, .ref-item:focus-visible{ background:rgba(47,90,120,0.08); outline:none; }
+  .ref-item:focus-visible{ box-shadow:inset 0 0 0 1.5px var(--atlas-blue); }
+  .ref-num{
+    flex:none; width:30px; height:30px; border-radius:50%;
+    background:var(--atlas-blue); color:#fff;
+    font-family:"Playfair Display",serif; font-weight:600;
+    display:flex; align-items:center; justify-content:center;
+    font-size:15px; margin-top:2px;
+  }
+  .ref-num.dashed{ background:var(--parchment); color:var(--atlas-blue-d);
+    border:2px dashed var(--atlas-blue); }
+  .ref-body .name{ font-weight:600; font-size:17px; color:var(--ink); }
+  .ref-body .cat{ font-size:14px; color:var(--ink-soft); font-style:italic; }
+
+  /* supporting / future box */
+  .support-box{
+    margin-top:26px;
+    border:1.5px dashed var(--line-road);
+    background:rgba(225,207,168,0.4);
+    padding:16px 20px 18px;
+  }
+  .support-box h3{
+    font-family:"Playfair Display",serif; font-weight:600;
+    font-size:16px; letter-spacing:0.02em; margin:0 0 4px; color:var(--ink);
+  }
+  .support-box .sub{ font-style:italic; color:var(--ink-faint); font-size:13.5px; margin:0 0 12px; }
+  .support-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:8px 24px; }
+  .support-item{
+    display:flex; gap:12px; align-items:flex-start;
+    background:none; border:none; text-align:left; font-family:inherit; color:inherit;
+    cursor:pointer; padding:8px 9px; border-radius:3px; width:100%;
+    transition:background .13s ease;
+  }
+  .support-item:hover, .support-item:focus-visible{ background:rgba(61,44,24,0.07); outline:none; }
+  .support-item:focus-visible{ box-shadow:inset 0 0 0 1.5px var(--ink-soft); }
+  .support-tag{
+    flex:none; width:30px; height:30px; border-radius:50%;
+    background:var(--parchment); border:2px dashed var(--ink-soft);
+    color:var(--ink); font-family:"Playfair Display",serif; font-weight:600;
+    display:flex; align-items:center; justify-content:center; font-size:15px; margin-top:2px;
+  }
+
+  /* ---------- Side panel ---------- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(40,28,14,0.42);
+    opacity:0; visibility:hidden; transition:opacity .22s ease, visibility .22s ease;
+    z-index:40;
+  }
+  .overlay.open{ opacity:1; visibility:visible; }
+  .panel{
+    position:fixed; top:0; right:0; height:100%;
+    width:min(460px, 92vw);
+    background:var(--parchment);
+    border-left:2px solid var(--ink);
+    transform:translateX(102%);
+    transition:transform .26s cubic-bezier(.4,.0,.2,1);
+    z-index:50;
+    display:flex; flex-direction:column;
+    box-shadow:-8px 0 30px rgba(40,28,14,0.18);
+  }
+  .panel.open{ transform:translateX(0); }
+  .panel-inner{ overflow-y:auto; padding:24px 26px 30px; }
+  .panel-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:14px; }
+  .panel .ord{
+    font-family:"Playfair Display",serif; font-size:13px; letter-spacing:0.22em;
+    text-transform:uppercase; color:var(--ink-faint); margin:0 0 6px;
+  }
+  .panel h2{
+    font-family:"Playfair Display",serif; font-weight:700;
+    font-size:25px; line-height:1.12; margin:0 0 4px; color:var(--ink);
+  }
+  .panel .cat-line{ font-style:italic; color:var(--ink-soft); font-size:16px; margin:0 0 14px; }
+  .closeb{
+    flex:none; background:none; border:1.5px solid var(--ink-soft); color:var(--ink);
+    width:34px; height:34px; border-radius:50%; cursor:pointer; font-size:19px;
+    line-height:1; display:flex; align-items:center; justify-content:center;
+    transition:background .13s ease;
+  }
+  .closeb:hover, .closeb:focus-visible{ background:rgba(61,44,24,0.1); outline:none; }
+
+  .badges{ display:flex; flex-wrap:wrap; gap:8px; margin:0 0 18px; }
+  .badge{
+    font-size:13px; padding:4px 11px; border-radius:2px;
+    letter-spacing:0.02em; border:1px solid; line-height:1.3;
+  }
+  .badge .bk{ font-variant:small-caps; letter-spacing:0.08em; opacity:.75; margin-right:5px; font-size:11.5px; }
+  .b-status-op{ color:var(--green); border-color:var(--green); background:rgba(79,122,63,0.09); }
+  .b-status-mid{ color:var(--amber); border-color:var(--amber); background:rgba(176,124,30,0.1); }
+  .b-status-future{ color:var(--slate); border-color:var(--slate); background:rgba(90,107,120,0.1); }
+  .b-fact{ color:var(--atlas-blue-d); border-color:var(--atlas-blue); background:rgba(47,90,120,0.08); font-weight:600; }
+  .b-conf-high{ color:var(--green); border-color:var(--green); background:transparent; }
+  .b-conf-med{ color:var(--amber); border-color:var(--amber); background:transparent; }
+
+  .field{ margin:0 0 16px; }
+  .field .lbl{
+    font-size:11.5px; letter-spacing:0.18em; text-transform:uppercase;
+    color:var(--ink-faint); margin:0 0 3px; font-weight:600;
+  }
+  .field .val{ font-size:16px; color:var(--ink); margin:0; }
+  .field .val.why{ font-size:16.5px; line-height:1.52; }
+  .caveat{
+    border-left:3px solid var(--amber); background:rgba(176,124,30,0.07);
+    padding:10px 14px; margin:4px 0 0;
+  }
+  .caveat .lbl{ color:var(--amber); }
+  .links{ display:flex; flex-wrap:wrap; gap:10px 18px; margin:18px 0 4px; }
+  .links a{
+    color:var(--atlas-blue-d); text-decoration:none; font-weight:600;
+    border-bottom:1.5px solid rgba(47,90,120,0.45); padding-bottom:1px; font-size:15px;
+  }
+  .links a:hover, .links a:focus-visible{ border-bottom-color:var(--atlas-blue-d); outline:none; }
+  .links a .ar{ font-size:13px; }
+
+  /* ---------- Footer note ---------- */
+  footer.note{
+    margin:34px 0 0; padding:18px 0 40px;
+    border-top:2px solid var(--ink);
+  }
+  footer.note p{
+    font-size:12.5px; line-height:1.55; color:var(--ink-soft);
+    max-width:980px; margin:0 auto;
+  }
+  footer.note .nlabel{
+    font-variant:small-caps; letter-spacing:0.1em; color:var(--ink-faint);
+    font-weight:600; margin-right:6px;
+  }
+
+  @media (max-width:560px){
+    body{ font-size:16px; }
+    .sheet{ padding:18px 14px 0; }
+    .ref-grid, .support-grid{ grid-template-columns:1fr; }
+    .legend{ font-size:13px; gap:8px 18px; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{ transition:none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <header class="masthead">
+    <p class="eyebrow">City of Mesa · Arizona · Industry Cluster Atlas</p>
+    <h1>Mesa Defense &amp; Aerospace Cluster Map</h1>
+    <p class="subtitle">Aerospace, Defense Manufacturing &amp; Aviation Sites</p>
+    <span class="draft-tag">Interactive Verification Prototype · Q2 2026</span>
+  </header>
+
+  <div class="legend" aria-hidden="true">
+    <span class="lg">
+      <svg class="swatch" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="var(--atlas-blue)"/><circle cx="12" cy="12" r="9" fill="none" stroke="var(--parchment)" stroke-width="2"/></svg>
+      Operational site
+    </span>
+    <span class="lg">
+      <svg class="swatch" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="var(--atlas-blue)"/><circle cx="12" cy="12" r="10.5" fill="none" stroke="var(--atlas-blue-d)" stroke-width="1.6" stroke-dasharray="3 3"/></svg>
+      Pre-commercial / caveat (reconfirm)
+    </span>
+    <span class="lg">
+      <svg class="swatch" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" fill="none" stroke="var(--line-road)" stroke-width="1.5" stroke-dasharray="3 3"/></svg>
+      Supporting / future (listed below)
+    </span>
+  </div>
+
+  <!-- ============ MAP ============ -->
+  <div class="map-frame">
+    <svg class="map" viewBox="0 0 1000 740" role="img"
+         aria-label="Schematic vintage-atlas map of Mesa, Arizona showing the Falcon Field defense aviation cluster in the north and the Phoenix-Mesa Gateway Airport cluster in the south, with nine numbered company markers.">
+
+      <defs>
+        <pattern id="hatch" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="0" x2="0" y2="7" stroke="#b9a878" stroke-width="0.7" opacity="0.5"/>
+        </pattern>
+        <pattern id="stipple" width="10" height="10" patternUnits="userSpaceOnUse">
+          <circle cx="2" cy="2" r="0.8" fill="#a98f63" opacity="0.4"/>
+          <circle cx="7" cy="6" r="0.8" fill="#a98f63" opacity="0.4"/>
+        </pattern>
+      </defs>
+
+      <!-- base -->
+      <rect x="0" y="0" width="1000" height="740" fill="var(--parchment)"/>
+
+      <!-- regions -->
+      <path d="M40,40 L640,40 L700,120 L700,330 L40,330 Z" fill="var(--region-green)" opacity="0.55"/>
+      <path d="M40,330 L700,330 L700,360 L500,380 L40,360 Z" fill="var(--region-beige)" opacity="0.5"/>
+      <path d="M40,360 L500,380 L780,400 L900,560 L820,700 L40,700 Z" fill="var(--region-tan)" opacity="0.55"/>
+      <rect x="0" y="0" width="1000" height="740" fill="url(#stipple)" opacity="0.5"/>
+
+      <!-- ===== ROADS ===== -->
+      <!-- Loop 202 freeway (double line, arcs across top and down east) -->
+      <path d="M40,78 C260,60 470,60 660,96 C820,126 905,210 912,360 C918,500 880,620 760,700"
+            fill="none" stroke="var(--line-road)" stroke-width="6" opacity="0.85"/>
+      <path d="M40,78 C260,60 470,60 660,96 C820,126 905,210 912,360 C918,500 880,620 760,700"
+            fill="none" stroke="var(--parchment)" stroke-width="2" stroke-dasharray="9 9"/>
+      <text class="road-label" x="150" y="72" transform="rotate(-3 150 72)">Loop 202</text>
+
+      <!-- Palm Street (north, by Falcon Field) -->
+      <line x1="300" y1="150" x2="560" y2="150" stroke="var(--line-road)" stroke-width="2"/>
+      <text class="road-label" x="305" y="143">Palm Street</text>
+
+      <!-- McDowell Road (north E-W) -->
+      <line x1="80" y1="312" x2="700" y2="312" stroke="var(--line-road)" stroke-width="3.2"/>
+      <text class="road-label" x="86" y="305">McDowell Road</text>
+
+      <!-- Higley Road (north S-N) -->
+      <line x1="690" y1="120" x2="690" y2="330" stroke="var(--line-road)" stroke-width="3"/>
+      <text class="road-label" x="700" y="200" transform="rotate(90 700 200)">Higley Road</text>
+
+      <!-- Sossaman Road (south S-N) -->
+      <line x1="372" y1="400" x2="372" y2="640" stroke="var(--line-road)" stroke-width="3"/>
+      <text class="road-label" x="360" y="470" transform="rotate(-90 360 470)">Sossaman Road</text>
+
+      <!-- Velocity Way (south, by Gateway, short) -->
+      <line x1="560" y1="470" x2="680" y2="530" stroke="var(--line-road)" stroke-width="2.2"/>
+      <text class="road-label" x="600" y="466" transform="rotate(27 600 466)">Velocity Way</text>
+
+      <!-- Pecos Road (south E-W) -->
+      <line x1="380" y1="648" x2="820" y2="648" stroke="var(--line-road)" stroke-width="3.2"/>
+      <text class="road-label" x="386" y="666">Pecos Road</text>
+
+      <!-- ===== FALCON FIELD ===== -->
+      <g>
+        <rect x="360" y="178" width="240" height="92" rx="2"
+              fill="url(#hatch)" stroke="var(--ink-soft)" stroke-width="1.2" opacity="0.9"/>
+        <line x1="372" y1="224" x2="588" y2="224" stroke="var(--ink-soft)" stroke-width="2" stroke-dasharray="10 7"/>
+        <line x1="392" y1="196" x2="560" y2="252" stroke="var(--ink-soft)" stroke-width="1.6" stroke-dasharray="8 6"/>
+        <text class="orient-label" x="360" y="171">Falcon Field</text>
+        <text class="field-label" x="362" y="288">general aviation &amp; defense airfield</text>
+      </g>
+
+      <!-- ===== PHOENIX-MESA GATEWAY ===== -->
+      <g>
+        <rect x="430" y="445" width="270" height="120" rx="2"
+              fill="url(#hatch)" stroke="var(--ink-soft)" stroke-width="1.2" opacity="0.9"/>
+        <line x1="446" y1="478" x2="686" y2="478" stroke="var(--ink-soft)" stroke-width="2" stroke-dasharray="10 7"/>
+        <line x1="446" y1="532" x2="686" y2="532" stroke="var(--ink-soft)" stroke-width="2" stroke-dasharray="10 7"/>
+        <text class="orient-label" x="430" y="600" style="font-size:18px;">Phoenix–Mesa Gateway Airport</text>
+      </g>
+
+      <!-- compass rose -->
+      <g transform="translate(860,170)" opacity="0.8">
+        <circle r="26" fill="none" stroke="var(--ink-soft)" stroke-width="1"/>
+        <polygon points="0,-24 5,0 0,24 -5,0" fill="var(--ink-soft)"/>
+        <polygon points="0,-24 5,0 0,0" fill="var(--ink)"/>
+        <text x="0" y="-30" text-anchor="middle" class="road-label" style="font-size:12px;fill:var(--ink)">N</text>
+      </g>
+
+      <!-- scale bar -->
+      <g transform="translate(70,690)" opacity="0.85">
+        <line x1="0" y1="0" x2="120" y2="0" stroke="var(--ink-soft)" stroke-width="2"/>
+        <line x1="0" y1="-4" x2="0" y2="4" stroke="var(--ink-soft)" stroke-width="2"/>
+        <line x1="60" y1="-4" x2="60" y2="4" stroke="var(--ink-soft)" stroke-width="2"/>
+        <line x1="120" y1="-4" x2="120" y2="4" stroke="var(--ink-soft)" stroke-width="2"/>
+        <text x="0" y="18" class="road-label" style="font-size:11px;">approx. schematic — not to scale</text>
+      </g>
+
+      <!-- marker layer (filled by JS) -->
+      <g id="markerLayer"></g>
+    </svg>
+  </div>
+
+  <!-- ============ REFERENCE LIST ============ -->
+  <section class="reference">
+    <div class="ref-head">
+      <h2>Site Reference</h2>
+      <span class="hint">Select a marker or a name to review evidence, status &amp; caveats</span>
+    </div>
+    <div class="ref-grid" id="refGrid"></div>
+
+    <div class="support-box">
+      <h3>Supporting &amp; Future Sites</h3>
+      <p class="sub">Context assets shown for orientation — not plotted as primary markers.</p>
+      <div class="support-grid" id="supportGrid"></div>
+    </div>
+  </section>
+
+  <footer class="note">
+    <p>
+      <span class="nlabel">Prototype note</span>
+      This prototype uses publicly available sources to verify Mesa facility locations and industry functions. Operational status may change, especially for planned, newly opened, pre-commercial, or secure defense-related sites. This map is intended for review and orientation only; final publication should reconfirm each site with company, city, airport, or official economic development sources.
+    </p>
+  </footer>
+</div>
+
+<!-- ============ SIDE PANEL ============ -->
+<div class="overlay" id="overlay"></div>
+<aside class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="panelName" tabindex="-1">
+  <div class="panel-inner" id="panelInner"></div>
+</aside>
+
+<script>
+/* ---------------- DATA (curated; do not alter) ---------------- */
+const SITES = {
+  1:{ord:"Marker 1", x:520, y:300, num:"1", dashed:false, short:"Boeing Mesa",
+      name:"Boeing Mesa",
+      cat:"Helicopter manufacturing / defense manufacturing",
+      addr:"5000 E McDowell Rd, Mesa, AZ 85215",
+      status:"Operational", statusClass:"b-status-op",
+      fact:"AH-64 Apache production",
+      why:"Boeing Mesa anchors the Falcon Field defense aviation cluster and gives Mesa a globally recognized combat helicopter manufacturing identity.",
+      maps:"https://maps.google.com/?q=5000+E+McDowell+Rd+Mesa+AZ+85215",
+      src:"https://www.aztechcouncil.org/boeing-contract-apache-helicopter-support/",
+      conf:"High", confClass:"b-conf-high",
+      caveat:"None for prototype; reconfirm exact production details before final publication."},
+
+  2:{ord:"Marker 2", x:408, y:300, num:"2", dashed:false, short:"MD Helicopters",
+      name:"MD Helicopters",
+      cat:"Helicopter OEM / MRO",
+      addr:"4555 E McDowell Rd, Mesa, AZ 85215",
+      status:"Operational / rebuilding production", statusClass:"b-status-mid",
+      fact:"Falcon Field helicopter OEM",
+      why:"MD Helicopters reinforces Mesa’s rotorcraft manufacturing cluster directly adjacent to Boeing and Falcon Field.",
+      maps:"https://maps.google.com/?q=4555+E+McDowell+Rd+Mesa+AZ+85215",
+      src:"https://aviationweek.com/defense/aircraft-propulsion/md-helicopters-rebuilding-production-support-capacity",
+      conf:"High", confClass:"b-conf-high",
+      caveat:"Production is in a rebuilding phase; do not represent as high-volume without additional evidence."},
+
+  3:{ord:"Marker 3", x:648, y:255, num:"3", dashed:false, short:"Nammo Defense Systems",
+      name:"Nammo Defense Systems",
+      cat:"Rockets, ammunition, propulsion / defense manufacturing",
+      addr:"4051 N Higley Rd, Mesa, AZ 85215",
+      status:"Operational", statusClass:"b-status-op",
+      fact:"Largest U.S. production facility",
+      why:"Nammo adds munitions, propulsion, and defense manufacturing depth to Mesa’s aerospace ecosystem.",
+      maps:"https://maps.google.com/?q=4051+N+Higley+Rd+Mesa+AZ+85215",
+      src:"https://www.nammo.com/locations/mesa-arizona/",
+      conf:"High", confClass:"b-conf-high",
+      caveat:"Specific production volumes and contract details are not fully public."},
+
+  4:{ord:"Marker 4", x:432, y:165, num:"4", dashed:false, short:"Northrop Grumman",
+      name:"Northrop Grumman Bushmaster",
+      cat:"Weapon systems / defense manufacturing",
+      addr:"4242 E Palm St, Mesa, AZ 85215",
+      status:"Operational", statusClass:"b-status-op",
+      fact:"Bushmaster chain gun systems",
+      why:"Northrop Grumman brings land-systems weapons manufacturing into the Mesa cluster, broadening the map beyond aircraft and aviation.",
+      maps:"https://maps.google.com/?q=4242+E+Palm+St+Mesa+AZ+85215",
+      src:"https://www.northropgrumman.com/careers/northrop-grumman-in-arizona",
+      conf:"High", confClass:"b-conf-high",
+      caveat:"Suite number varies by source; use building address for prototype."},
+
+  5:{ord:"Marker 5", x:410, y:505, num:"5", dashed:false, short:"Gulfstream Service Center",
+      name:"Gulfstream Aerospace Mesa Service Center",
+      cat:"Business jet service center / MRO",
+      addr:"6253 S Sossaman Rd, Mesa, AZ 85212",
+      status:"Operational / opened 2025", statusClass:"b-status-op",
+      fact:"$130M / 225K sq ft",
+      why:"Gulfstream’s Mesa service center brings a major OEM business aviation presence to Phoenix-Mesa Gateway Airport.",
+      maps:"https://maps.google.com/?q=6253+S+Sossaman+Rd+Mesa+AZ+85212",
+      src:"https://www.azcommerce.com/news-events/news/2025/1/gulfstream-opens-new-customer-support-service-center-in-mesa/",
+      conf:"High", confClass:"b-conf-high",
+      caveat:"None."},
+
+  6:{ord:"Marker 6", x:640, y:520, num:"6", dashed:false, short:"Able Aerospace Services",
+      name:"Able Aerospace Services",
+      cat:"Aerospace components MRO / repair / overhaul",
+      addr:"7706 E Velocity Way, Mesa, AZ 85212",
+      status:"Operational", statusClass:"b-status-op",
+      fact:"250K sq ft / 400+ staff",
+      why:"Able Aerospace supports Mesa’s aviation aftermarket and sustainment base, especially around Phoenix-Mesa Gateway Airport.",
+      maps:"https://maps.google.com/?q=7706+E+Velocity+Way+Mesa+AZ+85212",
+      src:"https://www.ableaerospace.com/contact/",
+      conf:"High", confClass:"b-conf-high",
+      caveat:"No recent investment figure was identified."},
+
+  7:{ord:"Marker 7", x:410, y:560, num:"7", dashed:false, short:"Top Aces Mesa",
+      name:"Top Aces Mesa",
+      cat:"F-16 adversary air operations / aviation training",
+      addr:"6355 S Sossaman Rd, Building A, Mesa, AZ 85212",
+      status:"Operational", statusClass:"b-status-op",
+      fact:"F-16 adversary air",
+      why:"Top Aces gives Mesa a high-visibility advanced fighter training role, connecting Gateway Airport to U.S. military pilot training.",
+      maps:"https://maps.google.com/?q=6355+S+Sossaman+Rd+Building+A+Mesa+AZ+85212",
+      src:"https://www.airforce-technology.com/news/first-batch-f-16-top-aces-mesa-coe-arizona/",
+      conf:"High", confClass:"b-conf-high",
+      caveat:"Label as adversary air operations, not traditional classroom training or manufacturing."},
+
+  8:{ord:"Marker 8", x:728, y:618, num:"8", dashed:false, short:"Hadrian Factory 3",
+      name:"Hadrian Factory 3",
+      cat:"AI-enabled precision defense manufacturing",
+      addr:"10101 E Pecos Rd, Building A, Mesa, AZ 85212",
+      status:"Newly opened / operational", statusClass:"b-status-op",
+      fact:"$200M / 270K–290K sq ft",
+      why:"Hadrian F3 adds a next-generation automated defense manufacturing story to Mesa, linking aerospace, missiles, rockets, and AI-enabled production.",
+      maps:"https://maps.google.com/?q=10101+E+Pecos+Rd+Mesa+AZ+85212",
+      src:"https://www.abc15.com/news/business/hadrian-opens-huge-automated-military-aerospace-products-factory-in-east-valley",
+      conf:"High", confClass:"b-conf-high",
+      caveat:"Facility size varies slightly by source; use range wording for prototype."},
+
+  9:{ord:"Marker 9", x:410, y:450, num:"9", dashed:true, short:"Virgin Galactic (Delta)",
+      name:"Virgin Galactic Mesa Delta Facility",
+      cat:"Spacecraft assembly / pre-commercial space manufacturing",
+      addr:"5559 S Sossaman Rd, Mesa, AZ 85212",
+      status:"Partially operational / pre-commercial", statusClass:"b-status-mid",
+      fact:"Delta-class spacecraft assembly",
+      why:"Virgin Galactic is a high-recognition commercial space brand that positions Mesa as part of the human-spaceflight manufacturing ecosystem.",
+      maps:"https://maps.google.com/?q=5559+S+Sossaman+Rd+Mesa+AZ+85212",
+      src:"https://www.virgingalactic.com/news/virgin-galactic-begins-operations-at-delta-spaceship-ground-testing-facility",
+      conf:"Medium", confClass:"b-conf-med",
+      caveat:"Commercial flights have not yet occurred as of Q2 2026; do not imply full commercial operations."}
+};
+
+const SUPPORT = {
+  A:{ord:"Supporting site A", tag:"A", short:"AZLabs",
+      name:"AZLabs",
+      cat:"Secure defense R&D campus",
+      addr:"6030 / 6035 S Kent St, Mesa, AZ 85212",
+      status:"Operational secure campus; tenant visibility limited", statusClass:"b-status-mid",
+      fact:"85K+ sq ft secure campus",
+      why:"AZLabs is a specialized secure R&D asset near Gateway Airport, but its tenant and activity level are less visible than manufacturing sites.",
+      maps:"https://maps.google.com/?q=6030+S+Kent+St+Mesa+AZ+85212",
+      src:"https://selectmesa.com/available-properties/azlabs-secure-space/",
+      conf:"High", confClass:"b-conf-high",
+      caveat:"Named tenants and active programs are not publicly disclosed."},
+
+  B:{ord:"Future site B", tag:"B", short:"FlightSafety Int’l",
+      name:"FlightSafety International Mesa Learning Center",
+      cat:"Future simulator training center",
+      addr:"Gateway Airport area, Mesa, AZ; exact address not yet public",
+      status:"Under construction / expected 2028", statusClass:"b-status-future",
+      fact:"100K sq ft planned",
+      why:"FlightSafety’s planned center adds future aviation training depth to Mesa’s Gateway cluster.",
+      maps:"https://maps.google.com/?q=Phoenix-Mesa+Gateway+Airport+Mesa+AZ",
+      src:"https://news.flightsafety.com/pressrelease/flightsafety-international-expands-arizona-presence-with-new-100000-square-foot-learning-center",
+      conf:"Medium", confClass:"b-conf-med",
+      caveat:"Future facility; exact street address not yet public."}
+};
+
+const SVGNS = "http://www.w3.org/2000/svg";
+
+/* ---------------- Build markers on the map ---------------- */
+const layer = document.getElementById("markerLayer");
+Object.keys(SITES).forEach(k=>{
+  const s = SITES[k];
+  const g = document.createElementNS(SVGNS,"g");
+  g.setAttribute("class","marker");
+  g.setAttribute("tabindex","0");
+  g.setAttribute("role","button");
+  g.setAttribute("aria-label", s.num + ". " + s.name + " — " + s.status);
+  g.dataset.id = k;
+
+  // larger transparent hit target
+  const hit = document.createElementNS(SVGNS,"circle");
+  hit.setAttribute("class","hit"); hit.setAttribute("cx",s.x); hit.setAttribute("cy",s.y); hit.setAttribute("r","24");
+  g.appendChild(hit);
+
+  // ring (dashed for pre-commercial/caveat)
+  const ring = document.createElementNS(SVGNS,"circle");
+  ring.setAttribute("class","ring");
+  ring.setAttribute("cx",s.x); ring.setAttribute("cy",s.y); ring.setAttribute("r","20");
+  ring.setAttribute("fill","none");
+  ring.setAttribute("stroke", s.dashed ? "var(--atlas-blue-d)" : "var(--parchment)");
+  ring.setAttribute("stroke-width", s.dashed ? "1.8" : "3");
+  if(s.dashed) ring.setAttribute("stroke-dasharray","4 4");
+  g.appendChild(ring);
+
+  // dot
+  const dot = document.createElementNS(SVGNS,"circle");
+  dot.setAttribute("class","dot");
+  dot.setAttribute("cx",s.x); dot.setAttribute("cy",s.y); dot.setAttribute("r","16");
+  dot.setAttribute("fill","var(--atlas-blue)");
+  g.appendChild(dot);
+
+  // number
+  const t = document.createElementNS(SVGNS,"text");
+  t.setAttribute("x",s.x); t.setAttribute("y",s.y+5.5);
+  t.setAttribute("text-anchor","middle");
+  t.setAttribute("font-family","'Playfair Display', serif");
+  t.setAttribute("font-weight","700");
+  t.setAttribute("font-size","16");
+  t.setAttribute("fill","#fff");
+  t.textContent = s.num;
+  g.appendChild(t);
+
+  // hover label (placed to avoid runway/road overlap)
+  const lbl = document.createElementNS(SVGNS,"text");
+  lbl.setAttribute("class","mlabel");
+  const onLeft = s.x > 620;            // markers on east side -> label to the left
+  lbl.setAttribute("x", onLeft ? s.x-24 : s.x+24);
+  lbl.setAttribute("y", s.y-22);
+  lbl.setAttribute("text-anchor", onLeft ? "end" : "start");
+  lbl.textContent = s.short;
+  g.appendChild(lbl);
+
+  const open = ()=>openPanel(SITES[k]);
+  g.addEventListener("click", open);
+  g.addEventListener("keydown", e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); open(); }});
+
+  layer.appendChild(g);
+});
+
+/* ---------------- Build reference list ---------------- */
+const refGrid = document.getElementById("refGrid");
+Object.keys(SITES).forEach(k=>{
+  const s = SITES[k];
+  const b = document.createElement("button");
+  b.className = "ref-item";
+  b.innerHTML =
+    '<span class="ref-num'+(s.dashed?' dashed':'')+'">'+s.num+'</span>'+
+    '<span class="ref-body"><span class="name">'+s.name+'</span><br>'+
+    '<span class="cat">'+s.cat+'</span></span>';
+  b.addEventListener("click", ()=>openPanel(s));
+  refGrid.appendChild(b);
+});
+
+const supportGrid = document.getElementById("supportGrid");
+Object.keys(SUPPORT).forEach(k=>{
+  const s = SUPPORT[k];
+  const b = document.createElement("button");
+  b.className = "support-item";
+  b.innerHTML =
+    '<span class="support-tag">'+s.tag+'</span>'+
+    '<span class="ref-body"><span class="name">'+s.name+'</span><br>'+
+    '<span class="cat">'+s.cat+'</span></span>';
+  b.addEventListener("click", ()=>openPanel(s));
+  supportGrid.appendChild(b);
+});
+
+/* ---------------- Detail panel ---------------- */
+const overlay = document.getElementById("overlay");
+const panel   = document.getElementById("panel");
+const inner   = document.getElementById("panelInner");
+let lastFocus = null;
+
+function esc(str){ return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function openPanel(s){
+  lastFocus = document.activeElement;
+  inner.innerHTML =
+    '<div class="panel-top">'+
+      '<div>'+
+        '<p class="ord">'+esc(s.ord)+'</p>'+
+        '<h2 id="panelName">'+esc(s.name)+'</h2>'+
+        '<p class="cat-line">'+esc(s.cat)+'</p>'+
+      '</div>'+
+      '<button class="closeb" id="closeBtn" aria-label="Close detail panel">&times;</button>'+
+    '</div>'+
+
+    '<div class="badges">'+
+      '<span class="badge '+s.statusClass+'"><span class="bk">Status</span>'+esc(s.status)+'</span>'+
+      '<span class="badge b-fact"><span class="bk">Fact</span>'+esc(s.fact)+'</span>'+
+      '<span class="badge '+s.confClass+'"><span class="bk">Confidence</span>'+esc(s.conf)+'</span>'+
+    '</div>'+
+
+    '<div class="field"><p class="lbl">Building category</p><p class="val">'+esc(s.cat)+'</p></div>'+
+    '<div class="field"><p class="lbl">Address / nearest intersection</p><p class="val">'+esc(s.addr)+'</p></div>'+
+    '<div class="field"><p class="lbl">Why it matters</p><p class="val why">'+esc(s.why)+'</p></div>'+
+
+    '<div class="links">'+
+      '<a href="'+s.maps+'" target="_blank" rel="noopener noreferrer">Open in Google Maps <span class="ar">&#8599;</span></a>'+
+      '<a href="'+s.src+'" target="_blank" rel="noopener noreferrer">View source <span class="ar">&#8599;</span></a>'+
+    '</div>'+
+
+    '<div class="field caveat" style="margin-top:18px;"><p class="lbl">Caveat — reconfirm before publication</p><p class="val">'+esc(s.caveat)+'</p></div>';
+
+  overlay.classList.add("open");
+  panel.classList.add("open");
+  document.getElementById("closeBtn").addEventListener("click", closePanel);
+  panel.focus();
+}
+
+function closePanel(){
+  overlay.classList.remove("open");
+  panel.classList.remove("open");
+  if(lastFocus && lastFocus.focus) lastFocus.focus();
+}
+
+overlay.addEventListener("click", closePanel);
+document.addEventListener("keydown", e=>{ if(e.key==="Escape" && panel.classList.contains("open")) closePanel(); });
+</script>
+</body>
+</html>
