@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mesa Semiconductor Supply Chain Cluster Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --parchment:#efe6d2;
+    --parchment-deep:#e6d9bd;
+    --land-tan:#ddcba6;
+    --land-beige:#e3d6b6;
+    --land-green:#c4cca0;
+    --land-green-deep:#b3bd8c;
+    --road:#b9a584;
+    --road-major:#9a8460;
+    --ink:#43321f;
+    --ink-soft:#6b573c;
+    --ink-faint:#8a7757;
+    --marker:#2c5a86;
+    --marker-deep:#1f4365;
+    --marker-ring:#27506f;
+    --caveat:#b07a2e;
+    --line:#cdbb95;
+    --panel:#f6efde;
+    --good:#5d7a4a;
+    --good-bg:#dde3c8;
+    --teal:#3d7068;
+    --teal-bg:#d2e0d8;
+    --amber:#a9772c;
+    --amber-bg:#ecdcb8;
+    --low:#9a6334;
+    --low-bg:#ecd6bd;
+    --shadow:rgba(67,50,31,.18);
+    --display:"Playfair Display",Georgia,"Times New Roman",serif;
+    --body:"EB Garamond",Georgia,serif;
+    --mono:"IBM Plex Mono",ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:var(--body);
+    color:var(--ink);
+    background:
+      radial-gradient(120% 90% at 20% 0%, #f4ecd9 0%, var(--parchment) 45%, var(--parchment-deep) 100%);
+    background-attachment:fixed;
+    line-height:1.45;
+    -webkit-font-smoothing:antialiased;
+  }
+  .frame{
+    max-width:1180px;
+    margin:0 auto;
+    padding:30px 22px 64px;
+  }
+  /* ---------- Masthead ---------- */
+  header.masthead{
+    border:2px solid var(--ink);
+    border-radius:3px;
+    padding:22px 26px 20px;
+    background:linear-gradient(180deg,#f7f0dd,#efe6d2);
+    box-shadow:0 2px 0 var(--ink), 0 10px 30px -16px var(--shadow);
+    position:relative;
+  }
+  header.masthead::before{
+    content:"";position:absolute;inset:6px;border:1px solid var(--ink-faint);
+    border-radius:2px;pointer-events:none;opacity:.55;
+  }
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:11px;letter-spacing:.32em;text-transform:uppercase;
+    color:var(--ink-soft);margin:0 0 8px;
+  }
+  h1{
+    font-family:var(--display);
+    font-weight:800;
+    font-size:clamp(27px,4.4vw,46px);
+    line-height:1.02;
+    margin:0;
+    color:var(--ink);
+    letter-spacing:.005em;
+  }
+  .subtitle{
+    font-family:var(--display);
+    font-weight:600;
+    font-style:italic;
+    font-size:clamp(14px,2vw,19px);
+    color:var(--ink-soft);
+    margin:8px 0 0;
+  }
+  .purpose{
+    margin:14px 0 0;
+    font-size:15.5px;
+    color:var(--ink-soft);
+    max-width:62ch;
+  }
+  .purpose b{color:var(--ink);font-weight:600;}
+  /* ---------- Legend ---------- */
+  .legend{
+    display:flex;flex-wrap:wrap;gap:10px 22px;
+    margin-top:18px;padding-top:14px;
+    border-top:1px solid var(--line);
+    font-size:13.5px;color:var(--ink-soft);
+  }
+  .legend .li{display:flex;align-items:center;gap:9px;}
+  .swatch{flex:none;width:26px;height:26px;position:relative;display:grid;place-items:center;}
+  .dot{width:20px;height:20px;border-radius:50%;background:var(--marker);
+    border:2px solid var(--marker-ring);color:#fff;font-family:var(--mono);font-size:10px;
+    display:grid;place-items:center;font-weight:500;box-shadow:0 1px 2px var(--shadow);}
+  .dot.dash{border-style:dashed;background:#5a7d9c;}
+  .swatch .ibadge{
+    position:absolute;width:18px;height:18px;border-radius:50%;
+    background:var(--caveat);color:#fff;font-family:var(--display);font-style:italic;
+    font-weight:700;font-size:12px;display:grid;place-items:center;
+    border:1.5px solid #f7f0dd;
+  }
+  .swatch .dashbox{width:24px;height:18px;border:1.6px dashed var(--ink-soft);border-radius:2px;}
+  /* ---------- Map ---------- */
+  .map-wrap{
+    margin-top:26px;
+    border:2px solid var(--ink);
+    border-radius:3px;
+    background:var(--parchment);
+    box-shadow:0 2px 0 var(--ink),0 16px 40px -22px var(--shadow);
+    position:relative;
+    overflow:hidden;
+  }
+  .map-wrap::after{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    box-shadow:inset 0 0 90px -10px rgba(120,98,60,.35);
+    border-radius:3px;
+  }
+  .map-title{
+    position:absolute;top:14px;left:18px;z-index:3;
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.28em;
+    text-transform:uppercase;color:var(--ink-soft);
+    background:rgba(247,240,221,.7);padding:4px 8px;border:1px solid var(--line);
+  }
+  .compass{
+    position:absolute;top:12px;right:16px;z-index:3;
+    width:46px;height:46px;opacity:.8;
+  }
+  svg.map{display:block;width:100%;height:auto;}
+  .road-line{stroke:var(--road);stroke-width:3.4;fill:none;stroke-linecap:round;}
+  .road-line.major{stroke:var(--road-major);stroke-width:7;}
+  .road-line.fwy{stroke:var(--road-major);stroke-width:7.5;stroke-dasharray:none;}
+  .road-casing{stroke:#cabd99;stroke-width:11;fill:none;stroke-linecap:round;opacity:.5;}
+  .road-label{font-family:var(--mono);font-size:12px;fill:var(--ink-soft);letter-spacing:.06em;}
+  .road-label.minor{font-size:11px;fill:var(--ink-faint);}
+  .place-label{font-family:var(--display);font-style:italic;font-size:14px;fill:var(--ink-soft);font-weight:600;}
+  .region-label{font-family:var(--display);font-size:15px;fill:#7e7048;font-weight:600;letter-spacing:.04em;opacity:.7;}
+  .grid-fade{stroke:var(--line);stroke-width:.6;opacity:.4;}
+
+  .marker{cursor:pointer;}
+  .marker .mk-ring{fill:var(--marker);stroke:#f3ead6;stroke-width:2.4;
+    transition:transform .15s ease, filter .15s ease;transform-box:fill-box;transform-origin:center;}
+  .marker .mk-ring.dash{fill:#5a7d9c;stroke-dasharray:5 3.5;stroke:var(--marker-ring);stroke-width:2.4;}
+  .marker .mk-num{fill:#fff;font-family:var(--mono);font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:central;pointer-events:none;}
+  .marker .mk-halo{fill:rgba(44,90,134,.16);opacity:0;transition:opacity .15s ease;}
+  .marker:hover .mk-halo,.marker.active .mk-halo{opacity:1;}
+  .marker:hover .mk-ring,.marker.active .mk-ring{filter:drop-shadow(0 3px 4px rgba(31,67,101,.5));}
+  .marker.active .mk-ring{transform:scale(1.12);}
+  .marker .ibadge-c{fill:var(--caveat);stroke:#f3ead6;stroke-width:1.6;}
+  .marker .ibadge-t{fill:#fff;font-family:var(--display);font-style:italic;font-weight:700;font-size:13px;text-anchor:middle;dominant-baseline:central;pointer-events:none;}
+  .marker:focus{outline:none;}
+  .marker:focus-visible .mk-ring{stroke:#1f4365;stroke-width:3.4;}
+
+  /* ---------- Reference list ---------- */
+  .lower{margin-top:30px;display:grid;grid-template-columns:1.55fr 1fr;gap:26px;align-items:start;}
+  @media(max-width:860px){.lower{grid-template-columns:1fr;}}
+  .section-h{
+    font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;
+    color:var(--ink-soft);margin:0 0 12px;padding-bottom:7px;border-bottom:1.5px solid var(--ink);
+    display:flex;justify-content:space-between;align-items:baseline;
+  }
+  .section-h span{font-family:var(--body);letter-spacing:0;text-transform:none;font-style:italic;font-size:13px;color:var(--ink-faint);}
+  ol.reflist{list-style:none;margin:0;padding:0;}
+  ol.reflist li{
+    display:flex;gap:13px;align-items:flex-start;
+    padding:11px 12px;border:1px solid transparent;border-radius:3px;cursor:pointer;
+    transition:background .12s ease,border-color .12s ease;
+  }
+  ol.reflist li + li{border-top:1px solid var(--line);}
+  ol.reflist li:hover,ol.reflist li.active{background:#f5edd9;border-color:var(--line);}
+  ol.reflist li.active{border-color:var(--marker);}
+  .ref-num{
+    flex:none;width:28px;height:28px;border-radius:50%;background:var(--marker);
+    color:#fff;font-family:var(--mono);font-size:13px;display:grid;place-items:center;
+    border:2px solid var(--marker-ring);margin-top:1px;
+  }
+  .ref-num.dash{border-style:dashed;background:#5a7d9c;}
+  .ref-body{flex:1;min-width:0;}
+  .ref-name{font-family:var(--display);font-weight:700;font-size:18px;line-height:1.15;color:var(--ink);display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+  .ref-name .mini-i{
+    width:16px;height:16px;border-radius:50%;background:var(--caveat);color:#fff;
+    font-family:var(--display);font-style:italic;font-weight:700;font-size:11px;
+    display:inline-grid;place-items:center;flex:none;
+  }
+  .ref-cat{font-size:14px;color:var(--ink-soft);margin-top:2px;}
+  .ref-meta{margin-top:6px;display:flex;flex-wrap:wrap;gap:6px;}
+
+  /* ---------- Badges ---------- */
+  .badge{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;
+    padding:3px 8px;border-radius:2px;border:1px solid;white-space:nowrap;}
+  .b-fact{color:var(--ink);background:#eadfc2;border-color:var(--road);}
+  .b-good{color:var(--good);background:var(--good-bg);border-color:#9bab7c;}
+  .b-teal{color:var(--teal);background:var(--teal-bg);border-color:#9cbcaf;}
+  .b-amber{color:var(--amber);background:var(--amber-bg);border-color:#cfa863;border-style:dashed;}
+  .b-low{color:var(--low);background:var(--low-bg);border-color:#cb9a66;}
+  .conf-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--ink-faint);margin-right:2px;align-self:center;}
+
+  /* ---------- Supporting box ---------- */
+  .support{
+    border:1.8px dashed var(--ink-soft);border-radius:3px;padding:16px 18px 18px;
+    background:rgba(228,216,186,.4);
+  }
+  .support h3{font-family:var(--display);font-size:18px;margin:0 0 3px;color:var(--ink);}
+  .support .sub{font-size:13.5px;color:var(--ink-soft);font-style:italic;margin:0 0 14px;}
+  .support .item{cursor:pointer;padding:10px;border-radius:3px;transition:background .12s;}
+  .support .item:hover,.support .item.active{background:rgba(247,240,221,.7);}
+  .support .item + .item{border-top:1px solid var(--line);margin-top:4px;}
+  .support .tag{font-family:var(--mono);font-size:11px;color:var(--ink-soft);}
+  .support .item-name{font-family:var(--display);font-weight:700;font-size:16px;color:var(--ink);}
+  .support .item-cat{font-size:13.5px;color:var(--ink-soft);}
+
+  .region-note{
+    margin-top:18px;font-size:13px;color:var(--ink-faint);font-style:italic;
+    border-left:3px solid var(--line);padding:4px 0 4px 12px;
+  }
+
+  /* ---------- Detail panel ---------- */
+  .scrim{position:fixed;inset:0;background:rgba(45,34,20,.42);opacity:0;pointer-events:none;
+    transition:opacity .22s ease;z-index:40;}
+  .scrim.open{opacity:1;pointer-events:auto;}
+  .panel{
+    position:fixed;top:0;right:0;height:100%;width:min(440px,92vw);
+    background:var(--panel);border-left:2px solid var(--ink);
+    box-shadow:-18px 0 44px -24px var(--shadow);
+    transform:translateX(102%);transition:transform .26s cubic-bezier(.4,.0,.2,1);
+    z-index:50;display:flex;flex-direction:column;
+  }
+  .panel.open{transform:translateX(0);}
+  .panel-head{padding:20px 22px 16px;border-bottom:1.5px solid var(--ink);position:relative;background:linear-gradient(180deg,#f8f1e0,#f3ead6);}
+  .panel-head .kicker{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+  .panel-head .pnum{width:30px;height:30px;border-radius:50%;background:var(--marker);color:#fff;
+    font-family:var(--mono);font-size:14px;display:grid;place-items:center;border:2px solid var(--marker-ring);}
+  .panel-head .pnum.dash{border-style:dashed;background:#5a7d9c;}
+  .panel-head .pnum.alpha{background:#7a6a48;border:2px dashed var(--ink-soft);}
+  .panel-head h2{font-family:var(--display);font-weight:800;font-size:23px;line-height:1.08;margin:0;color:var(--ink);}
+  .panel-head .pcat{font-size:14.5px;color:var(--ink-soft);margin-top:5px;font-style:italic;}
+  .close-btn{position:absolute;top:16px;right:16px;width:34px;height:34px;border:1.5px solid var(--ink-soft);
+    background:transparent;border-radius:50%;color:var(--ink);font-size:18px;cursor:pointer;line-height:1;
+    display:grid;place-items:center;transition:background .12s;}
+  .close-btn:hover{background:#e7dabb;}
+  .panel-body{padding:18px 22px 28px;overflow-y:auto;flex:1;}
+  .field{margin-bottom:16px;}
+  .field-label{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:5px;}
+  .field-val{font-size:15.5px;color:var(--ink);}
+  .badge-row{display:flex;flex-wrap:wrap;gap:7px;align-items:center;}
+  .why{font-size:15.5px;line-height:1.5;color:var(--ink);background:#efe6cf;border-left:3px solid var(--marker);padding:11px 13px;border-radius:0 3px 3px 0;}
+  .caveat-box{font-size:14.5px;line-height:1.5;color:var(--ink-soft);background:#f0e4c8;border:1px dashed var(--caveat);border-radius:3px;padding:11px 13px;}
+  .caveat-box .ic{color:var(--caveat);font-weight:700;font-style:italic;font-family:var(--display);margin-right:5px;}
+  .src-note{font-size:13.5px;color:var(--ink-soft);font-style:italic;line-height:1.45;}
+  a.maplink{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:13px;color:var(--marker-deep);
+    text-decoration:none;border:1px solid var(--marker);padding:7px 12px;border-radius:3px;background:#e4ecf2;transition:background .12s;}
+  a.maplink:hover{background:#d3e1ec;}
+  .field-sep{border:0;border-top:1px solid var(--line);margin:18px 0;}
+
+  /* ---------- Footer ---------- */
+  footer.source{
+    margin-top:38px;border-top:1.5px solid var(--ink);padding-top:16px;
+    font-size:12.5px;color:var(--ink-soft);line-height:1.55;max-width:88ch;
+  }
+  footer.source .lab{font-family:var(--mono);font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-bottom:6px;}
+  .hint{font-family:var(--mono);font-size:11px;color:var(--ink-faint);text-align:center;margin:14px 0 0;letter-spacing:.05em;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+</style>
+</head>
+<body>
+<div class="frame">
+
+  <header class="masthead">
+    <p class="eyebrow">Arizona Industry Cluster Atlas · Executive Verification Prototype</p>
+    <h1>Mesa Semiconductor Supply Chain Cluster Map</h1>
+    <p class="subtitle">Materials, Chemicals, Equipment &amp; Fab-Support Sites</p>
+    <p class="purpose">An interactive review prototype for <b>Steve Hsu's</b> Arizona real estate / industry cluster book. The final book may use only a static numbered image — this tool exists to <b>verify each site's evidence, status, caveats, and semiconductor relevance</b> before publication. Tap any marker or company name to inspect its record.</p>
+
+    <div class="legend" aria-label="Map legend">
+      <div class="li"><span class="swatch"><span class="dot">●</span></span> Solid blue marker — operational / main map site</div>
+      <div class="li"><span class="swatch"><span class="dot dash">●</span></span> Dashed blue marker — under construction / caveat site</div>
+      <div class="li"><span class="swatch"><span class="ibadge">i</span></span> Info icon — Mesa location &amp; sector confirmed; local product mix not fully public</div>
+      <div class="li"><span class="swatch"><span class="dashbox"></span></span> Dashed box — supporting / under-verification sites (not main markers)</div>
+    </div>
+  </header>
+
+  <!-- ============ MAP ============ -->
+  <div class="map-wrap">
+    <div class="map-title">Schematic · Southeast Valley · Not to GIS scale</div>
+    <svg class="compass" viewBox="0 0 100 100" aria-hidden="true">
+      <circle cx="50" cy="50" r="34" fill="none" stroke="#8a7757" stroke-width="2"/>
+      <polygon points="50,14 57,50 50,44 43,50" fill="#2c5a86" stroke="#1f4365" stroke-width="1"/>
+      <polygon points="50,86 43,50 50,56 57,50" fill="#cabd99"/>
+      <text x="50" y="11" text-anchor="middle" font-family="Playfair Display,serif" font-size="13" font-weight="700" fill="#43321f">N</text>
+    </svg>
+
+    <svg class="map" viewBox="0 0 1000 660" role="img" aria-label="Schematic map of Mesa, Arizona semiconductor supply-chain sites">
+      <!-- base land regions -->
+      <rect x="0" y="0" width="1000" height="660" fill="#e8dcc0"/>
+      <path d="M0,0 H1000 V200 Q700,170 420,210 Q180,245 0,225 Z" fill="#e3d6b6"/>
+      <path d="M0,225 Q180,245 420,210 Q700,170 1000,200 V470 Q760,500 470,475 Q220,455 0,490 Z" fill="#ddcba6"/>
+      <path d="M0,490 Q220,455 470,475 Q760,500 1000,470 V660 H0 Z" fill="#d8caa0"/>
+      <!-- open desert / mountain hint (NE) -->
+      <path d="M760,40 Q880,30 960,70 Q990,150 940,250 Q860,290 770,240 Q740,140 760,40 Z" fill="#c4cca0" opacity=".85"/>
+      <path d="M790,230 Q840,170 900,200 Q930,260 880,300 Q820,320 790,280 Z" fill="#b3bd8c" opacity=".7"/>
+      <text class="region-label" x="845" y="120" text-anchor="middle">Usery</text>
+      <text class="region-label" x="845" y="142" text-anchor="middle">open desert</text>
+
+      <!-- faint section grid -->
+      <g class="grid-fade">
+        <line x1="0" y1="95" x2="1000" y2="95"/>
+        <line x1="0" y1="195" x2="1000" y2="195"/>
+        <line x1="0" y1="300" x2="1000" y2="300"/>
+        <line x1="0" y1="425" x2="1000" y2="425"/>
+        <line x1="0" y1="510" x2="1000" y2="510"/>
+        <line x1="180" y1="0" x2="180" y2="660"/>
+        <line x1="380" y1="0" x2="380" y2="660"/>
+        <line x1="600" y1="0" x2="600" y2="660"/>
+        <line x1="835" y1="0" x2="835" y2="660"/>
+      </g>
+
+      <!-- ===== ROADS ===== -->
+      <!-- US 60 freeway (north) -->
+      <path class="road-casing" d="M0,95 H1000"/>
+      <path class="road-line fwy" d="M0,95 H1000"/>
+      <text class="road-label" x="20" y="86">US 60 — Superstition Freeway</text>
+
+      <!-- Loop 202 arc (SE) -->
+      <path class="road-casing" d="M1000,300 Q720,360 600,470 Q540,540 300,560"/>
+      <path class="road-line fwy" d="M1000,300 Q720,360 600,470 Q540,540 300,560"/>
+      <text class="road-label" x="612" y="455" transform="rotate(-22 612 455)">Loop 202</text>
+
+      <!-- Baseline Rd -->
+      <path class="road-line major" d="M0,195 H1000"/>
+      <text class="road-label" x="20" y="186">Baseline Road</text>
+
+      <!-- Pecos Rd -->
+      <path class="road-line major" d="M340,425 H1000"/>
+      <text class="road-label" x="600" y="416">Pecos Road</text>
+
+      <!-- Germann Rd -->
+      <path class="road-line major" d="M380,510 H1000"/>
+      <text class="road-label" x="600" y="501">Germann Road</text>
+
+      <!-- Hampton Ave (east, short) -->
+      <path class="road-line" d="M470,262 H700"/>
+      <text class="road-label minor" x="476" y="253">Hampton Avenue</text>
+
+      <!-- Juanita Ave (west, short) -->
+      <path class="road-line" d="M60,300 H300"/>
+      <text class="road-label minor" x="66" y="291">Juanita Avenue</text>
+
+      <!-- vertical cross streets -->
+      <path class="road-line major" d="M180,95 V660"/>
+      <text class="road-label" x="186" y="640" transform="rotate(-90 186 640)">Greenfield Road</text>
+
+      <path class="road-line major" d="M600,110 V560"/>
+      <text class="road-label" x="606" y="555" transform="rotate(-90 606 555)">Ellsworth Road</text>
+
+      <path class="road-line major" d="M835,110 V640"/>
+      <text class="road-label" x="841" y="635" transform="rotate(-90 841 635)">Mountain Road</text>
+
+      <!-- ===== Airport ===== -->
+      <g aria-hidden="true">
+        <rect x="650" y="455" width="150" height="92" rx="3" fill="#cfc196" stroke="#9a8460" stroke-width="1.4" opacity=".85"/>
+        <line x1="662" y1="470" x2="788" y2="535" stroke="#f2ead4" stroke-width="4"/>
+        <line x1="668" y1="535" x2="792" y2="472" stroke="#f2ead4" stroke-width="3"/>
+        <path d="M725,500 l16,-5 l4,4 l-12,7 l10,12 l-6,2 l-13,-11 l-9,5 l-2,-6 z" fill="#6b573c"/>
+      </g>
+      <text class="place-label" x="725" y="565" text-anchor="middle">Phoenix-Mesa Gateway Airport</text>
+
+      <!-- cluster annotation -->
+      <text class="region-label" x="200" y="160" text-anchor="middle" opacity=".55">— Central chemicals node —</text>
+      <text class="region-label" x="760" y="610" text-anchor="middle" opacity=".55">— Gateway materials &amp; logistics —</text>
+
+      <!-- ===== MARKERS (rendered by JS) ===== -->
+      <g id="markers"></g>
+    </svg>
+  </div>
+
+  <p class="hint">▸ Click a numbered marker, a list entry, or a supporting site to open its evidence card.</p>
+
+  <!-- ============ LOWER REFERENCE ============ -->
+  <div class="lower">
+    <div>
+      <h2 class="section-h">Numbered Reference List <span>8 main markers</span></h2>
+      <ol class="reflist" id="reflist"></ol>
+    </div>
+
+    <div>
+      <h2 class="section-h">Detail</h2>
+      <div class="support" id="supportBox">
+        <h3>Supporting / Under Verification</h3>
+        <p class="sub">Not plotted as main markers in this prototype — documentation weaker than the eight anchors.</p>
+        <div id="supportList"></div>
+      </div>
+
+      <p class="region-note">Regional context only — <b>not</b> plotted as Mesa points: TSMC (Phoenix), Intel (Chandler / Ocotillo), Amkor (Peoria), NXP (Chandler).</p>
+    </div>
+  </div>
+
+  <footer class="source">
+    <span class="lab">Source note</span>
+    This prototype uses publicly available company disclosures, City of Mesa and Arizona announcements, and reputable industry or local news sources to verify Mesa facility locations, industry functions, and operating status as of <b>Q2 2026</b>. Several facilities have source-limited details regarding local product mix, production scale, or sector allocation; these are marked with caveats and should be reconfirmed before final publication.
+  </footer>
+</div>
+
+<!-- ============ DETAIL PANEL ============ -->
+<div class="scrim" id="scrim"></div>
+<aside class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="panelName" aria-hidden="true">
+  <div class="panel-head">
+    <button class="close-btn" id="closeBtn" aria-label="Close detail panel">✕</button>
+    <div class="kicker"><span class="pnum" id="panelNum">1</span>
+      <span class="badge b-fact" id="panelFact">Fact</span></div>
+    <h2 id="panelName">Name</h2>
+    <div class="pcat" id="panelCat">Category</div>
+  </div>
+  <div class="panel-body" id="panelBody"></div>
+</aside>
+
+<script>
+const MAIN = [
+  {
+    n:1, x:815, y:535, marker:"solid", info:false,
+    name:"FUJIFILM Electronic Materials",
+    cat:"Semiconductor specialty chemicals / electronic materials",
+    addr:"6550 S Mountain Rd, Mesa, AZ 85212",
+    status:"Operational / expanding", statusClass:"b-good",
+    fact:"Specialty chemicals & R&D",
+    why:"FUJIFILM is one of Mesa's clearest semiconductor supply-chain anchors, providing electronic materials and specialty chemicals tied to advanced chip manufacturing.",
+    maps:"https://maps.google.com/?q=6550+S+Mountain+Rd+Mesa+AZ+85212",
+    source:"Use FUJIFILM official materials, City of Mesa, ACA, or GPEC source confirming the Mesa electronic materials facility and expansion.",
+    conf:"High", confClass:"b-good",
+    caveat:"Reconfirm the latest expansion figure before final publication."
+  },
+  {
+    n:2, x:852, y:560, marker:"solid", info:true,
+    name:"MGC Pure Chemicals America",
+    cat:"Ultra-pure chemicals / electronic-grade chemicals",
+    addr:"6560 S Mountain Rd, Mesa, AZ 85212",
+    status:"Operational", statusClass:"b-good",
+    fact:"Ultra-pure chemicals",
+    why:"MGC strengthens Mesa's specialty chemical base for semiconductor manufacturing and sits directly adjacent to FUJIFILM in the Gateway-area materials cluster.",
+    maps:"https://maps.google.com/?q=6560+S+Mountain+Rd+Mesa+AZ+85212",
+    source:"Use MGC official corporate profile or official Mesa / Arizona economic development source confirming the Mesa facility.",
+    conf:"Medium-High", confClass:"b-teal",
+    caveat:"Public sources confirm Mesa location and corporate semiconductor relevance, but do not fully specify the local product mix, production share, or semiconductor-only allocation for this site."
+  },
+  {
+    n:3, x:635, y:505, marker:"solid", info:true,
+    name:"JX Advanced Metals USA",
+    cat:"Sputtering target manufacturing / advanced electronic materials",
+    addr:"10036 E Germann Rd, Mesa, AZ 85212",
+    status:"Operational / newly completed", statusClass:"b-good",
+    fact:"Advanced metals / sputtering targets",
+    why:"JX adds high-value semiconductor materials capacity to Mesa and helps position southeast Mesa as a supplier base for advanced manufacturing.",
+    maps:"https://maps.google.com/?q=10036+E+Germann+Rd+Mesa+AZ+85212",
+    source:"Use JX official corporate materials, City of Mesa / Select Mesa, ACA, GPEC, or reputable industry media confirming the Mesa facility.",
+    conf:"Medium-High", confClass:"b-teal",
+    caveat:"Public sources confirm Mesa location and semiconductor-materials relevance, but local product mix and sector allocation should be reconfirmed before final print."
+  },
+  {
+    n:4, x:565, y:243, marker:"solid", info:false,
+    name:"KoMiCo Technology",
+    cat:"Precision cleaning / coating for semiconductor equipment",
+    addr:"7300 E Hampton Ave, Mesa, AZ 85209",
+    status:"Operational", statusClass:"b-good",
+    fact:"Semiconductor cleaning & coating",
+    why:"KoMiCo represents the fab-support layer of the semiconductor ecosystem, providing precision cleaning and coating services for advanced manufacturing equipment.",
+    maps:"https://maps.google.com/?q=7300+E+Hampton+Ave+Mesa+AZ+85209",
+    source:"Use KoMiCo official source, City of Mesa, ACA, GPEC, or reputable semiconductor industry coverage confirming the Mesa facility.",
+    conf:"High", confClass:"b-good",
+    caveat:"Reconfirm any \u201Clargest U.S. site\u201D or scale claim before final publication."
+  },
+  {
+    n:5, x:305, y:178, marker:"solid", info:false,
+    name:"Moses Lake Industries",
+    cat:"Advanced semiconductor chemicals",
+    addr:"840 E Baseline Rd, Mesa, AZ 85204",
+    status:"Operational / expanding", statusClass:"b-good",
+    fact:"Advanced semiconductor chemicals",
+    why:"Moses Lake Industries adds another electronic-chemicals node to Mesa, reinforcing the city's role in specialty materials for chip manufacturing.",
+    maps:"https://maps.google.com/?q=840+E+Baseline+Rd+Mesa+AZ+85204",
+    source:"Use Moses Lake Industries official materials, City of Mesa, ACA, GPEC, or reputable business source confirming Mesa investment and facility function.",
+    conf:"High", confClass:"b-good",
+    caveat:"Reconfirm exact investment amount and current expansion status before final publication."
+  },
+  {
+    n:6, x:255, y:213, marker:"solid", info:true,
+    name:"Benchmark Precision Technologies",
+    cat:"Semiconductor equipment manufacturing / precision manufacturing",
+    addr:"730 E Baseline Rd, Mesa, AZ 85204",
+    status:"Operational", statusClass:"b-good",
+    fact:"Semiconductor equipment support",
+    why:"Benchmark adds semiconductor equipment and precision manufacturing capability to the Mesa supply chain, complementing the materials and chemicals cluster.",
+    maps:"https://maps.google.com/?q=730+E+Baseline+Rd+Mesa+AZ+85204",
+    source:"Use Benchmark official source, City of Mesa / ACA / GPEC, or reputable business coverage confirming the Mesa precision technologies facility.",
+    conf:"Medium-High", confClass:"b-teal",
+    caveat:"Confirm the latest facility size and semiconductor-specific activity before final publication."
+  },
+  {
+    n:7, x:150, y:283, marker:"solid", info:false,
+    name:"Infineon EPI Services",
+    cat:"GaN epi wafer / compound semiconductor wafer services",
+    addr:"550 W Juanita Ave, Mesa, AZ 85210",
+    status:"Operational", statusClass:"b-good",
+    fact:"GaN epi wafer services",
+    why:"Infineon EPI Services gives Mesa a direct compound-semiconductor wafer-process node, which makes the map stronger than a chemicals-only supply-chain story.",
+    maps:"https://maps.google.com/?q=550+W+Juanita+Ave+Mesa+AZ+85210",
+    source:"Use Infineon official source or reputable semiconductor source confirming the Mesa EPI Services facility and GaN / epi wafer function.",
+    conf:"High", confClass:"b-good",
+    caveat:"Reconfirm current branding and business-unit naming before final print."
+  },
+  {
+    n:8, x:700, y:435, marker:"dash", info:false,
+    name:"DSV Mesa / Arizona Regional HQ",
+    cat:"Semiconductor-capable logistics / advanced manufacturing logistics",
+    addr:"9560 E Pecos Rd, Mesa, AZ 85212",
+    status:"Under construction / opening expected 2027", statusClass:"b-amber",
+    fact:"Logistics hub / opening 2027",
+    why:"DSV adds logistics capacity near Mesa's Gateway industrial corridor and can support Arizona's semiconductor and advanced manufacturing supply chains.",
+    maps:"https://maps.google.com/?q=9560+E+Pecos+Rd+Mesa+AZ+85212",
+    source:"Use DSV official announcement, City of Mesa / ACA / GPEC, or reputable logistics / business source confirming the Mesa facility and expected opening.",
+    conf:"Medium", confClass:"b-amber",
+    caveat:"This is an under-construction multi-sector logistics hub publicly positioned to support Arizona's manufacturing and semiconductor sectors. It should not be described as a semiconductor-only logistics facility."
+  }
+];
+
+const SUPPORT = [
+  {
+    id:"A", name:"Pentagon Technologies",
+    cat:"Semiconductor chamber cleaning / tool services",
+    addr:"8953 E Starfire Ave, Mesa, AZ 85212",
+    status:"Needs verification", statusClass:"b-amber",
+    fact:"Chamber cleaning / tool services",
+    why:"Pentagon may support semiconductor equipment cleaning and tool services, but available public documentation for the Mesa site is weaker than the main map markers.",
+    maps:"https://maps.google.com/?q=8953+E+Starfire+Ave+Mesa+AZ+85212",
+    source:"Source-limited; do not use as a main marker unless stronger company, city, or industry documentation is found.",
+    conf:"Low-Medium", confClass:"b-low",
+    caveat:"Keep in supporting / under verification box. Do not plot as a primary marker for this prototype."
+  },
+  {
+    id:"B", name:"Western Semi Solutions",
+    cat:"Semiconductor equipment support / services",
+    addr:"2942 N Greenfield Rd, Suite 121, Mesa, AZ 85215",
+    status:"Operational; map significance uncertain", statusClass:"b-amber",
+    fact:"Equipment support",
+    why:"Western Semi Solutions may be relevant as a local semiconductor support vendor, but it is not strong enough to define the cluster in the first executive review map.",
+    maps:"https://maps.google.com/?q=2942+N+Greenfield+Rd+Suite+121+Mesa+AZ+85215",
+    source:"Company / directory sources only unless stronger documentation is available.",
+    conf:"Medium", confClass:"b-teal",
+    caveat:"Supporting vendor only. Do not plot as a main marker unless Steve wants a broader ecosystem map."
+  }
+];
+
+const SVGNS="http://www.w3.org/2000/svg";
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+/* ---- render markers ---- */
+const mg = document.getElementById("markers");
+MAIN.forEach(d=>{
+  const g=document.createElementNS(SVGNS,"g");
+  g.setAttribute("class","marker");
+  g.setAttribute("tabindex","0");
+  g.setAttribute("role","button");
+  g.setAttribute("aria-label",`${d.n}. ${d.name}`);
+  g.dataset.n=d.n;
+  const halo=document.createElementNS(SVGNS,"circle");
+  halo.setAttribute("class","mk-halo");halo.setAttribute("cx",d.x);halo.setAttribute("cy",d.y);halo.setAttribute("r",26);
+  const ring=document.createElementNS(SVGNS,"circle");
+  ring.setAttribute("class","mk-ring"+(d.marker==="dash"?" dash":""));
+  ring.setAttribute("cx",d.x);ring.setAttribute("cy",d.y);ring.setAttribute("r",15);
+  const num=document.createElementNS(SVGNS,"text");
+  num.setAttribute("class","mk-num");num.setAttribute("x",d.x);num.setAttribute("y",d.y+0.5);
+  num.textContent=d.n;
+  g.appendChild(halo);g.appendChild(ring);g.appendChild(num);
+  if(d.info){
+    const ic=document.createElementNS(SVGNS,"circle");
+    ic.setAttribute("class","ibadge-c");ic.setAttribute("cx",d.x+13);ic.setAttribute("cy",d.y-13);ic.setAttribute("r",8);
+    const it=document.createElementNS(SVGNS,"text");
+    it.setAttribute("class","ibadge-t");it.setAttribute("x",d.x+13);it.setAttribute("y",d.y-12);it.textContent="i";
+    g.appendChild(ic);g.appendChild(it);
+  }
+  g.addEventListener("click",()=>open(d));
+  g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();open(d);}});
+  mg.appendChild(g);
+});
+
+/* ---- render reference list ---- */
+const rl=document.getElementById("reflist");
+MAIN.forEach(d=>{
+  const li=document.createElement("li");
+  li.dataset.n=d.n;
+  li.innerHTML=`
+    <span class="ref-num${d.marker==="dash"?" dash":""}">${d.n}</span>
+    <div class="ref-body">
+      <div class="ref-name">${esc(d.name)}${d.info?'<span class="mini-i" title="Location & sector confirmed; product mix not fully public">i</span>':''}</div>
+      <div class="ref-cat">${esc(d.cat)}</div>
+      <div class="ref-meta">
+        <span class="badge b-fact">${esc(d.fact)}</span>
+        <span class="badge ${d.statusClass}">${esc(d.status)}</span>
+        <span class="badge ${d.confClass}">${esc(d.conf)}</span>
+      </div>
+    </div>`;
+  li.addEventListener("click",()=>open(d));
+  rl.appendChild(li);
+});
+
+/* ---- render supporting box ---- */
+const sl=document.getElementById("supportList");
+SUPPORT.forEach(d=>{
+  const div=document.createElement("div");
+  div.className="item";div.dataset.id=d.id;
+  div.innerHTML=`
+    <div class="tag">${d.id} · ${esc(d.conf)} confidence</div>
+    <div class="item-name">${esc(d.name)}</div>
+    <div class="item-cat">${esc(d.cat)}</div>`;
+  div.addEventListener("click",()=>open(d,true));
+  sl.appendChild(div);
+});
+
+/* ---- detail panel ---- */
+const scrim=document.getElementById("scrim");
+const panel=document.getElementById("panel");
+const body=document.getElementById("panelBody");
+
+function clearActive(){
+  document.querySelectorAll(".marker.active,.reflist li.active,.support .item.active")
+    .forEach(el=>el.classList.remove("active"));
+}
+
+function open(d,isSupport=false){
+  clearActive();
+  if(isSupport){
+    document.querySelector(`.support .item[data-id="${d.id}"]`)?.classList.add("active");
+  }else{
+    document.querySelector(`.marker[data-n="${d.n}"]`)?.classList.add("active");
+    document.querySelector(`.reflist li[data-n="${d.n}"]`)?.classList.add("active");
+  }
+  const pn=document.getElementById("panelNum");
+  pn.textContent = isSupport ? d.id : d.n;
+  pn.className = "pnum" + (isSupport ? " alpha" : (d.marker==="dash" ? " dash" : ""));
+  document.getElementById("panelFact").textContent=d.fact;
+  document.getElementById("panelName").textContent=d.name;
+  document.getElementById("panelCat").textContent=d.cat;
+
+  body.innerHTML=`
+    <div class="field">
+      <div class="field-label">Building category</div>
+      <div class="field-val">${esc(d.cat)}</div>
+    </div>
+    <div class="field">
+      <div class="field-label">Address / nearest intersection</div>
+      <div class="field-val">${esc(d.addr)}</div>
+    </div>
+    <div class="field">
+      <div class="field-label">Status &amp; classification</div>
+      <div class="badge-row">
+        <span class="badge ${d.statusClass}">${esc(d.status)}</span>
+        <span class="badge b-fact">${esc(d.fact)}</span>
+        <span class="conf-label">Confidence:</span>
+        <span class="badge ${d.confClass}">${esc(d.conf)}</span>
+      </div>
+    </div>
+    <hr class="field-sep">
+    <div class="field">
+      <div class="field-label">Why it matters</div>
+      <div class="why">${esc(d.why)}</div>
+    </div>
+    <div class="field">
+      <div class="field-label">Caveat / source note</div>
+      <div class="caveat-box"><span class="ic">i</span>${esc(d.caveat)}</div>
+    </div>
+    <hr class="field-sep">
+    <div class="field">
+      <div class="field-label">Source (to cite before publication)</div>
+      <div class="src-note">${esc(d.source)}</div>
+    </div>
+    <div class="field">
+      <div class="field-label">Locate</div>
+      <a class="maplink" href="${d.maps}" target="_blank" rel="noopener noreferrer">▸ Open in Google Maps</a>
+    </div>`;
+
+  panel.classList.add("open");
+  panel.setAttribute("aria-hidden","false");
+  scrim.classList.add("open");
+  document.getElementById("closeBtn").focus();
+}
+
+function close(){
+  panel.classList.remove("open");
+  panel.setAttribute("aria-hidden","true");
+  scrim.classList.remove("open");
+  clearActive();
+}
+document.getElementById("closeBtn").addEventListener("click",close);
+scrim.addEventListener("click",close);
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&panel.classList.contains("open"))close();});
+</script>
+</body>
+</html>
