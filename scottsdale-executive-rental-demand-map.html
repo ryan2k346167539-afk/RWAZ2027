@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scottsdale Lifestyle + Executive Rental Demand Map — Internal Verification</title>
+<style>
+  :root{
+    --parchment:#e9dcc0;
+    --parchment-deep:#e0d0ad;
+    --land:#b6b888;
+    --land-2:#aeb07e;
+    --preserve:#c4c79a;
+    --ink:#3f2c18;
+    --ink-soft:#6b5333;
+    --road:#9a8252;
+    --road-major:#7d6537;
+    --pin:#2f5d8c;
+    --pin-deep:#234a72;
+    --pin-sel:#c8902b;
+    --rule:#b89d6e;
+    --card:#f3ead4;
+    --card-edge:#cdb487;
+    --serif:"Georgia","Iowan Old Style","Palatino Linotype","Book Antiqua",serif;
+    --sans:"Trebuchet MS","Gill Sans","Segoe UI",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse at 20% 10%, #f1e6cc 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 90%, #ddcba4 0%, transparent 60%),
+      var(--parchment);
+    color:var(--ink);
+    font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;
+  }
+  .frame{
+    max-width:1180px;
+    margin:0 auto;
+    padding:26px 22px 60px;
+  }
+  /* ---- Header ---- */
+  header.mast{
+    border:2px solid var(--ink);
+    background:linear-gradient(180deg,#efe4c9,#e6d6b4);
+    padding:18px 24px 16px;
+    position:relative;
+    box-shadow:inset 0 0 0 4px var(--parchment), 0 2px 0 rgba(63,44,24,.18);
+  }
+  header.mast::after{content:"";position:absolute;left:10px;right:10px;bottom:6px;height:1px;background:var(--rule);}
+  .eyebrow{
+    font-family:var(--sans);
+    letter-spacing:.28em;
+    text-transform:uppercase;
+    font-size:11px;
+    color:var(--ink-soft);
+    margin:0 0 6px;
+  }
+  h1.title{
+    font-family:var(--serif);
+    color:var(--ink);
+    font-size:clamp(22px,3.4vw,34px);
+    line-height:1.12;
+    margin:0 0 6px;
+    font-weight:700;
+    letter-spacing:.01em;
+  }
+  .subtitle{
+    font-family:var(--serif);
+    font-style:italic;
+    color:var(--ink-soft);
+    font-size:14px;
+    margin:0;
+    max-width:760px;
+  }
+  /* ---- Layout ---- */
+  .layout{
+    display:flex;
+    gap:22px;
+    margin-top:22px;
+    align-items:flex-start;
+  }
+  .map-col{flex:1 1 58%;min-width:0;}
+  .panel-col{flex:1 1 42%;min-width:0;}
+  @media(max-width:880px){
+    .layout{flex-direction:column;}
+    .map-col,.panel-col{flex:1 1 auto;width:100%;}
+  }
+  /* ---- Map card ---- */
+  .map-wrap{
+    border:2px solid var(--ink);
+    background:var(--parchment-deep);
+    padding:8px;
+    box-shadow:inset 0 0 0 3px var(--parchment), 0 3px 10px rgba(63,44,24,.18);
+  }
+  .map-wrap svg{display:block;width:100%;height:auto;}
+  .map-caption{
+    font-family:var(--serif);
+    font-style:italic;
+    font-size:12px;
+    color:var(--ink-soft);
+    text-align:center;
+    padding:8px 4px 4px;
+  }
+  /* SVG element styling */
+  .pin{cursor:pointer;}
+  .pin circle.dot{fill:var(--pin);stroke:#f3ead4;stroke-width:2.5;transition:all .15s ease;}
+  .pin text.num{fill:#fff;font-family:var(--sans);font-weight:700;font-size:14px;text-anchor:middle;dominant-baseline:central;pointer-events:none;}
+  .pin:hover circle.dot{fill:var(--pin-deep);}
+  .pin.active circle.dot{fill:var(--pin-sel);stroke:#fff;}
+  .pin.active circle.halo{stroke:var(--pin-sel);stroke-width:2;fill:none;opacity:.9;}
+  .pin circle.halo{fill:none;opacity:0;}
+  .road{stroke:var(--road);stroke-width:2.4;fill:none;}
+  .road.major{stroke:var(--road-major);stroke-width:4;}
+  .road.fwy{stroke:var(--road-major);stroke-width:5;fill:none;stroke-linejoin:round;}
+  .road.fwy-dash{stroke:#e6d6b4;stroke-width:1.4;stroke-dasharray:6 7;fill:none;}
+  .roadlabel{font-family:var(--serif);font-size:10.5px;fill:var(--road-major);font-style:italic;}
+  .arealabel{font-family:var(--serif);font-size:11px;fill:#7a7144;font-style:italic;letter-spacing:.04em;}
+  /* ---- Reference list ---- */
+  .reflist{
+    border:2px solid var(--ink);
+    background:#efe4c9;
+    margin-top:16px;
+    padding:14px 16px 12px;
+    box-shadow:inset 0 0 0 3px var(--parchment);
+  }
+  .reflist h2{
+    font-family:var(--serif);font-size:14px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ink);margin:0 0 10px;border-bottom:1px solid var(--rule);padding-bottom:6px;
+  }
+  .reflist ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:4px 18px;}
+  @media(max-width:560px){.reflist ol{grid-template-columns:1fr;}}
+  .reflist li{font-size:13px;}
+  .reflist button{
+    width:100%;text-align:left;background:none;border:none;cursor:pointer;
+    font-family:var(--sans);font-size:13px;color:var(--ink);padding:5px 6px;border-radius:3px;
+    display:flex;gap:9px;align-items:baseline;line-height:1.25;
+  }
+  .reflist button:hover{background:#e3d2ad;}
+  .reflist button.active{background:#ead9b1;box-shadow:inset 3px 0 0 var(--pin-sel);}
+  .reflist .rn{
+    flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;
+    width:20px;height:20px;border-radius:50%;background:var(--pin);color:#fff;
+    font-weight:700;font-size:12px;font-family:var(--sans);
+  }
+  .reflist button.active .rn{background:var(--pin-sel);}
+  /* ---- Evidence panel ---- */
+  .panel{
+    border:2px solid var(--ink);
+    background:var(--card);
+    box-shadow:inset 0 0 0 3px var(--parchment), 0 3px 10px rgba(63,44,24,.16);
+    position:sticky;top:14px;
+  }
+  .panel-head{
+    background:linear-gradient(180deg,#e7d6b2,#ddc99e);
+    border-bottom:1.5px solid var(--card-edge);
+    padding:13px 16px;
+    display:flex;gap:12px;align-items:flex-start;
+  }
+  .panel-num{
+    flex:0 0 auto;width:34px;height:34px;border-radius:50%;
+    background:var(--pin);color:#fff;font-family:var(--sans);font-weight:700;font-size:17px;
+    display:flex;align-items:center;justify-content:center;box-shadow:0 1px 2px rgba(0,0,0,.25);
+  }
+  .panel-name{font-family:var(--serif);font-size:18px;font-weight:700;color:var(--ink);margin:0;line-height:1.15;}
+  .panel-cat{font-family:var(--sans);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin-top:3px;}
+  .tag{
+    display:inline-block;font-family:var(--sans);font-size:10px;letter-spacing:.05em;text-transform:uppercase;
+    background:#d8c39a;color:#5a431f;border:1px solid #c2aa78;border-radius:2px;padding:2px 7px;margin-top:6px;
+  }
+  .panel-body{padding:14px 16px 16px;}
+  .field{margin-bottom:11px;}
+  .field .lab{
+    font-family:var(--sans);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
+    color:#8a6f43;margin-bottom:2px;
+  }
+  .field .val{font-family:var(--serif);font-size:13.5px;color:var(--ink);line-height:1.42;}
+  .field.why .val{font-size:14px;}
+  .conf{display:inline-block;font-family:var(--sans);font-weight:700;font-size:12px;color:#2f5d2f;}
+  .caveat{
+    background:#ece0c4;border:1px solid var(--card-edge);border-left:3px solid var(--road-major);
+    padding:9px 11px;font-family:var(--serif);font-style:italic;font-size:12.5px;color:var(--ink-soft);line-height:1.4;
+  }
+  .src-group{margin-top:12px;}
+  .src-group .glab{
+    font-family:var(--sans);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:#8a6f43;margin-bottom:6px;
+  }
+  .src-btns{display:flex;flex-wrap:wrap;gap:7px;}
+  a.src{
+    display:inline-flex;align-items:center;gap:6px;text-decoration:none;
+    font-family:var(--sans);font-size:12px;font-weight:600;line-height:1.1;
+    border:1.5px solid var(--pin);color:var(--pin);background:#f7f0dd;
+    padding:6px 10px;border-radius:3px;transition:all .13s ease;
+  }
+  a.src:hover{background:var(--pin);color:#fff;}
+  a.src.maps{border-color:#5a431f;color:#5a431f;}
+  a.src.maps:hover{background:#5a431f;color:#fff;}
+  a.src .ic{font-size:11px;opacity:.85;}
+  a.src:hover .ic{opacity:1;}
+  /* ---- Footer ---- */
+  footer.note{
+    margin-top:22px;border-top:1px solid var(--rule);padding-top:12px;
+    font-family:var(--serif);font-style:italic;font-size:12px;color:var(--ink-soft);
+    text-align:center;line-height:1.5;
+  }
+  footer.note .corridor{font-style:normal;font-family:var(--sans);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:#8a6f43;display:block;margin-bottom:6px;}
+</style>
+</head>
+<body>
+<div class="frame">
+
+  <header class="mast">
+    <p class="eyebrow">Arizona Industry Map Project · Greater Phoenix Investment Map</p>
+    <h1 class="title">Scottsdale Lifestyle + Executive&nbsp;Rental Demand Map</h1>
+    <p class="subtitle">Internal verification map of the employment, healthcare, innovation, retail/dining, and resort/golf anchors supporting high-end executive rental demand along the Scottsdale corridor.</p>
+  </header>
+
+  <div class="layout">
+    <!-- MAP -->
+    <div class="map-col">
+      <div class="map-wrap">
+        <svg viewBox="0 0 640 840" role="img" aria-label="Stylized verification map of the Scottsdale executive rental demand corridor">
+          <!-- land -->
+          <rect x="46" y="34" width="548" height="772" rx="14" fill="var(--land)"/>
+          <rect x="46" y="34" width="548" height="772" rx="14" fill="none" stroke="var(--road-major)" stroke-width="1.4" opacity="0.45"/>
+          <!-- McDowell Sonoran Preserve / mountains soft context (east / NE) -->
+          <path d="M 470 40 Q 560 70 588 150 Q 600 260 560 360 Q 520 440 540 520 L 592 520 L 592 40 Z" fill="var(--preserve)" opacity="0.8"/>
+          <path d="M 486 78 l 24 -34 l 22 40 l 26 -30 l 30 56" fill="none" stroke="#8f8a5a" stroke-width="1.6" opacity="0.55"/>
+          <path d="M 500 150 l 20 -26 l 22 30 l 24 -22 l 22 40" fill="none" stroke="#8f8a5a" stroke-width="1.4" opacity="0.45"/>
+          <text class="arealabel" x="556" y="240" text-anchor="middle" transform="rotate(90 556 240)">McDowell Mountains · Sonoran Preserve</text>
+
+          <!-- roads -->
+          <!-- Loop 101 freeway: north arc then down east side -->
+          <path class="road fwy" d="M 96 116 Q 300 86 430 120 Q 545 156 552 300 Q 556 470 512 640"/>
+          <path class="road fwy-dash" d="M 96 116 Q 300 86 430 120 Q 545 156 552 300 Q 556 470 512 640"/>
+          <text class="roadlabel" x="250" y="92" transform="rotate(-7 250 92)">Loop 101 (Pima Fwy)</text>
+
+          <!-- Scottsdale Road (vertical spine) -->
+          <line class="road major" x1="262" y1="60" x2="262" y2="800"/>
+          <text class="roadlabel" x="268" y="560" transform="rotate(90 268 560)">Scottsdale Road</text>
+          <!-- Hayden Road -->
+          <line class="road" x1="188" y1="120" x2="188" y2="788"/>
+          <text class="roadlabel" x="182" y="600" transform="rotate(90 182 600)" text-anchor="middle">Hayden Rd</text>
+          <!-- Bell Road / Princess Drive (north) -->
+          <line class="road" x1="70" y1="156" x2="470" y2="156"/>
+          <text class="roadlabel" x="80" y="150">Bell Rd / Princess Dr</text>
+          <!-- Shea Boulevard (mid-north) -->
+          <line class="road major" x1="70" y1="346" x2="566" y2="346"/>
+          <text class="roadlabel" x="430" y="340">Shea Boulevard</text>
+          <!-- Camelback Road / Old Town (south) -->
+          <line class="road" x1="70" y1="650" x2="470" y2="650"/>
+          <text class="roadlabel" x="80" y="644">Camelback Rd · Old Town</text>
+
+          <!-- compass -->
+          <g opacity="0.8">
+            <circle cx="566" cy="700" r="20" fill="#efe4c9" stroke="var(--road-major)" stroke-width="1"/>
+            <path d="M566 684 L571 700 L566 696 L561 700 Z" fill="var(--pin)"/>
+            <path d="M566 716 L571 700 L566 704 L561 700 Z" fill="#9a8252"/>
+            <text x="566" y="678" text-anchor="middle" font-family="var(--serif)" font-size="10" fill="var(--ink)">N</text>
+          </g>
+
+          <!-- airport landmark near Airpark -->
+          <g opacity="0.9">
+            <rect x="352" y="190" width="46" height="11" rx="2" transform="rotate(-24 375 195)" fill="#cdbf93" stroke="#8f8a5a" stroke-width="1"/>
+            <line x1="358" y1="200" x2="396" y2="182" stroke="#fff" stroke-width="1" stroke-dasharray="3 3" transform="rotate(-24 377 191)"/>
+            <text class="arealabel" x="398" y="178" font-size="9.5">Scottsdale Airport</text>
+          </g>
+
+          <!-- ===== PINS ===== -->
+          <g id="pins"></g>
+        </svg>
+      </div>
+      <div class="map-caption">Markers are stylized to a corridor centroid; dense clusters are slightly offset for legibility. Geography is relative, not survey-accurate.</div>
+
+      <!-- Reference list -->
+      <div class="reflist">
+        <h2>Numbered Reference List</h2>
+        <ol id="reflist"></ol>
+      </div>
+    </div>
+
+    <!-- EVIDENCE PANEL -->
+    <div class="panel-col">
+      <div class="panel" id="panel"></div>
+    </div>
+  </div>
+
+  <footer class="note">
+    <span class="corridor">Scottsdale Executive Rental Demand Corridor</span>
+    Internal verification map. Sources are provided for research review. District markers are stylized and may be visually offset for legibility. Not final book layout.
+  </footer>
+
+</div>
+
+<script>
+const ICON = {primary:"\u25C9", news:"\u25A4", maps:"\u25C8"};
+
+const MARKERS = [
+  {
+    num:1, x:335, y:205,
+    name:"Scottsdale Airpark",
+    type:"District / Employment Center",
+    category:"Employment Center / Corporate Node",
+    location:"Scottsdale Airpark district around Scottsdale Airport and the Loop 101 / Scottsdale Road corridor; suggested visual centroid near the Scottsdale Airport / Airpark area, Scottsdale, AZ.",
+    status:"Active district",
+    why:"The core employment anchor of the Scottsdale executive rental demand thesis. It functions as a major business, aviation-access, corporate, and employment district, supporting demand from executives, business owners, professional tenants, and aviation-linked users.",
+    confidence:"High",
+    caveat:"This is a district marker, not a single-building marker. A stylized centroid is used near Scottsdale Airport / Airpark, slightly offset from the Kierland / Scottsdale Quarter node for marker legibility.",
+    primary:[{label:"Official city economic-benefit source", url:"https://www.scottsdaleaz.gov/scottsdale-airport/airport-economic-benefit-study"}],
+    news:[{label:"Recent site-selection analysis", url:"https://siteselection.com/scottsdale-airpark-evolves-into-an-urban-18-hour-city/"}],
+    maps:[{label:"Google Maps location", url:"https://www.google.com/maps/search/Scottsdale+Airpark+Scottsdale+AZ"}]
+  },
+  {
+    num:2, x:250, y:775,
+    name:"SkySong / ASU Scottsdale Innovation Center",
+    type:"Company / Institution",
+    category:"Innovation / University-Linked Node",
+    location:"1475 N. Scottsdale Road, Scottsdale, AZ 85257.",
+    status:"Operational",
+    why:"Adds an innovation and university-linked employment layer to the map. It shows that Scottsdale's rental demand is not only lifestyle-driven, but also supported by ASU-linked companies, entrepreneurial activity, and knowledge-economy tenants.",
+    confidence:"High",
+    caveat:"Sits in South Scottsdale and is geographically separated from the North Scottsdale lifestyle / Airpark cluster. Kept as the southern innovation anchor of the corridor.",
+    primary:[{label:"Official ASU innovation-campus page", url:"https://corporate.asu.edu/partner-with-asu/spaces-and-facilities/skysong/"}],
+    news:[{label:"Recent local leasing news", url:"https://arizonadigitalfreepress.com/skysong-leasing-activity-tops-28000-square-feet-as-asu-scottsdale-innovation-center-marks-20th-anniversary/"}],
+    maps:[{label:"Google Maps location", url:"https://www.google.com/maps/search/SkySong+ASU+Scottsdale+Innovation+Center+1475+N+Scottsdale+Rd+Scottsdale+AZ"}]
+  },
+  {
+    num:3, x:490, y:320,
+    name:"Mayo Clinic Scottsdale",
+    type:"Company / Institution",
+    category:"Healthcare Anchor",
+    location:"13400 E. Shea Blvd., Scottsdale, AZ 85259.",
+    status:"Operational",
+    why:"A world-class healthcare anchor that supports physician, researcher, healthcare-executive, and specialist relocation demand. It strengthens the high-income professional rental thesis along the Shea / North Scottsdale corridor.",
+    confidence:"High",
+    caveat:"Refers to the Scottsdale clinic campus. Mayo Clinic Hospital is located in Phoenix and is intentionally not given a separate marker on this Scottsdale map; it is context only.",
+    primary:[{label:"Official Mayo Clinic Scottsdale page", url:"https://www.mayoclinic.org/patient-visitor-guide/arizona/campus-buildings-maps/mayo-clinic-building-scottsdale"}],
+    news:[{label:"Recent local healthcare expansion news", url:"https://www.allaboutarizonanews.com/mayo-clinics-expansion-provides-jobs-and-more-rare-medical-care-to-phoenix-area/"}],
+    maps:[{label:"Google Maps location", url:"https://www.google.com/maps/search/Mayo+Clinic+Scottsdale+13400+E+Shea+Blvd+Scottsdale+AZ"}]
+  },
+  {
+    num:4, x:360, y:360,
+    name:"HonorHealth Scottsdale Shea Medical Center",
+    type:"Company / Institution",
+    category:"Healthcare Anchor",
+    location:"9003 E. Shea Blvd., Scottsdale, AZ 85260.",
+    status:"Operational",
+    why:"A second major healthcare employment and professional-services anchor along the Shea corridor. Together with Mayo Clinic Scottsdale, it helps explain sustained demand from healthcare workers, executives, physicians, specialists, and related service providers.",
+    confidence:"High",
+    caveat:"Kept visually distinct from Mayo Clinic Scottsdale even though both sit within the broader Shea / healthcare corridor.",
+    primary:[{label:"Official HonorHealth hospital page", url:"https://www.honorhealth.com/locations/hospitals/scottsdale-shea-medical-center"}],
+    news:[{label:"Hospital recognition / press source", url:"https://www.honorhealth.com/sites/default/files/documents/media-relations/shea-medical-center-receives-beckers-top-100.pdf"}],
+    maps:[{label:"Google Maps location", url:"https://www.google.com/maps/search/HonorHealth+Scottsdale+Shea+Medical+Center+9003+E+Shea+Blvd+Scottsdale+AZ"}]
+  },
+  {
+    num:5, x:295, y:690,
+    name:"Old Town Scottsdale",
+    type:"District / Employment Center",
+    category:"Lifestyle Retail / Dining District",
+    location:"Old Town Scottsdale district; generally centered around Main Street, 5th Avenue, Scottsdale Road, and the downtown Scottsdale area.",
+    status:"Active district",
+    why:"The walkable southern lifestyle district of the map. It supports executive rental demand through dining, entertainment, mixed-use urban lifestyle, and proximity to Scottsdale Fashion Square and downtown services.",
+    confidence:"High",
+    caveat:"Not framed as a tourism destination. Treated as an official mixed-use / lifestyle district supporting high-end renter demand.",
+    primary:[{label:"Official city character-area plan", url:"https://www.scottsdaleaz.gov/docs/default-source/scottsdaleaz/long-range-planning/character-area-plans/old-town/old-town-character-area-plan---chapter-1---land-use.pdf?sfvrsn=c008c7bb_1"}],
+    news:[{label:"District overview source", url:"https://oldtownscottsdaleaz.com/the-districts/"}],
+    maps:[{label:"Google Maps location", url:"https://www.google.com/maps/search/Old+Town+Scottsdale+AZ"}]
+  },
+  {
+    num:6, x:250, y:648,
+    name:"Scottsdale Fashion Square",
+    type:"Lifestyle / Residential Anchor",
+    category:"Lifestyle Retail / Dining District",
+    location:"7014 E. Camelback Road, Scottsdale, AZ 85251.",
+    status:"Operational",
+    why:"A major luxury retail anchor that reinforces Scottsdale's high-end consumer and executive lifestyle profile. It connects Old Town, the Camelback corridor, luxury retail, hospitality, and high-income residential demand.",
+    confidence:"High",
+    caveat:"Close to Old Town Scottsdale but kept as a separate marker because it is the strongest luxury retail anchor in the southern Scottsdale corridor. Slightly offset visually from Old Town for readability.",
+    primary:[{label:"Official retail center website", url:"https://www.fashionsquare.com"}],
+    news:[{label:"Recent retail renovation news", url:"https://www.abc15.com/news/business/scottsdale-fashion-squares-latest-renovation-project-to-start-in-early-2026"}],
+    maps:[{label:"Google Maps location", url:"https://www.google.com/maps/search/Scottsdale+Fashion+Square+7014+E+Camelback+Rd+Scottsdale+AZ"}]
+  },
+  {
+    num:7, x:255, y:250,
+    name:"Kierland / Scottsdale Quarter Lifestyle Retail Node",
+    type:"Lifestyle / Residential Anchor",
+    category:"Lifestyle Retail / Dining District",
+    location:"Kierland Commons, 15205 N. Kierland Blvd., Scottsdale, AZ 85254; Scottsdale Quarter, 15169 N. Scottsdale Road, Scottsdale, AZ 85254.",
+    status:"Operational / active mixed-use retail node",
+    why:"Kierland Commons and Scottsdale Quarter function together as a North Scottsdale luxury retail, dining, office, and mixed-use lifestyle node. It supports executive rental demand by concentrating high-end shopping, dining, residential, office, and hospitality amenities near the Airpark and North Scottsdale corporate corridor.",
+    confidence:"High",
+    caveat:"Combined lifestyle node, not a single-property marker. Kierland Commons may sit in Phoenix city limits despite its Scottsdale mailing address \u2014 included because it functions as part of the North Scottsdale lifestyle corridor. Scottsdale Quarter is near the Scottsdale Road boundary and is treated as part of the same node. Slightly offset from the Scottsdale Airpark marker for readability.",
+    primary:[{label:"Official Kierland project page", url:"https://woodbinedevelopment.com/our-projects/kierland-commons"}],
+    news:[{label:"Recent Scottsdale Quarter investment news", url:"https://inbusinessphx.com/commercial-real-estate/vc-firm-acquires-scottsdale-quarter-plans-100m-renovation"}],
+    maps:[
+      {label:"Kierland Commons \u2014 Google Maps", url:"https://www.google.com/maps/search/Kierland+Commons+15205+N+Kierland+Blvd+Scottsdale+AZ"},
+      {label:"Scottsdale Quarter \u2014 Google Maps", url:"https://www.google.com/maps/search/Scottsdale+Quarter+15169+N+Scottsdale+Rd+Scottsdale+AZ"}
+    ]
+  },
+  {
+    num:8, x:195, y:175,
+    name:"Fairmont Princess / TPC Scottsdale Golf & Resort Node",
+    type:"Lifestyle / Residential Anchor",
+    category:"Resort / Hospitality Anchor + Golf / Recreation Anchor",
+    location:"Fairmont Scottsdale Princess, 7575 E. Princess Drive, Scottsdale, AZ 85255; TPC Scottsdale Stadium Course, 17020 N. Hayden Road, Scottsdale, AZ 85255.",
+    status:"Operational",
+    why:"Fairmont Scottsdale Princess and TPC Scottsdale form a combined North Scottsdale resort, corporate hospitality, and PGA golf node. It reinforces Scottsdale's executive lifestyle, business travel, event, hospitality, and recreation demand \u2014 especially because TPC Scottsdale hosts the WM Phoenix Open and the Fairmont Princess is a major luxury resort and meetings destination.",
+    confidence:"High",
+    caveat:"Adjacent but distinct properties, roughly a short drive apart, represented as one combined marker to avoid overcrowding. This single pin represents a combined golf / resort node, not one property.",
+    primary:[
+      {label:"Official Fairmont resort website", url:"https://www.fairmont.com/en/hotels/scottsdale/fairmont-scottsdale-princess/"},
+      {label:"Official TPC Scottsdale website", url:"https://tpc.com/scottsdale/"}
+    ],
+    news:[{label:"Official PGA / WM Phoenix Open source", url:"https://pgatourmedia.pgatourhq.com/tours/2026/pgatour/wmphoenixopen"}],
+    maps:[
+      {label:"Fairmont Princess \u2014 Google Maps", url:"https://www.google.com/maps/search/Fairmont+Scottsdale+Princess+7575+E+Princess+Dr+Scottsdale+AZ"},
+      {label:"TPC Scottsdale \u2014 Google Maps", url:"https://www.google.com/maps/search/TPC+Scottsdale+17020+N+Hayden+Rd+Scottsdale+AZ"}
+    ]
+  }
+];
+
+const SVGNS = "http://www.w3.org/2000/svg";
+const pinsG = document.getElementById("pins");
+const reflist = document.getElementById("reflist");
+const panel = document.getElementById("panel");
+let selected = 1;
+
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+// ---- build pins ----
+MARKERS.forEach(m=>{
+  const g = document.createElementNS(SVGNS,"g");
+  g.setAttribute("class","pin");
+  g.setAttribute("data-num",m.num);
+  g.setAttribute("tabindex","0");
+  g.setAttribute("role","button");
+  g.setAttribute("aria-label","Marker "+m.num+": "+m.name);
+  g.innerHTML =
+    '<circle class="halo" cx="'+m.x+'" cy="'+m.y+'" r="22"></circle>'+
+    '<circle class="dot" cx="'+m.x+'" cy="'+m.y+'" r="15"></circle>'+
+    '<text class="num" x="'+m.x+'" y="'+m.y+'">'+m.num+'</text>';
+  g.addEventListener("click",()=>select(m.num));
+  g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();select(m.num);}});
+  pinsG.appendChild(g);
+});
+
+// ---- build reference list ----
+MARKERS.forEach(m=>{
+  const li = document.createElement("li");
+  li.innerHTML = '<button data-num="'+m.num+'"><span class="rn">'+m.num+'</span><span>'+esc(m.name)+'</span></button>';
+  li.querySelector("button").addEventListener("click",()=>select(m.num));
+  reflist.appendChild(li);
+});
+
+// ---- source button helper ----
+function srcBtns(arr,cls){
+  return arr.map(s=>'<a class="src '+cls+'" href="'+s.url+'" target="_blank" rel="noopener noreferrer"><span class="ic">'+
+    (cls==="maps"?ICON.maps:(cls==="news"?ICON.news:ICON.primary))+'</span>'+esc(s.label)+'</a>').join("");
+}
+
+// ---- render evidence card ----
+function render(m){
+  panel.innerHTML =
+  '<div class="panel-head">'+
+    '<div class="panel-num">'+m.num+'</div>'+
+    '<div>'+
+      '<p class="panel-name">'+esc(m.name)+'</p>'+
+      '<div class="panel-cat">'+esc(m.type)+'</div>'+
+      '<span class="tag">'+esc(m.category)+'</span>'+
+    '</div>'+
+  '</div>'+
+  '<div class="panel-body">'+
+    '<div class="field"><div class="lab">Address / Location</div><div class="val">'+esc(m.location)+'</div></div>'+
+    '<div class="field"><div class="lab">Operational Status</div><div class="val">'+esc(m.status)+'</div></div>'+
+    '<div class="field why"><div class="lab">Why It Matters</div><div class="val">'+esc(m.why)+'</div></div>'+
+    '<div class="field"><div class="lab">Confidence Level</div><div class="val"><span class="conf">'+esc(m.confidence)+'</span></div></div>'+
+    '<div class="field"><div class="lab">Caveat / Verification Note</div><div class="caveat">'+esc(m.caveat)+'</div></div>'+
+    '<div class="src-group"><div class="glab">Primary Source'+(m.primary.length>1?'s':'')+'</div><div class="src-btns">'+srcBtns(m.primary,"primary")+'</div></div>'+
+    (m.news&&m.news.length?'<div class="src-group"><div class="glab">Recent / News Source</div><div class="src-btns">'+srcBtns(m.news,"news")+'</div></div>':'')+
+    '<div class="src-group"><div class="glab">Google Maps</div><div class="src-btns">'+srcBtns(m.maps,"maps")+'</div></div>'+
+  '</div>';
+}
+
+// ---- selection ----
+function select(num){
+  selected = num;
+  const m = MARKERS.find(x=>x.num===num);
+  render(m);
+  document.querySelectorAll(".pin").forEach(p=>p.classList.toggle("active",+p.dataset.num===num));
+  document.querySelectorAll(".reflist button").forEach(b=>b.classList.toggle("active",+b.dataset.num===num));
+}
+
+select(1);
+</script>
+</body>
+</html>
