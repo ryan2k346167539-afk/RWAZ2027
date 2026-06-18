@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mesa Aviation MRO &amp; Airport Services Cluster — Verification Map</title>
+<style>
+  :root{
+    --parchment:#f3e7cc;
+    --parchment-2:#ece0c4;
+    --parchment-edge:#e3d3ad;
+    --land:#c9d2a3;
+    --land-2:#c0cb97;
+    --zone:#aebb83;
+    --zone-line:#8f9d63;
+    --road:#c8a877;
+    --road-major:#b88b4e;
+    --ink:#3a2817;
+    --ink-soft:#5b4427;
+    --ink-mute:#7a6443;
+    --marker:#21567f;
+    --marker-dark:#173f5e;
+    --marker-ring:#f3e7cc;
+    --cream:#fbf4e2;
+    --line:#cdb78a;
+    --shadow:rgba(58,40,23,.22);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+    background:
+      radial-gradient(ellipse at 30% 0%, #f7eed7 0%, rgba(247,238,215,0) 55%),
+      radial-gradient(ellipse at 80% 100%, #e8d9b8 0%, rgba(232,217,184,0) 60%),
+      var(--parchment);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    padding:22px 18px 40px;
+  }
+  .frame{
+    max-width:1180px;margin:0 auto;
+    border:2px solid var(--ink);
+    box-shadow:0 0 0 5px var(--parchment), 0 0 0 6px var(--ink-mute), 0 14px 36px var(--shadow);
+    background:linear-gradient(180deg,var(--parchment) 0%,var(--parchment-2) 100%);
+    padding:26px 28px 30px;
+  }
+  header.title-block{text-align:center;border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:18px}
+  .eyebrow{
+    font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--ink-mute);
+    margin:0 0 8px;font-weight:600;
+  }
+  h1{
+    font-size:clamp(24px,3.4vw,38px);line-height:1.08;margin:0 0 10px;color:var(--ink);
+    font-weight:700;letter-spacing:.01em;
+  }
+  .subtitle{
+    font-size:clamp(13px,1.5vw,16px);font-style:italic;color:var(--ink-soft);
+    max-width:760px;margin:0 auto;line-height:1.5;
+  }
+  .layout{display:grid;grid-template-columns:1.55fr 1fr;gap:22px;align-items:start}
+  @media (max-width:880px){.layout{grid-template-columns:1fr}}
+
+  /* MAP */
+  .map-wrap{
+    border:1.5px solid var(--ink-mute);
+    background:var(--parchment);
+    position:relative;
+    box-shadow:inset 0 0 0 6px var(--parchment), inset 0 0 0 7px var(--line);
+  }
+  svg.map{display:block;width:100%;height:auto}
+  .marker{cursor:pointer}
+  .marker circle.pin{
+    fill:var(--marker);stroke:var(--marker-ring);stroke-width:2.4;
+    transition:transform .15s ease, fill .15s ease;
+    transform-box:fill-box;transform-origin:center;
+    filter:drop-shadow(0 2px 2px rgba(23,63,94,.45));
+  }
+  .marker text.num{
+    fill:var(--cream);font-size:13px;font-weight:700;text-anchor:middle;
+    dominant-baseline:central;pointer-events:none;
+    font-family:Georgia,serif;
+  }
+  .marker:hover circle.pin{fill:#2e6fa0}
+  .marker.active circle.pin{fill:#b8541f;stroke:#fff;transform:scale(1.18)}
+  .map-label{font-size:12px;fill:var(--ink-soft);font-style:italic}
+  .road-label{font-size:10.5px;fill:var(--road-major);font-weight:600;letter-spacing:.04em}
+  .airport-label{font-size:12.5px;fill:var(--ink);font-weight:700;letter-spacing:.02em}
+  .zone-label{font-size:13px;fill:var(--zone-line);font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+  .compass text{font-size:11px;fill:var(--ink-mute);font-weight:700}
+
+  /* EVIDENCE PANEL */
+  .panel{
+    border:1.5px solid var(--ink-mute);
+    background:var(--cream);
+    box-shadow:inset 0 0 0 5px var(--cream), inset 0 0 0 6px var(--line);
+    min-height:480px;display:flex;flex-direction:column;
+  }
+  .panel-inner{padding:20px 20px 22px;flex:1;display:flex;flex-direction:column}
+  .panel .placeholder{margin:auto;text-align:center;color:var(--ink-mute);max-width:280px}
+  .panel .placeholder .glyph{font-size:34px;margin-bottom:10px;opacity:.65}
+  .panel .placeholder p{font-style:italic;line-height:1.5;font-size:14px;margin:6px 0 0}
+
+  .card-head{display:flex;align-items:flex-start;gap:12px;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:12px}
+  .card-num{
+    flex:0 0 auto;width:34px;height:34px;border-radius:50%;
+    background:var(--marker);color:var(--cream);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;font-size:16px;border:2px solid var(--marker-ring);
+    box-shadow:0 1px 3px rgba(23,63,94,.4);
+  }
+  .card-head h2{font-size:18px;margin:0 0 3px;line-height:1.2;color:var(--ink)}
+  .card-type{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mute);font-weight:600}
+  .row{margin:0 0 11px}
+  .row .k{
+    font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-mute);
+    font-weight:700;display:block;margin-bottom:2px;
+  }
+  .row .v{font-size:14px;line-height:1.5;color:var(--ink-soft)}
+  .badges{display:flex;gap:8px;flex-wrap:wrap;margin:2px 0 12px}
+  .badge{
+    font-size:11px;font-weight:600;letter-spacing:.03em;
+    padding:3px 10px;border-radius:2px;border:1px solid;
+  }
+  .badge.status{background:#dde6c4;border-color:#9aaa6c;color:#445327}
+  .badge.conf{background:#cfe0ec;border-color:#7ba3c0;color:#1f4e6e}
+  .caveat{
+    background:#f1e3c4;border-left:3px solid var(--road-major);
+    padding:9px 12px;font-size:12.5px;font-style:italic;color:var(--ink-soft);
+    line-height:1.5;margin:0 0 14px;
+  }
+  .caveat .k{font-style:normal;font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:10px;color:var(--road-major);display:block;margin-bottom:3px}
+  .links{margin-top:auto;border-top:1px solid var(--line);padding-top:13px;display:flex;flex-direction:column;gap:8px}
+  .links a{
+    display:flex;align-items:center;gap:9px;text-decoration:none;
+    color:var(--marker-dark);font-size:13px;font-weight:600;
+    padding:7px 11px;border:1px solid var(--line);background:var(--parchment);
+    transition:background .15s,border-color .15s;
+  }
+  .links a:hover{background:#efe3c6;border-color:var(--marker)}
+  .links a .lk-ico{flex:0 0 auto;width:18px;text-align:center;opacity:.8}
+  .links a .lk-txt{flex:1}
+  .links a small{display:block;font-weight:400;font-style:italic;color:var(--ink-mute);font-size:11px}
+
+  /* REFERENCE LIST */
+  .reference{border-top:1px solid var(--line);margin-top:22px;padding-top:18px}
+  .reference h3{
+    font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-mute);
+    margin:0 0 12px;font-weight:700;
+  }
+  .ref-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 22px}
+  @media (max-width:700px){.ref-grid{grid-template-columns:1fr 1fr}}
+  @media (max-width:460px){.ref-grid{grid-template-columns:1fr}}
+  .ref-item{
+    display:flex;gap:10px;align-items:baseline;cursor:pointer;padding:5px 7px;
+    border:1px solid transparent;border-radius:2px;transition:background .12s,border-color .12s;
+  }
+  .ref-item:hover{background:#efe3c6;border-color:var(--line)}
+  .ref-item.active{background:#f3ddc2;border-color:var(--road-major)}
+  .ref-num{
+    flex:0 0 auto;width:22px;height:22px;border-radius:50%;background:var(--marker);
+    color:var(--cream);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;
+  }
+  .ref-item.active .ref-num{background:#b8541f}
+  .ref-name{font-size:13px;line-height:1.3;color:var(--ink-soft)}
+  .ref-name small{display:block;color:var(--ink-mute);font-size:11px;letter-spacing:.05em;text-transform:uppercase}
+
+  footer.source-note{
+    border-top:1px solid var(--line);margin-top:22px;padding-top:14px;
+    font-size:11.5px;font-style:italic;color:var(--ink-mute);line-height:1.6;text-align:center;
+  }
+</style>
+</head>
+<body>
+<div class="frame">
+
+  <header class="title-block">
+    <p class="eyebrow">Arizona Industry Map Project · Internal Verification Map</p>
+    <h1>Mesa Aviation MRO &amp; Airport Services Cluster</h1>
+    <p class="subtitle">Phoenix-Mesa Gateway Airport and Falcon Field anchor Mesa&rsquo;s aircraft service, FBO, flight training, and airport operations ecosystem.</p>
+  </header>
+
+  <div class="layout">
+
+    <!-- ================= MAP ================= -->
+    <div class="map-wrap">
+      <svg class="map" viewBox="0 0 760 620" role="img" aria-label="Stylized map of Mesa, Arizona aviation clusters">
+        <!-- land -->
+        <rect x="0" y="0" width="760" height="620" fill="var(--land)"/>
+        <rect x="0" y="0" width="760" height="620" fill="url(#grain)"/>
+        <defs>
+          <pattern id="grain" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(20)">
+            <rect width="6" height="6" fill="none"/>
+            <circle cx="1" cy="1" r="0.5" fill="#b8c28d" opacity="0.5"/>
+          </pattern>
+          <linearGradient id="zoneFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#b6c389" stop-opacity="0.85"/>
+            <stop offset="100%" stop-color="#aebb83" stop-opacity="0.65"/>
+          </linearGradient>
+        </defs>
+
+        <!-- ===== CLUSTER ZONES ===== -->
+        <!-- Falcon Field cluster (NE / upper) -->
+        <ellipse cx="225" cy="150" rx="150" ry="92" fill="url(#zoneFill)" stroke="var(--zone-line)" stroke-width="1.4" stroke-dasharray="6 5"/>
+        <text class="zone-label" x="225" y="78" text-anchor="middle">Falcon Field Cluster</text>
+
+        <!-- Gateway Airport cluster (SE / lower) -->
+        <ellipse cx="560" cy="470" rx="175" ry="120" fill="url(#zoneFill)" stroke="var(--zone-line)" stroke-width="1.4" stroke-dasharray="6 5"/>
+        <text class="zone-label" x="560" y="360" text-anchor="middle">Gateway Airport Cluster</text>
+
+        <!-- ===== ROADS ===== -->
+        <!-- Loop 202 (Red Mountain) across the north -->
+        <path d="M 0 60 C 180 30, 430 45, 760 95" fill="none" stroke="var(--road-major)" stroke-width="4.5" opacity="0.9"/>
+        <path d="M 0 60 C 180 30, 430 45, 760 95" fill="none" stroke="var(--parchment)" stroke-width="1" stroke-dasharray="3 7" opacity="0.7"/>
+        <text class="road-label" x="60" y="50">LOOP 202 · RED MOUNTAIN FWY</text>
+
+        <!-- US 60 Superstition Fwy through the middle -->
+        <path d="M 0 290 C 250 268, 520 272, 760 250" fill="none" stroke="var(--road-major)" stroke-width="4.5" opacity="0.9"/>
+        <path d="M 0 290 C 250 268, 520 272, 760 250" fill="none" stroke="var(--parchment)" stroke-width="1" stroke-dasharray="3 7" opacity="0.7"/>
+        <text class="road-label" x="40" y="282">US 60 · SUPERSTITION FWY</text>
+
+        <!-- Loop 202 (Santan) sweeping the southeast -->
+        <path d="M 250 620 C 300 540, 360 470, 520 440 C 640 418, 720 430, 760 470" fill="none" stroke="var(--road-major)" stroke-width="4.5" opacity="0.9"/>
+        <path d="M 250 620 C 300 540, 360 470, 520 440 C 640 418, 720 430, 760 470" fill="none" stroke="var(--parchment)" stroke-width="1" stroke-dasharray="3 7" opacity="0.7"/>
+        <text class="road-label" x="270" y="560" transform="rotate(-52 270 560)">LOOP 202 · SANTAN FWY</text>
+
+        <!-- S Sossaman Rd (vertical, Gateway area) -->
+        <path d="M 520 360 L 524 600" fill="none" stroke="var(--road)" stroke-width="3" opacity="0.95"/>
+        <text class="road-label" x="486" y="400" transform="rotate(90 486 400)">S SOSSAMAN RD</text>
+
+        <!-- E Velocity Way (short, Gateway) -->
+        <path d="M 560 540 L 690 532" fill="none" stroke="var(--road)" stroke-width="2.4" opacity="0.9"/>
+        <text class="road-label" x="600" y="560">E VELOCITY WAY</text>
+
+        <!-- E Falcon Dr (Falcon Field) -->
+        <path d="M 100 200 L 360 196" fill="none" stroke="var(--road)" stroke-width="3" opacity="0.95"/>
+        <text class="road-label" x="120" y="216">E FALCON DR</text>
+
+        <!-- ===== AIRPORT RUNWAYS ===== -->
+        <!-- Falcon Field runway -->
+        <g opacity="0.92">
+          <rect x="150" y="118" width="150" height="9" rx="2" fill="#9a8b6a" transform="rotate(-6 225 122)"/>
+          <text class="airport-label" x="225" y="108" text-anchor="middle">Falcon Field Airport (KFFZ)</text>
+        </g>
+        <!-- Gateway runways -->
+        <g opacity="0.92">
+          <rect x="470" y="486" width="170" height="9" rx="2" fill="#9a8b6a" transform="rotate(-4 555 490)"/>
+          <rect x="478" y="510" width="150" height="7" rx="2" fill="#9a8b6a" transform="rotate(-4 553 513)"/>
+          <text class="airport-label" x="560" y="600" text-anchor="middle">Phoenix-Mesa Gateway Airport (IWA)</text>
+        </g>
+
+        <!-- city context label -->
+        <text class="map-label" x="380" y="318" text-anchor="middle" opacity="0.75">City of Mesa, Arizona</text>
+
+        <!-- compass rose -->
+        <g class="compass" transform="translate(710 560)">
+          <circle r="20" fill="none" stroke="var(--ink-mute)" stroke-width="1"/>
+          <path d="M 0 -18 L 4 0 L 0 18 L -4 0 Z" fill="var(--ink-mute)"/>
+          <path d="M -18 0 L 0 -4 L 18 0 L 0 4 Z" fill="none" stroke="var(--ink-mute)" stroke-width="0.8"/>
+          <text x="0" y="-24" text-anchor="middle">N</text>
+        </g>
+
+        <!-- ===== MARKERS ===== -->
+        <!-- group injected by JS below for clarity, but defined statically for no-JS fallback -->
+        <g id="markers">
+          <!-- Falcon Field cluster -->
+          <g class="marker" data-id="2" transform="translate(245,150)"><circle class="pin" r="14"/><text class="num" x="0" y="0">2</text></g>
+          <g class="marker" data-id="9" transform="translate(186,178)"><circle class="pin" r="14"/><text class="num" x="0" y="0">9</text></g>
+
+          <!-- Gateway cluster -->
+          <g class="marker" data-id="5" transform="translate(498,420)"><circle class="pin" r="14"/><text class="num" x="0" y="0">5</text></g>
+          <g class="marker" data-id="6" transform="translate(458,452)"><circle class="pin" r="14"/><text class="num" x="0" y="0">6</text></g>
+          <g class="marker" data-id="8" transform="translate(505,455)"><circle class="pin" r="14"/><text class="num" x="0" y="0">8</text></g>
+          <g class="marker" data-id="7" transform="translate(540,470)"><circle class="pin" r="14"/><text class="num" x="0" y="0">7</text></g>
+          <g class="marker" data-id="1" transform="translate(560,505)"><circle class="pin" r="14"/><text class="num" x="0" y="0">1</text></g>
+          <g class="marker" data-id="4" transform="translate(548,545)"><circle class="pin" r="14"/><text class="num" x="0" y="0">4</text></g>
+          <g class="marker" data-id="3" transform="translate(648,524)"><circle class="pin" r="14"/><text class="num" x="0" y="0">3</text></g>
+        </g>
+      </svg>
+    </div>
+
+    <!-- ================= EVIDENCE PANEL ================= -->
+    <aside class="panel" id="panel">
+      <div class="panel-inner" id="panelInner">
+        <div class="placeholder">
+          <div class="glyph">&#9992;</div>
+          <p>Select a numbered marker on the map &mdash; or a name from the reference list below &mdash; to open its evidence card.</p>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- ================= REFERENCE LIST ================= -->
+  <section class="reference">
+    <h3>Numbered Reference</h3>
+    <div class="ref-grid" id="refGrid"></div>
+  </section>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="source-note">
+    Internal verification map. Sources are drawn from official airport, company, economic-development, and aviation-industry pages. Marker positions should be checked against Google Maps before conversion to final book graphics.
+  </footer>
+
+</div>
+
+<script>
+const DATA = [
+  {
+    id:1,
+    name:"Phoenix-Mesa Gateway Airport (IWA)",
+    type:"Airport Operator",
+    address:"6033 S Sossaman Rd, Mesa, AZ 85212",
+    status:"Operating",
+    why:"The primary aviation hub anchoring Mesa\u2019s Gateway aviation cluster. It concentrates airport operations, MRO, aircraft service centers, FBO services, pilot training, and aviation-support tenants in southeast Mesa.",
+    confidence:"High",
+    caveat:"Use \u201CPhoenix-Mesa Gateway Airport (IWA)\u201D on the map. The terminal address and airport authority address may differ; use the terminal address for map positioning.",
+    primary:"https://www.gatewayairport.com",
+    news:"https://www.kjzz.org/business/2025-01-10/gulfstream-opens-130m-service-center-at-mesa-gateway-airport",
+    maps:"https://www.google.com/maps/search/?api=1&query=Phoenix-Mesa%20Gateway%20Airport%206033%20S%20Sossaman%20Rd%20Mesa%20AZ%2085212"
+  },
+  {
+    id:2,
+    name:"Falcon Field Airport (KFFZ)",
+    type:"Airport Operator",
+    address:"4800 E Falcon Dr, Mesa, AZ 85215",
+    status:"Operating",
+    why:"Mesa\u2019s general aviation airport and the second aviation node in this map. It supports FBO services, flight activity, aviation services, hangar development, and the broader Falcon Field aviation district.",
+    confidence:"High",
+    caveat:"Some sources use slightly different airport address formatting. Use 4800 E Falcon Dr for map positioning.",
+    primary:"https://www.falconfieldairport.com",
+    news:"https://www.faa.gov/ffz",
+    maps:"https://www.google.com/maps/search/?api=1&query=Falcon%20Field%20Airport%204800%20E%20Falcon%20Dr%20Mesa%20AZ%2085215"
+  },
+  {
+    id:3,
+    name:"Able Aerospace Services",
+    type:"MRO / Maintenance",
+    address:"7706 E Velocity Way, Mesa, AZ 85212",
+    status:"Operating",
+    why:"One of Mesa\u2019s strongest MRO anchors. Able Aerospace Services is a Textron Aviation subsidiary with a major facility at the Gateway Airport campus and supports aircraft component repair, overhaul, and maintenance services.",
+    confidence:"High",
+    caveat:"Distinguish Able Aerospace Services from Textron Aviation\u2019s separate Mesa Service Center. They are related through Textron but are separate map entities at separate addresses.",
+    primary:"https://www.ableaerospace.com",
+    news:"https://www.mesanow.org/news/public/article/2374",
+    maps:"https://www.google.com/maps/search/?api=1&query=Able%20Aerospace%20Services%207706%20E%20Velocity%20Way%20Mesa%20AZ%2085212"
+  },
+  {
+    id:4,
+    name:"Gulfstream Aerospace \u2014 Mesa Service Center",
+    type:"MRO / Aircraft Service Center",
+    address:"6253 S Sossaman Rd, Mesa, AZ 85212",
+    status:"Operating",
+    why:"A major aircraft service center and one of the most visible recent aviation investments at Phoenix-Mesa Gateway Airport. It is directly relevant to the MRO / airport services theme.",
+    confidence:"High",
+    caveat:"This entity may also appear in a Defense & Aerospace map. Retain it here because this Mesa facility functions specifically as a business-aviation service center and is one of the strongest MRO / aircraft-service anchors at Phoenix-Mesa Gateway Airport.",
+    primary:"https://www.gpec.org/news/gulfstream-opens-mesa-facility/",
+    news:"https://www.ainonline.com/aviation-news/business-aviation/2025-01-10/gulfstream-inaugurates-new-arizona-service-center",
+    maps:"https://www.google.com/maps/search/?api=1&query=Gulfstream%20Aerospace%206253%20S%20Sossaman%20Rd%20Mesa%20AZ%2085212"
+  },
+  {
+    id:5,
+    name:"Textron Aviation \u2014 Mesa Service Center",
+    type:"MRO / Aircraft Service Center",
+    address:"5533 S Sossaman Rd, Mesa, AZ 85212",
+    status:"Operating",
+    why:"Factory-authorized service center for Textron Aviation brands such as Cessna, Beechcraft, Hawker, and Citation. It is a direct MRO / aircraft-service anchor at Phoenix-Mesa Gateway Airport.",
+    confidence:"High",
+    caveat:"Do not conflate this facility with Able Aerospace Services. Both are connected to Textron but represent different service operations.",
+    primary:"https://txtav.com/service/mesa-service-center",
+    news:"https://media.txtav.com/244995-textron-aviation-s-mesa-service-center-marks-15-years-of-legendary-customer-support-in-region/",
+    maps:"https://www.google.com/maps/search/?api=1&query=Textron%20Aviation%20Mesa%20Service%20Center%205533%20S%20Sossaman%20Rd%20Mesa%20AZ%2085212"
+  },
+  {
+    id:6,
+    name:"Embraer Executive Jet Services \u2014 Mesa Service Center",
+    type:"MRO / Aircraft Service Center",
+    address:"5643 S Avery Cir, Mesa, AZ 85212",
+    status:"Operating",
+    why:"Embraer\u2019s Mesa executive jet service center adds another OEM-backed MRO presence to the Gateway Airport aviation cluster. It strengthens the map\u2019s aircraft-service-center story.",
+    confidence:"High",
+    caveat:"Use the Gateway Airport / Mesa address. Avoid using weak directory sources as the main evidence; use Embraer and Gateway-area sources where possible.",
+    primary:"https://www.embraer.com/services-and-support-maintenance-services/en/",
+    news:"https://www.linkedin.com/posts/embraer_mro-weareembraer-activity-7227312806902079488-uVCt",
+    maps:"https://www.google.com/maps/search/?api=1&query=Embraer%20Executive%20Jet%20Services%205643%20S%20Avery%20Cir%20Mesa%20AZ%2085212"
+  },
+  {
+    id:7,
+    name:"Gateway Aviation Services / Gateway FBO",
+    type:"FBO / Aviation Services",
+    address:"5803 S Sossaman Rd, Suite 116, Mesa, AZ 85212",
+    status:"Operating",
+    why:"The FBO and airport-services node for Phoenix-Mesa Gateway Airport. It supports corporate, military, and general aviation users and gives the map a clear airport-services anchor beyond MRO facilities.",
+    confidence:"High",
+    caveat:"Label as \u201CGateway Aviation Services / Gateway FBO\u201D to clarify function.",
+    primary:"https://www.gatewayfbo.com",
+    news:"https://www.gatewayairport.com/fixedbaseoperators",
+    maps:"https://www.google.com/maps/search/?api=1&query=Gateway%20Aviation%20Services%205803%20S%20Sossaman%20Rd%20Suite%20116%20Mesa%20AZ%2085212"
+  },
+  {
+    id:8,
+    name:"ATP Flight School \u2014 Mesa / IWA",
+    type:"Flight Training",
+    address:"5661 S Sossaman Rd, Mesa, AZ 85212",
+    status:"Operating",
+    why:"A major flight-training presence at Phoenix-Mesa Gateway Airport. It represents the aviation workforce / pilot-training side of the airport services ecosystem.",
+    confidence:"High",
+    caveat:"ATP is flight training, not MRO. Keep it on the map because this map covers airport services and aviation ecosystem anchors, not only aircraft maintenance.",
+    primary:"https://atpflightschool.com/local/iwa",
+    news:"https://www.gatewayfbo.com/airfieldpartners",
+    maps:"https://www.google.com/maps/search/?api=1&query=ATP%20Flight%20School%205661%20S%20Sossaman%20Rd%20Mesa%20AZ%2085212"
+  },
+  {
+    id:9,
+    name:"Cunningham Aviation \u2014 Falcon Field FBO",
+    type:"FBO / Aviation Services",
+    address:"4753 E Falcon Dr, Suite 1, Mesa, AZ 85215",
+    status:"Operating",
+    why:"The key FBO anchor at Falcon Field. It gives the Falcon Field sub-cluster a specific airport-services operator rather than only showing the airport itself.",
+    confidence:"High",
+    caveat:"Label as \u201CCunningham Aviation \u2014 Falcon Field FBO.\u201D It may be useful to note that it consolidated the former Avflight Mesa operation, but do not overcomplicate the map label.",
+    primary:"https://www.paragonaviationgroup.com/cunningham-aviation-acquires-assets-of-avflight-mesa-corporation/",
+    news:"https://www.ainonline.com/aviation-news/2025-08-20/fbo-consolidates-arizonas-falcon-field",
+    maps:"https://www.google.com/maps/search/?api=1&query=Cunningham%20Aviation%204753%20E%20Falcon%20Dr%20Suite%201%20Mesa%20AZ%2085215"
+  }
+];
+
+const byId = id => DATA.find(d => d.id === Number(id));
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const host = u => { try { return new URL(u).hostname.replace(/^www\./,""); } catch(e){ return u; } };
+
+function shortNews(u){
+  const h = host(u);
+  if(h.indexOf("linkedin")>-1) return "LinkedIn announcement";
+  if(h.indexOf("faa.gov")>-1) return "FAA airport record";
+  return h;
+}
+
+function renderCard(d){
+  const newsRow = d.news ? `
+    <a href="${esc(d.news)}" target="_blank" rel="noopener noreferrer">
+      <span class="lk-ico">&#128240;</span>
+      <span class="lk-txt">Recent / News source<small>${esc(shortNews(d.news))}</small></span>
+    </a>` : "";
+
+  return `
+    <div class="card-head">
+      <div class="card-num">${d.id}</div>
+      <div>
+        <h2>${esc(d.name)}</h2>
+        <span class="card-type">${esc(d.type)}</span>
+      </div>
+    </div>
+
+    <div class="badges">
+      <span class="badge status">Status: ${esc(d.status)}</span>
+      <span class="badge conf">Confidence: ${esc(d.confidence)}</span>
+    </div>
+
+    <div class="row"><span class="k">Address</span><span class="v">${esc(d.address)}</span></div>
+    <div class="row"><span class="k">Why it matters</span><span class="v">${esc(d.why)}</span></div>
+
+    <div class="caveat">
+      <span class="k">Caveat / verification note</span>
+      ${esc(d.caveat)}
+    </div>
+
+    <div class="links">
+      <a href="${esc(d.primary)}" target="_blank" rel="noopener noreferrer">
+        <span class="lk-ico">&#128279;</span>
+        <span class="lk-txt">Primary source<small>${esc(host(d.primary))}</small></span>
+      </a>
+      ${newsRow}
+      <a href="${esc(d.maps)}" target="_blank" rel="noopener noreferrer">
+        <span class="lk-ico">&#128205;</span>
+        <span class="lk-txt">Open in Google Maps<small>Verify pin position</small></span>
+      </a>
+    </div>
+  `;
+}
+
+const panelInner = document.getElementById("panelInner");
+const markers = Array.from(document.querySelectorAll(".marker"));
+const refGrid = document.getElementById("refGrid");
+
+function select(id){
+  const d = byId(id);
+  if(!d) return;
+  panelInner.innerHTML = renderCard(d);
+  markers.forEach(m => m.classList.toggle("active", m.dataset.id === String(id)));
+  document.querySelectorAll(".ref-item").forEach(r => r.classList.toggle("active", r.dataset.id === String(id)));
+}
+
+// build reference list in fixed numeric order
+[...DATA].sort((a,b)=>a.id-b.id).forEach(d => {
+  const div = document.createElement("div");
+  div.className = "ref-item";
+  div.dataset.id = d.id;
+  div.setAttribute("role","button");
+  div.setAttribute("tabindex","0");
+  div.innerHTML = `<span class="ref-num">${d.id}</span><span class="ref-name">${esc(d.name)}<small>${esc(d.type)}</small></span>`;
+  div.addEventListener("click", () => select(d.id));
+  div.addEventListener("keydown", e => { if(e.key==="Enter"||e.key===" "){ e.preventDefault(); select(d.id);} });
+  refGrid.appendChild(div);
+});
+
+// wire markers
+markers.forEach(m => {
+  m.setAttribute("role","button");
+  m.setAttribute("tabindex","0");
+  m.setAttribute("aria-label","Marker " + m.dataset.id);
+  m.addEventListener("click", () => select(m.dataset.id));
+  m.addEventListener("keydown", e => { if(e.key==="Enter"||e.key===" "){ e.preventDefault(); select(m.dataset.id);} });
+});
+
+// open with the primary anchor selected
+select(1);
+</script>
+</body>
+</html>
