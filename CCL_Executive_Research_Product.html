@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCL Supply Chain：從市場敘事到 Buy-side 投資框架</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B0F15; --surface:#111722; --surface2:#161e2b; --surface3:#1b2433;
+  --border:#242f40; --border-soft:#1d2735;
+  --text:#E7EDF4; --muted:#93A1B3; --faint:#5F6C7D;
+  --copper:#CE8A54; --copper-hi:#E3A876; --copper-dim:rgba(206,138,84,.13);
+  --ok:#43B586; --ok-bg:rgba(67,181,134,.12);
+  --warn:#D6A448; --warn-bg:rgba(214,164,72,.12);
+  --bad:#DE6470; --bad-bg:rgba(222,100,112,.12);
+  --unk:#7F8FC7; --unk-bg:rgba(127,143,199,.13);
+  --na:#5F6C7D;  --na-bg:rgba(95,108,125,.14);
+  --disp:'Noto Serif TC',Georgia,'Times New Roman',serif;
+  --body:'Noto Sans TC',-apple-system,'PingFang TC','Microsoft JhengHei',sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --maxw:880px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:16px;line-height:1.75;
+  -webkit-font-smoothing:antialiased;}
+::selection{background:var(--copper-dim);color:var(--copper-hi)}
+a{color:var(--copper);text-decoration:none}
+
+/* ===== progress bar ===== */
+#progress{position:fixed;top:0;left:0;height:2px;width:0;background:linear-gradient(90deg,var(--copper),var(--copper-hi));z-index:99;transition:width .1s linear}
+
+/* ===== sidebar ===== */
+#toc{position:fixed;top:0;left:0;bottom:0;width:236px;padding:36px 20px 28px 28px;
+  border-right:1px solid var(--border-soft);background:rgba(11,15,21,.92);backdrop-filter:blur(8px);
+  display:flex;flex-direction:column;gap:2px;z-index:50;overflow-y:auto}
+#toc .brand{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;color:var(--copper);margin-bottom:6px}
+#toc .brand-sub{font-size:12px;color:var(--faint);margin-bottom:26px;line-height:1.5}
+#toc a.tlink{display:flex;align-items:baseline;gap:9px;padding:7px 10px;border-radius:7px;color:var(--muted);
+  font-size:13px;transition:all .18s}
+#toc a.tlink .no{font-family:var(--mono);font-size:10px;color:var(--faint);min-width:18px}
+#toc a.tlink:hover{color:var(--text);background:var(--surface)}
+#toc a.tlink.on{color:var(--copper-hi);background:var(--copper-dim)}
+#toc a.tlink.on .no{color:var(--copper)}
+#toc .toc-foot{margin-top:auto;padding-top:20px;border-top:1px solid var(--border-soft);
+  font-family:var(--mono);font-size:10px;color:var(--faint);line-height:1.9;letter-spacing:.04em}
+
+/* mobile top nav */
+#mnav{display:none;position:fixed;top:0;left:0;right:0;z-index:60;background:rgba(11,15,21,.95);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--border-soft);
+  overflow-x:auto;white-space:nowrap;padding:10px 14px;-webkit-overflow-scrolling:touch}
+#mnav::-webkit-scrollbar{display:none}
+#mnav a{display:inline-block;font-size:12px;color:var(--muted);padding:5px 12px;border:1px solid var(--border);
+  border-radius:99px;margin-right:7px}
+#mnav a.on{color:var(--copper-hi);border-color:var(--copper);background:var(--copper-dim)}
+
+/* ===== main ===== */
+main{margin-left:236px;padding:0 40px}
+.wrap{max-width:var(--maxw);margin:0 auto}
+section.part{padding:88px 0 40px;border-bottom:1px solid var(--border-soft)}
+section.part:last-of-type{border-bottom:none}
+
+/* reveal */
+.rv{opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s ease}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+
+/* ===== headings ===== */
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--copper);margin-bottom:14px;
+  display:flex;align-items:center;gap:12px}
+.eyebrow::after{content:"";height:1px;flex:1;max-width:64px;background:var(--copper);opacity:.4}
+h2.pt{font-family:var(--disp);font-size:clamp(26px,3.4vw,34px);font-weight:700;line-height:1.35;margin-bottom:10px;letter-spacing:.01em}
+p.pd{color:var(--muted);font-size:15px;max-width:640px;margin-bottom:36px}
+h3.st{font-family:var(--disp);font-size:19px;font-weight:700;margin:44px 0 18px;display:flex;align-items:center;gap:10px}
+h3.st .tick{width:8px;height:8px;background:var(--copper);border-radius:2px;flex:none}
+
+/* ===== components ===== */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px 24px}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+
+.badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10.5px;
+  letter-spacing:.06em;padding:3px 10px;border-radius:99px;font-weight:500;white-space:nowrap}
+.badge::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.b-ok{color:var(--ok);background:var(--ok-bg)}
+.b-warn{color:var(--warn);background:var(--warn-bg)}
+.b-bad{color:var(--bad);background:var(--bad-bg)}
+.b-unk{color:var(--unk);background:var(--unk-bg)}
+.b-na{color:var(--na);background:var(--na-bg)}
+.b-cu{color:var(--copper-hi);background:var(--copper-dim)}
+
+.callout{border-left:3px solid var(--copper);background:var(--surface);border-radius:0 12px 12px 0;
+  padding:18px 22px;margin:26px 0}
+.callout .cl-t{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--copper);margin-bottom:8px}
+.callout p{font-size:15px;color:var(--text)}
+.callout.warn{border-left-color:var(--bad)}
+.callout.warn .cl-t{color:var(--bad)}
+
+.tk{font-family:var(--mono);font-size:12px;color:var(--faint)}
+.num{font-family:var(--mono)}
+em.hl{font-style:normal;color:var(--copper-hi)}
+strong{color:var(--text);font-weight:700}
+p+p{margin-top:12px}
+
+details.exp{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin:14px 0;overflow:hidden}
+details.exp summary{cursor:pointer;padding:15px 20px;font-size:14px;color:var(--muted);list-style:none;
+  display:flex;align-items:center;gap:10px;user-select:none;transition:color .2s}
+details.exp summary:hover{color:var(--text)}
+details.exp summary::-webkit-details-marker{display:none}
+details.exp summary::before{content:"+";font-family:var(--mono);color:var(--copper);width:16px;font-size:15px;flex:none}
+details.exp[open] summary::before{content:"−"}
+details.exp[open] summary{color:var(--text);border-bottom:1px solid var(--border-soft)}
+details.exp .exp-b{padding:18px 22px 20px;font-size:14px;color:var(--muted)}
+
+/* ===== cover ===== */
+#cover{min-height:96vh;display:flex;flex-direction:column;justify-content:center;padding:100px 0 70px;border-bottom:1px solid var(--border-soft)}
+#cover .meta-top{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--faint);
+  display:flex;gap:20px;flex-wrap:wrap;margin-bottom:44px}
+#cover .meta-top .dot{color:var(--copper)}
+#cover h1{font-family:var(--disp);font-weight:900;font-size:clamp(34px,5.2vw,56px);line-height:1.28;letter-spacing:.01em;margin-bottom:22px}
+#cover h1 .cu{color:var(--copper)}
+#cover .sub{font-family:var(--disp);font-size:clamp(16px,2vw,20px);color:var(--muted);font-weight:600;
+  font-style:italic;margin-bottom:34px;letter-spacing:.02em}
+#cover .one{max-width:620px;font-size:16.5px;color:var(--text);border-left:3px solid var(--copper);
+  padding-left:20px;margin-bottom:52px}
+#cover .qs{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:52px}
+#cover .q{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px}
+#cover .q .qn{font-family:var(--mono);font-size:11px;color:var(--copper);margin-bottom:9px;letter-spacing:.12em}
+#cover .q p{font-size:14.5px;color:var(--text);line-height:1.65}
+#cover .foil{height:3px;background:linear-gradient(90deg,transparent,var(--copper) 18%,var(--copper-hi) 50%,var(--copper) 82%,transparent);
+  border-radius:3px;opacity:.85;margin-bottom:22px}
+#cover .meta-bot{font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.08em;line-height:2}
+
+/* ===== timeline (part1) ===== */
+.tl{position:relative;margin:10px 0 8px;padding-left:30px}
+.tl::before{content:"";position:absolute;left:9px;top:8px;bottom:8px;width:2px;
+  background:linear-gradient(180deg,var(--copper),var(--border))}
+.tl-i{position:relative;padding:0 0 30px}
+.tl-i:last-child{padding-bottom:4px}
+.tl-i::before{content:"";position:absolute;left:-27px;top:7px;width:12px;height:12px;border-radius:50%;
+  background:var(--bg);border:2.5px solid var(--copper)}
+.tl-i.ghost::before{border-color:var(--faint)}
+.tl-i .tl-w{font-family:var(--mono);font-size:11px;color:var(--copper);letter-spacing:.12em;margin-bottom:5px}
+.tl-i.ghost .tl-w{color:var(--faint)}
+.tl-i h4{font-size:16px;font-weight:700;margin-bottom:5px}
+.tl-i p{font-size:14px;color:var(--muted);max-width:600px}
+
+.twolayer{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:28px}
+.layer-c{border-radius:14px;padding:22px 24px;border:1px solid var(--border)}
+.layer-c.la{background:linear-gradient(160deg,var(--surface),rgba(67,181,134,.05))}
+.layer-c.lb{background:linear-gradient(160deg,var(--surface),rgba(222,100,112,.06))}
+.layer-c .lc-t{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.layer-c h4{font-family:var(--disp);font-size:16.5px}
+.layer-c p{font-size:14px;color:var(--muted)}
+
+/* ===== thesis cards (part2) ===== */
+.thesis{display:grid;gap:12px}
+.th-c{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:18px 22px;
+  display:grid;grid-template-columns:52px 1fr auto;gap:16px;align-items:start;transition:border-color .2s}
+.th-c:hover{border-color:#31405a}
+.th-c .th-id{font-family:var(--mono);font-size:13px;color:var(--copper);padding-top:2px;font-weight:500}
+.th-c h4{font-size:15.5px;font-weight:700;margin-bottom:5px;line-height:1.5}
+.th-c p{font-size:13.5px;color:var(--muted);line-height:1.65}
+.th-c .th-meta{display:flex;flex-direction:column;gap:7px;align-items:flex-end}
+.imp{font-family:var(--mono);font-size:10px;color:var(--faint);letter-spacing:.08em}
+.imp b{color:var(--warn);font-weight:500;letter-spacing:.14em}
+
+/* ===== dashboard (part3) ===== */
+.dash{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:30px}
+.d-c{border-radius:14px;padding:22px;border:1px solid var(--border);background:var(--surface);text-align:left;position:relative;overflow:hidden}
+.d-c::after{content:"";position:absolute;top:0;left:0;right:0;height:2.5px}
+.d-c.ok::after{background:var(--ok)} .d-c.bad::after{background:var(--bad)} .d-c.unk::after{background:var(--unk)}
+.d-c .d-n{font-family:var(--mono);font-size:44px;font-weight:500;line-height:1;margin:4px 0 8px}
+.d-c.ok .d-n{color:var(--ok)} .d-c.bad .d-n{color:var(--bad)} .d-c.unk .d-n{color:var(--unk)}
+.d-c .d-l{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;color:var(--muted)}
+.d-c p{font-size:12.5px;color:var(--faint);margin-top:8px;line-height:1.6}
+
+.mini{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 30px}
+.mini .m-i{font-family:var(--mono);font-size:11px;color:var(--muted);background:var(--surface);
+  border:1px solid var(--border);border-radius:8px;padding:6px 12px}
+.mini .m-i b{font-weight:500}
+.mini .ok b{color:var(--ok)} .mini .warn b{color:var(--warn)} .mini .bad b{color:var(--bad)} .mini .na b{color:var(--na)}
+
+.proof{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pf{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 19px}
+.pf .pf-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:7px}
+.pf .pf-id{font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+.pf h5{font-size:14.5px;font-weight:700;line-height:1.5;margin-bottom:4px}
+.pf p{font-size:13px;color:var(--muted);line-height:1.62}
+
+/* ===== findings (part4) ===== */
+.find{display:grid;gap:12px}
+.f-c{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:20px 24px;
+  display:grid;grid-template-columns:44px 1fr;gap:18px}
+.f-c .f-n{font-family:var(--disp);font-size:26px;font-weight:900;color:var(--copper);opacity:.9;line-height:1.1}
+.f-c h4{font-family:var(--disp);font-size:17px;font-weight:700;margin-bottom:7px;line-height:1.5}
+.f-c p{font-size:14px;color:var(--muted);line-height:1.7;max-width:640px}
+
+/* ===== laminate stack (part5, signature) ===== */
+.stack{margin:8px 0 4px;position:relative}
+.sl{display:grid;grid-template-columns:150px 1fr 118px;gap:18px;align-items:center;
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:14px 22px;margin-bottom:6px;position:relative;overflow:hidden;transition:transform .2s,border-color .2s}
+.sl::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--border)}
+.sl.dh::before{background:var(--copper)}
+.sl.dm::before{background:var(--copper);opacity:.45}
+.sl:hover{transform:translateX(4px);border-color:#31405a}
+.sl .sl-name{font-weight:700;font-size:14.5px;line-height:1.4}
+.sl .sl-name .en{display:block;font-family:var(--mono);font-size:10px;color:var(--faint);letter-spacing:.1em;font-weight:400;margin-top:2px}
+.sl .sl-note{font-size:13px;color:var(--muted);line-height:1.6}
+.sl .sl-depth{display:flex;flex-direction:column;gap:5px;align-items:flex-end}
+.sl .dd{display:flex;gap:4px}
+.sl .dd i{width:16px;height:5px;border-radius:3px;background:var(--border)}
+.sl.dh .dd i{background:var(--copper)}
+.sl.dm .dd i:nth-child(-n+2){background:var(--copper);opacity:.6}
+.sl.dl .dd i:nth-child(1){background:var(--faint)}
+.sl .dl-t{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--faint)}
+.sl.dh .dl-t{color:var(--copper)}
+.s-arrow{text-align:center;color:var(--faint);font-family:var(--mono);font-size:11px;padding:1px 0 7px;user-select:none}
+.s-split{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:6px}
+.s-split .sl{margin-bottom:0}
+.legend{display:flex;gap:18px;flex-wrap:wrap;margin:18px 0 0;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.legend .li{display:flex;align-items:center;gap:8px}
+.legend .sw{width:16px;height:5px;border-radius:3px}
+
+/* ===== alpha framework (part6) ===== */
+.flow{display:flex;align-items:stretch;gap:0;margin:10px 0 30px;flex-wrap:wrap}
+.fl-s{flex:1;min-width:118px;background:var(--surface);border:1px solid var(--border);border-radius:11px;
+  padding:14px 13px;text-align:center;position:relative}
+.fl-s .fn{font-family:var(--mono);font-size:9.5px;color:var(--copper);letter-spacing:.14em;margin-bottom:6px}
+.fl-s h5{font-size:13px;font-weight:700;line-height:1.45}
+.fl-s p{font-size:11px;color:var(--faint);margin-top:4px;line-height:1.5}
+.fl-a{display:flex;align-items:center;color:var(--copper);font-family:var(--mono);padding:0 7px;font-size:13px}
+.formula{font-family:var(--mono);font-size:14px;background:var(--surface2);border:1px solid var(--border);
+  border-radius:10px;padding:15px 20px;color:var(--text);margin:22px 0;text-align:center;letter-spacing:.02em}
+.formula .cu{color:var(--copper-hi)}
+
+.bars{display:grid;gap:8px;margin-top:8px}
+.bar-r{display:grid;grid-template-columns:128px 1fr 44px;gap:14px;align-items:center}
+.bar-r .b-name{font-size:13px;text-align:right;color:var(--text)}
+.bar-r .b-name .tk{display:block;font-size:9.5px}
+.bar-r .b-track{height:12px;background:var(--surface2);border-radius:6px;overflow:hidden;border:1px solid var(--border-soft)}
+.bar-r .b-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,#8a5a35,var(--copper));width:0;transition:width 1s cubic-bezier(.2,.7,.3,1)}
+.bar-r.dim .b-fill{background:var(--faint);opacity:.5}
+.bar-r.na .b-track{background:repeating-linear-gradient(45deg,var(--surface2),var(--surface2) 5px,var(--surface3) 5px,var(--surface3) 10px)}
+.bar-r .b-v{font-family:var(--mono);font-size:12px;color:var(--copper-hi);text-align:right}
+.bar-r.dim .b-v{color:var(--faint)}
+.bar-r.na .b-v{color:var(--unk);font-size:10px}
+
+/* ===== research queue (part7) ===== */
+.tier-h{display:flex;align-items:baseline;gap:12px;margin:36px 0 14px}
+.tier-h .t-tag{font-family:var(--mono);font-size:11px;letter-spacing:.14em;padding:4px 12px;border-radius:99px;
+  border:1px solid var(--copper);color:var(--copper-hi)}
+.tier-h.t2 .t-tag{border-color:var(--warn);color:var(--warn)}
+.tier-h.t3 .t-tag{border-color:var(--faint);color:var(--muted)}
+.tier-h span{font-size:13px;color:var(--faint)}
+.q-c{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 20px;
+  display:grid;grid-template-columns:118px 1fr;gap:16px;align-items:baseline;margin-bottom:8px}
+.q-c .q-n{font-weight:700;font-size:14.5px}
+.q-c .q-n .tk{display:block}
+.q-c p{font-size:13.5px;color:var(--muted);line-height:1.65}
+.q-c p b.trg{color:var(--warn);font-weight:500;font-family:var(--mono);font-size:12px}
+.t3-g{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.t3-c{background:var(--surface);border:1px solid var(--border-soft);border-radius:11px;padding:14px 18px}
+.t3-c h6{font-size:13px;font-weight:700;margin-bottom:4px;color:var(--muted)}
+.t3-c p{font-size:12px;color:var(--faint);line-height:1.6}
+
+/* ===== unknown backlog (part8) ===== */
+.u-g{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.u-c{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:17px 20px;position:relative}
+.u-c.top{border-color:rgba(127,143,199,.45);background:linear-gradient(165deg,var(--surface),rgba(127,143,199,.06))}
+.u-c .u-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:8px}
+.u-c .u-id{font-family:var(--mono);font-size:11px;color:var(--unk)}
+.u-c .stars{font-family:var(--mono);font-size:10px;color:var(--warn);letter-spacing:.1em}
+.u-c h5{font-size:14.5px;font-weight:700;margin-bottom:8px;line-height:1.5}
+.u-c .u-row{font-size:12.5px;color:var(--muted);line-height:1.6;margin-top:6px}
+.u-c .u-row .u-k{font-family:var(--mono);font-size:10px;color:var(--faint);letter-spacing:.1em;display:block;margin-bottom:2px}
+
+/* ===== research loop (part9) ===== */
+.loop-wrap{position:relative;width:min(560px,100%);aspect-ratio:1;margin:26px auto 10px}
+.loop-ring{position:absolute;inset:12%;border:1.5px dashed #35425a;border-radius:50%}
+.loop-c{position:absolute;width:180px;background:var(--surface);border:1px solid var(--border);border-radius:13px;
+  padding:14px 16px;text-align:center;box-shadow:0 8px 28px rgba(0,0,0,.35)}
+.loop-c .lo-t{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--copper);margin-bottom:5px}
+.loop-c h5{font-size:14px;font-weight:700;margin-bottom:4px}
+.loop-c p{font-size:11.5px;color:var(--muted);line-height:1.55}
+.loop-c.p1{top:0;left:50%;transform:translateX(-50%)}
+.loop-c.p2{bottom:6%;right:0}
+.loop-c.p3{bottom:6%;left:0}
+.loop-core{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:190px;text-align:center;
+  background:var(--copper-dim);border:1px solid var(--copper);border-radius:14px;padding:16px 14px}
+.loop-core .lo-t{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--copper-hi);margin-bottom:5px}
+.loop-core p{font-size:12px;color:var(--text);line-height:1.6}
+.loop-arr{position:absolute;font-family:var(--mono);color:var(--copper);font-size:15px;user-select:none}
+.loop-arr.a1{top:26%;right:13%;transform:rotate(52deg)}
+.loop-arr.a2{bottom:14%;left:49%;transform:rotate(180deg)}
+.loop-arr.a3{top:26%;left:13%;transform:rotate(-52deg)}
+.fals{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:26px 0 8px}
+.fals .fa-c{background:var(--surface);border:1px solid rgba(222,100,112,.35);border-radius:12px;padding:16px 18px}
+.fals .fa-c .fa-n{font-family:var(--mono);font-size:11px;color:var(--bad);margin-bottom:7px;letter-spacing:.12em}
+.fals .fa-c p{font-size:13.5px;line-height:1.6}
+.disc{counter-reset:d;display:grid;gap:9px;margin-top:10px}
+.disc .di{background:var(--surface);border:1px solid var(--border-soft);border-radius:10px;padding:13px 18px 13px 52px;
+  position:relative;font-size:13.5px;color:var(--muted);line-height:1.65}
+.disc .di::before{counter-increment:d;content:counter(d,decimal-leading-zero);position:absolute;left:18px;top:14px;
+  font-family:var(--mono);font-size:11px;color:var(--copper)}
+.disc .di b{color:var(--text)}
+
+/* ===== final ===== */
+#final .kt{display:grid;gap:14px;margin-top:8px}
+#final .kt-c{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px 28px}
+#final .kt-c h4{font-family:var(--disp);font-size:18px;font-weight:700;margin-bottom:8px}
+#final .kt-c p{font-size:14.5px;color:var(--muted);max-width:640px}
+#final .fin{margin:56px 0 30px;text-align:center}
+#final .fin .foil{height:2px;background:linear-gradient(90deg,transparent,var(--copper),transparent);margin-bottom:36px}
+#final .fin p.big{font-family:var(--disp);font-size:clamp(21px,3vw,28px);font-weight:700;line-height:1.6}
+#final .fin p.big .cu{color:var(--copper)}
+#final .fin .src{font-family:var(--mono);font-size:10.5px;color:var(--faint);margin-top:30px;letter-spacing:.06em;line-height:2}
+
+/* ===== responsive ===== */
+@media (max-width:1080px){
+  #toc{display:none}
+  #mnav{display:block}
+  main{margin-left:0;padding:52px 22px 0}
+}
+@media (max-width:760px){
+  .g2,.g3,.g4,.twolayer,.proof,.u-g,.t3-g{grid-template-columns:1fr}
+  #cover .qs{grid-template-columns:1fr}
+  .dash{grid-template-columns:1fr}
+  .fals{grid-template-columns:1fr}
+  .th-c{grid-template-columns:40px 1fr}
+  .th-c .th-meta{grid-column:2;flex-direction:row;align-items:center;justify-content:flex-start}
+  .sl{grid-template-columns:1fr;gap:8px}
+  .sl .sl-depth{align-items:flex-start}
+  .flow{flex-direction:column}
+  .fl-a{transform:rotate(90deg);justify-content:center;padding:2px 0}
+  .bar-r{grid-template-columns:96px 1fr 40px}
+  .q-c{grid-template-columns:1fr;gap:6px}
+  .f-c{grid-template-columns:1fr;gap:8px}
+  .loop-wrap{aspect-ratio:auto;display:flex;flex-direction:column;gap:12px;width:100%}
+  .loop-ring,.loop-arr{display:none}
+  .loop-c,.loop-core{position:static;transform:none;width:100%}
+  .loop-core{order:-1}
+}
+:focus-visible{outline:2px solid var(--copper);outline-offset:2px;border-radius:6px}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<nav id="toc" aria-label="目錄">
+  <div class="brand">CCL RESEARCH PRODUCT</div>
+  <div class="brand-sub">從市場敘事到<br>Buy-side 投資框架</div>
+  <a class="tlink" href="#cover"><span class="no">◆</span>Cover</a>
+  <a class="tlink" href="#p1"><span class="no">01</span>敘事的起點</a>
+  <a class="tlink" href="#p2"><span class="no">02</span>論點拆解</a>
+  <a class="tlink" href="#p3"><span class="no">03</span>驗證結果</a>
+  <a class="tlink" href="#p4"><span class="no">04</span>七個關鍵發現</a>
+  <a class="tlink" href="#p5"><span class="no">05</span>供應鏈全圖</a>
+  <a class="tlink" href="#p6"><span class="no">06</span>Alpha 框架</a>
+  <a class="tlink" href="#p7"><span class="no">07</span>研究佇列</a>
+  <a class="tlink" href="#p8"><span class="no">08</span>Unknown List</a>
+  <a class="tlink" href="#p9"><span class="no">09</span>Living Framework</a>
+  <a class="tlink" href="#final"><span class="no">10</span>Key Takeaways</a>
+  <div class="toc-foot">基準日 2026-07-09<br>閱讀時間 15–20 min<br>個人研究・非投資建議</div>
+</nav>
+
+<nav id="mnav" aria-label="行動版目錄">
+  <a href="#cover">Cover</a><a href="#p1">01 敘事</a><a href="#p2">02 論點</a><a href="#p3">03 驗證</a><a href="#p4">04 發現</a><a href="#p5">05 供應鏈</a><a href="#p6">06 Alpha</a><a href="#p7">07 佇列</a><a href="#p8">08 Unknown</a><a href="#p9">09 Loop</a><a href="#final">10 結語</a>
+</nav>
+
+<main>
+<div class="wrap">
+
+<!-- ============ COVER ============ -->
+<section id="cover">
+  <div class="meta-top rv">
+    <span>EXECUTIVE RESEARCH PRODUCT</span><span class="dot">◆</span>
+    <span>2026-07-09</span><span class="dot">◆</span>
+    <span>v1.0</span>
+  </div>
+  <h1 class="rv">CCL Supply Chain<br>從市場敘事到 <span class="cu">Buy-side 投資框架</span></h1>
+  <p class="sub rv">How an Investment Thesis Was Verified, Challenged, and Rebuilt</p>
+  <p class="one rv">這不是一份選股報告，而是一個把市場敘事轉化為研究框架的完整案例——從一集 Podcast、一則 Threads 貼文開始，經過兩輪驗證與證偽，最後留下的是一套可持續更新的研究系統。</p>
+  <div class="qs">
+    <div class="q rv"><div class="qn">QUESTION 01</div><p>孟恭到底說了什麼？——把節目論點與轉述者添加的敘事，一條一條拆開。</p></div>
+    <div class="q rv"><div class="qn">QUESTION 02</div><p>哪些是真的？哪些是敘事？——每條論點獨立查核，給出可證偽的判定。</p></div>
+    <div class="q rv"><div class="qn">QUESTION 03</div><p>如果不追消息，真正值得追的是什麼？——預期差、時機、與證偽速度。</p></div>
+  </div>
+  <div class="foil rv"></div>
+  <div class="meta-bot rv">SOURCES：《CCL 供應鏈 Thesis 驗證報告》＋《AI Infra × CCL Alpha Playbook v1.0》｜個人研究，非投資建議</div>
+</section>
+
+<!-- ============ PART 1 ============ -->
+<section class="part" id="p1">
+  <div class="eyebrow rv">PART 01 · THE NARRATIVE</div>
+  <h2 class="pt rv">敘事的起點：一集 Podcast，兩層作者</h2>
+  <p class="pd rv">整個研究由一則社群素材觸發。追溯它的傳播路徑後，第一個發現就改寫了全案：這份素材存在「兩層作者」，而兩層的可信度天差地遠。</p>
+
+  <div class="tl rv">
+    <div class="tl-i"><div class="tl-w">2026 / 07 / 08</div><h4>《股癌》EP676 → EP677 播出</h4><p>謝孟恭談台股降槓桿壓力測試、季線紀律、功率元件缺貨；EP677 新點名 CCL 與 Wafer 兩個維持強勢的族群——但節目沒有展開講。</p></div>
+    <div class="tl-i"><div class="tl-w">同日稍後</div><h4>Threads 帳號 _sunmoon.kyle 轉述並加料</h4><p>在轉述節目內容之上，自行添加敘事：「CCL 更上游有一家沒人討論、市值不大、連研究報告都沒有、交期拉長的神祕公司」，並以「追蹤或私訊拿完整研究筆記」收尾。</p></div>
+    <div class="tl-i"><div class="tl-w">市場層</div><h4>討論發酵</h4><p>「族群是真的 → 有一檔沒人知道 → 私訊拿筆記」的懸念結構開始在社群擴散。</p></div>
+    <div class="tl-i"><div class="tl-w">2026 / 07 / 09 · 第一輪</div><h4>《CCL 供應鏈 Thesis 驗證報告》</h4><p>把素材拆成 9 條可查核的 thesis，區分「孟恭層」與「Threads 作者層」；對 CCL 上游每一個節點（玻纖布、玻纖紗、銅箔、樹脂、鑽針、瓷釉熔劑）逐一查核覆蓋狀態。</p></div>
+    <div class="tl-i"><div class="tl-w">2026 / 07 / 09 · 第二輪</div><h4>《Alpha Research Playbook v1.0》</h4><p>把驗證結果制度化：32 家研究母體、預期差矩陣、Alpha Score、Tier 1/2/3 研究佇列、15 項 Unknown List、三條證偽線與三個更新迴圈。</p></div>
+  </div>
+
+  <div class="twolayer">
+    <div class="layer-c la rv">
+      <div class="lc-t"><h4>第一層：謝孟恭（EP676/677）</h4><span class="badge b-ok">大致成立</span></div>
+      <p>降槓桿壓力測試、功率元件缺貨、CCL 與 Wafer 強勢——經交叉比對節目筆記與產業新聞，<strong>產業事實面大致成立</strong>。但幾乎全部都是市場已知、且股價已大幅反映的資訊。</p>
+    </div>
+    <div class="layer-c lb rv">
+      <div class="lc-t"><h4>第二層：Threads 轉述者</h4><span class="badge b-bad">Weak → Contradict</span></div>
+      <p>「神祕上游公司」的敘事為轉述者自行添加，非孟恭論點。逐節點查核後判定 <strong>Weak 至 Contradict</strong>——且收尾的導流結構本身就是紅旗。</p>
+    </div>
+  </div>
+
+  <div class="callout rv"><div class="cl-t">WHY IT MATTERS</div>
+    <p>對這份素材的正確操作只有一句話：<em class="hl">取其產業事實，棄其選股暗示。</em>這條原則後來被制度化為可複用的社群素材篩子。</p>
+  </div>
+</section>
+
+<!-- ============ PART 2 ============ -->
+<section class="part" id="p2">
+  <div class="eyebrow rv">PART 02 · THESIS EXTRACTION</div>
+  <h2 class="pt rv">論點拆解：九條 Thesis，兩種來源</h2>
+  <p class="pd rv">所有論點被完整擷取為可獨立驗證的卡片。來源層決定了先驗可信度——但每一條都經過同樣的獨立查核。</p>
+
+  <h3 class="st rv"><span class="tick"></span>孟恭層（EP676 / EP677 經轉述）</h3>
+  <div class="thesis">
+    <div class="th-c rv"><div class="th-id">T1</div><div><h4>台股正在降槓桿：殺盤源於槓桿爆掉，不是基本面</h4><p>6/26 單日重挫 1,683 點、四日修正逾 3,700 點、權值股跌停——現象確認；「健康洗籌碼」屬詮釋框架。</p></div><div class="th-meta"><span class="badge b-ok">Confirmed·現象</span><span class="imp">重要度 <b>★★★★★</b></span></div></div>
+    <div class="th-c rv"><div class="th-id">T2</div><div><h4>季線是生命線，跌破就換人當大哥</h4><p>屬交易紀律而非可證偽命題，與其一貫風格一致——不納入真偽判定，但成為本研究「等回檔」時機框架的來源。</p></div><div class="th-meta"><span class="badge b-na">N/A·紀律</span><span class="imp">重要度 <b>★★★</b></span></div></div>
+    <div class="th-c rv"><div class="th-id">T3</div><div><h4>功率元件缺貨漲價，仍是盤面主流</h4><p>MOSFET 買不到、7 月漲價信密集、TI/ST 交期最長 99 週——多方印證。風險：重複下單造成的庫存幻影。</p></div><div class="th-meta"><span class="badge b-ok">Confirmed</span><span class="imp">重要度 <b>★★★★</b></span></div></div>
+    <div class="th-c rv"><div class="th-id">T4</div><div><h4>功率市值太小，法人難參與，行情偏短線輪動</h4><p>結構性陳述與市值分布相符，但「法人是否其實在建倉」無法硬性驗證——已列入 Unknown（U9）。</p></div><div class="th-meta"><span class="badge b-warn">Partially</span><span class="imp">重要度 <b>★★★</b></span></div></div>
+    <div class="th-c rv"><div class="th-id">T5</div><div><h4>被動元件修正中，但有流動性優勢</h4><p>「修正中」與盤面相符；「法人會回來佈局」待買賣超轉正驗證——屬觀察名單型論點，非持有型。</p></div><div class="th-meta"><span class="badge b-warn">Partially</span><span class="imp">重要度 <b>★★</b></span></div></div>
+    <div class="th-c rv"><div class="th-id">T6</div><div><h4>CCL 維持強勢：漲價、供不應求</h4><p>全案硬證據最充分的一條：台燿 Q2 漲最高 40%、三雄 5 月營收同創新高、高盛上修族群 EPS 17–29%——<strong>但已大幅 price-in</strong>。</p></div><div class="th-meta"><span class="badge b-ok">Confirmed</span><span class="imp">重要度 <b>★★★★★</b></span></div></div>
+    <div class="th-c rv"><div class="th-id">T7</div><div><h4>Wafer（矽晶圓）維持強勢</h4><p>只有節目點名＋「一鯨落萬物生」補漲邏輯，無報價硬數據——證據深度不足，列入 Unknown（U10）先補證據。</p></div><div class="th-meta"><span class="badge b-warn">Partially·證據不足</span><span class="imp">重要度 <b>★★★</b></span></div></div>
+  </div>
+
+  <h3 class="st rv"><span class="tick"></span>Threads 作者層（轉述者自行添加）</h3>
+  <div class="thesis">
+    <div class="th-c rv"><div class="th-id">T8</div><div><h4>「孟恭點名 CCL 卻不點個股，並不常見」</h4><p>與事實相反：EP671 孟恭明言，以他的資金規模會刻意避談市值百億級中小型股。不點名是一貫紀律，不是暗號。</p></div><div class="th-meta"><span class="badge b-bad">Contradict</span><span class="imp">重要度 <b>★★★★</b></span></div></div>
+    <div class="th-c rv"><div class="th-id">T9</div><div><h4>「CCL 更上游有一家沒人討論、無研究報告的神祕公司」</h4><p>逐節點查核：每一個符合描述的候選都已有漲停潮、投顧報告或媒體專文。「交期拉長」倒是真的——但那是全市場已知資訊。</p></div><div class="th-meta"><span class="badge b-bad">Weak → Contradict</span><span class="imp">重要度 <b>★★★★★</b></span></div></div>
+  </div>
+</section>
+
+<!-- ============ PART 3 ============ -->
+<section class="part" id="p3">
+  <div class="eyebrow rv">PART 03 · WHAT WAS PROVEN</div>
+  <h2 class="pt rv">驗證結果：一張儀表板</h2>
+  <p class="pd rv">兩輪研究之後，全部知識被審計為三類：可作為決策地基的、已被證偽的、以及承認不知道的。</p>
+
+  <div class="dash">
+    <div class="d-c ok rv"><div class="d-l">CONFIRMED</div><div class="d-n">7</div><p>已具充分證據的事項（C1–C7）——可作為決策地基，但多屬市場已知。</p></div>
+    <div class="d-c bad rv"><div class="d-l">FALSIFIED</div><div class="d-n">3</div><p>已被證偽的敘事（F1–F3）——全部來自 Threads 轉述層。</p></div>
+    <div class="d-c unk rv"><div class="d-l">UNKNOWN</div><div class="d-n">15</div><p>目前不知道、且不可猜的事項（U1–U15）——本研究的防火牆。</p></div>
+  </div>
+
+  <div class="mini rv">
+    <span class="m-i">9 條 Thesis 判定分布：</span>
+    <span class="m-i ok"><b>3</b> Confirmed</span>
+    <span class="m-i warn"><b>3</b> Partially</span>
+    <span class="m-i bad"><b>2</b> Contradict</span>
+    <span class="m-i na"><b>1</b> N/A</span>
+  </div>
+
+  <h3 class="st rv"><span class="tick"></span>Confirmed — 決策地基</h3>
+  <div class="proof">
+    <div class="pf rv"><div class="pf-h"><span class="pf-id">C1</span><span class="badge b-ok">高·多源交叉</span></div><h5>CCL 高階供不應求為真</h5><p>台燿 Q2 漲最高 40%、台光電 M7+ 漲 10–15%、三雄 5 月營收同創新高、南亞法說明示高階缺貨到 2026 之後。</p></div>
+    <div class="pf rv"><div class="pf-h"><span class="pf-id">C2</span><span class="badge b-ok">高</span></div><h5>AI 供應鏈擴散仍在進行</h5><p>封測報價 +30–50% → 功率缺貨（交期 99 週）→ CCL / Wafer 被新點名——擴散鏈由內而外持續外推。</p></div>
+    <div class="pf rv"><div class="pf-h"><span class="pf-id">C3</span><span class="badge b-ok">高</span></div><h5>玻纖布是最硬瓶頸</h5><p>日東紡 T-glass 市占 &gt;90%、新產能 2027H2 才開且僅 +20%；Low-Dk 交期 30 週+；E-glass 四度調漲。</p></div>
+    <div class="pf rv"><div class="pf-h"><span class="pf-id">C4</span><span class="badge b-warn">中高·待二源</span></div><h5>銅箔結構性缺口</h5><p>HVLP 表面處理設備日商市占 8 成 → 全產業擴產上限約 1,500 噸/月；缺口說法 400–600 噸/月，數字須二源驗證。</p></div>
+    <div class="pf rv"><div class="pf-h"><span class="pf-id">C5</span><span class="badge b-warn">中高</span></div><h5>CSP「以價換量」的結構差異</h5><p>高盛估 AI PCB+CCL 僅佔 CSP capex 0.8–1.4%（2026）→ 漲價容忍度極高。多方最硬論據，依賴 capex 母數不下修。</p></div>
+    <div class="pf rv"><div class="pf-h"><span class="pf-id">C6</span><span class="badge b-ok">高·現象</span></div><h5>降槓桿壓力測試為真</h5><p>6/26 單日重挫 1,683 點、權值股跌停——現象確認；「歸因於槓桿而非基本面」屬詮釋框架。</p></div>
+    <div class="pf rv"><div class="pf-h"><span class="pf-id">C7</span><span class="badge b-ok">高</span></div><h5>功率元件缺貨漲價為真</h5><p>MOSFET 買不到、7 月漲價信密集、交期最長 99 週——外溢鏈的溫度計。</p></div>
+  </div>
+
+  <h3 class="st rv"><span class="tick"></span>Falsified — 被證偽的敘事</h3>
+  <div class="proof">
+    <div class="pf rv"><div class="pf-h"><span class="pf-id">F1</span><span class="badge b-bad">Refuted</span></div><h5>「孟恭不點名個股很不尋常」</h5><p>EP671 自述刻意避談中小型股，只談權值股。懸念是人為製造的敘事鉤子。</p></div>
+    <div class="pf rv"><div class="pf-h"><span class="pf-id">F2</span><span class="badge b-bad">Refuted</span></div><h5>「上游有一家沒人討論的公司」</h5><p>玻纖五雄 1 月漲停潮＋大摩/投顧報告、金居有投顧目標價、國精化有專文＋導流、尖點有法人報告——無一候選同時滿足五項描述。</p></div>
+    <div class="pf rv"><div class="pf-h"><span class="pf-id">F3</span><span class="badge b-bad">Refuted</span></div><h5>「跟單可獲得私有資訊優勢」</h5><p>候選評分最高的公司，恰是投顧體系導流最積極的標的——跟單等於承接已被行銷至少半年的敘事。</p></div>
+  </div>
+
+  <details class="exp rv"><summary>方法補充：候選評分為什麼本身就是證偽</summary><div class="exp-b">研究不猜測、不認定轉述者所指標的，而是把其五項描述——(a) CCL 更上游 (b) 單價不高用量極大 (c) 交期拉長 (d) 市值不大股價整理中 (e) 沒人討論、無研究報告——當成篩選條件，對整條上游獨立打分。結果：沒有任何一家能同時滿足五項，尤其是 (e)；描述模糊到 6–8 家都「部分吻合」——這是冷讀（cold reading）式文案的特徵，而非研究。位置完全吻合「賣鐵礦」描述的幾家公司（福隆、台灣必成、長春）甚至未上市，可投資性為零。</div></details>
+</section>
+
+<!-- ============ PART 4 ============ -->
+<section class="part" id="p4">
+  <div class="eyebrow rv">PART 04 · BIGGEST FINDINGS</div>
+  <h2 class="pt rv">七個關鍵發現</h2>
+  <p class="pd rv">如果只有五分鐘，讀這一章就夠了。</p>
+
+  <div class="find">
+    <div class="f-c rv"><div class="f-n">1</div><div><h4>CCL 強勢是真的——但「知道缺料」的資訊價值是零。</h4><p>漲價、缺貨、EPS 上修 17–29% 全部有據可查；也全部反映在歷史新高、千元俱樂部與處置紀錄裡。2026/7 的正確問題不是「這是不是真的」，而是「2027–28 的跳躍成長有多少已在價格裡」。</p></div></div>
+    <div class="f-c rv"><div class="f-n">2</div><div><h4>神祕上游公司沒有證據。</h4><p>逐節點查核 CCL 上游每一環，每個符合描述的候選都已被討論——有漲停潮、有目標價、有媒體專文。「無研究報告」對所有主要候選都是可證偽的假話。</p></div></div>
+    <div class="f-c rv"><div class="f-n">3</div><div><h4>懸念是人為製造的。</h4><p>「不點名很反常」與孟恭 EP671 的自述直接矛盾——刻意避談中小型股是他的一貫紀律。轉述者把紀律包裝成暗號，製造出私有資訊的錯覺。</p></div></div>
+    <div class="f-c rv"><div class="f-n">4</div><div><h4>導流結構本身就是紅旗。</h4><p>「族群是真的 → 有一檔沒人知道 → 私訊拿筆記」是典型帶單漏斗。諷刺的是，孟恭本人在 EP671 花了整段譴責這類帳號。這條證偽建立了一個可複用的篩子。</p></div></div>
+    <div class="f-c rv"><div class="f-n">5</div><div><h4>產業成立，但敘事被放大——真正的瓶頸有名有姓。</h4><p>不需要神祕公司：日東紡 T-glass 市占逾 90%、Low-Dk 交期 30 週+、HVLP 設備商市占 8 成——最硬的瓶頸全部是公開資訊，也全部被定價。</p></div></div>
+    <div class="f-c rv"><div class="f-n">6</div><div><h4>結構反轉有明確時間戳：2027H2–2028。</h4><p>所有人都在擴產（台玻 12 條線、日東紡 2027H2、國精化 10 倍 PSMA、銅箔新廠）＋中系高階認證推進＋平台遞延疑慮——供需同步反轉是可排程事件，不是黑天鵝。</p></div></div>
+    <div class="f-c rv"><div class="f-n">7</div><div><h4>Unknown 比答案更重要。</h4><p>15 項未知構成研究的防火牆：任何依賴 U 項目的結論必須降級；證據補上前拒絕給分。環球晶因報價數據未補而評分 N/A——這就是紀律。</p></div></div>
+  </div>
+</section>
+
+<!-- ============ PART 5 ============ -->
+<section class="part" id="p5">
+  <div class="eyebrow rv">PART 05 · AI SUPPLY CHAIN</div>
+  <h2 class="pt rv">供應鏈全圖：一塊板材的縱深</h2>
+  <p class="pd rv">CCL 本身就是層壓板——這張圖也以疊層呈現。每一層標示本輪研究的驗證深度：深度不足的層，在補上證據前只能作為地圖，不能作為決策依據。</p>
+
+  <div class="stack rv">
+    <div class="sl dl"><div class="sl-name">AI Infrastructure<span class="en">SERVER / RACK</span></div><div class="sl-note">需求母數＝CSP capex（年增 43% 預估的存續＝U14）；GPU（Rubin）與 ASIC 滲透率為未知項</div><div class="sl-depth"><div class="dd"><i></i><i></i><i></i></div><span class="dl-t">DEPTH · LOW</span></div></div>
+    <div class="s-arrow">▼</div>
+    <div class="sl dm"><div class="sl-name">先進封裝<span class="en">PACKAGE · CoWoS</span></div><div class="sl-note">CoWoS 2025 約 7.5 萬片 → 上修至 13 萬片規劃；封測報價 +30–50% 已公開，個股層未驗證</div><div class="sl-depth"><div class="dd"><i></i><i></i><i></i></div><span class="dl-t">DEPTH · MED</span></div></div>
+    <div class="s-arrow">▼</div>
+    <div class="sl dl"><div class="sl-name">ABF 載板<span class="en">SUBSTRATE</span></div><div class="sl-note">Rubin 載板面積 +75%、18 層；2027 缺口估 21–27% 屬引述、未經二源驗證（U15）——證據缺口＝研究機會</div><div class="sl-depth"><div class="dd"><i></i><i></i><i></i></div><span class="dl-t">DEPTH · LOW</span></div></div>
+    <div class="s-arrow">▼</div>
+    <div class="sl dm"><div class="sl-name">PCB<span class="en">40 層+ 厚板 / HDI</span></div><div class="sl-note">鑽針耗量 +4–6 倍；「一線擴產保守 → 二線 HDI 外溢」結構已確認，一線個股本輪未驗證</div><div class="sl-depth"><div class="dd"><i></i><i></i><i></i></div><span class="dl-t">DEPTH · MED</span></div></div>
+    <div class="s-arrow">▼</div>
+    <div class="sl dh"><div class="sl-name">CCL 銅箔基板<span class="en">M6 → M9 規格跳級</span></div><div class="sl-note">全案驗證核心：台系龍頭在 Ultra Low Loss 絕對主導、全球 AI CCL 約 6 成；漲價鏈已走完一輪並開始第二輪</div><div class="sl-depth"><div class="dd"><i></i><i></i><i></i></div><span class="dl-t">DEPTH · HIGH</span></div></div>
+    <div class="s-arrow">▼</div>
+    <div class="s-split">
+      <div class="sl dh"><div class="sl-name">銅箔<span class="en">COPPER FOIL · HVLP2→4</span></div><div class="sl-note">缺口估 400–600 噸/月（待二源）；設備瓶頸單一日商市占 8 成</div><div class="sl-depth"><div class="dd"><i></i><i></i><i></i></div><span class="dl-t">DEPTH · HIGH</span></div></div>
+      <div class="sl dh"><div class="sl-name">玻纖布 / 紗<span class="en">GLASS CLOTH · Low-Dk / T / Q</span></div><div class="sl-note">最硬瓶頸：交期 30 週+；日東紡 T-glass 市占 &gt;90%，新產能 2027H2</div><div class="sl-depth"><div class="dd"><i></i><i></i><i></i></div><span class="dl-t">DEPTH · HIGH</span></div></div>
+    </div>
+    <div class="s-split">
+      <div class="sl dm"><div class="sl-name">樹脂<span class="en">RESIN · PPE / HC / PSMA</span></div><div class="sl-note">定性充分（擴產 10 倍、提前一年），全球供需量化表未建（U3）</div><div class="sl-depth"><div class="dd"><i></i><i></i><i></i></div><span class="dl-t">DEPTH · MED</span></div></div>
+      <div class="sl dm"><div class="sl-name">化學品 / 礦物<span class="en">CHEMICAL · 熔劑 / 瓷釉</span></div><div class="sl-note">全鏈覆蓋最低的節點：位置經驗證，量價傳導模型無人建過</div><div class="sl-depth"><div class="dd"><i></i><i></i><i></i></div><span class="dl-t">DEPTH · MED</span></div></div>
+    </div>
+    <div class="s-arrow">▼</div>
+    <div class="sl dl"><div class="sl-name">Raw Material<span class="en">石英砂 · 國際銅價 · 特用單體</span></div><div class="sl-note">價格母數層；台股無純標的，僅作為成本端追蹤</div><div class="sl-depth"><div class="dd"><i></i><i></i><i></i></div><span class="dl-t">DEPTH · LOW</span></div></div>
+  </div>
+
+  <div class="legend rv">
+    <span class="li"><span class="sw" style="background:var(--copper)"></span>HIGH＝已獨立驗證</span>
+    <span class="li"><span class="sw" style="background:var(--copper);opacity:.5"></span>MED＝部分驗證</span>
+    <span class="li"><span class="sw" style="background:var(--faint)"></span>LOW＝未驗證·僅結構標註</span>
+  </div>
+
+  <div class="callout rv"><div class="cl-t">傳導現況 · 2026/07</div>
+    <p>漲價鏈「上游原材料 → CCL/PCB → 載板」已完整走完一輪並開始第二輪。高盛估 AI PCB+CCL 僅佔 CSP capex <em class="hl">0.8–1.4%</em>——CSP「以價換量」、對漲價容忍度極高，是本輪與歷史 PCB 循環最大的結構差異。</p>
+  </div>
+
+  <details class="exp rv"><summary>橫向擴散鏈（EP676–677 確認的資金外溢路徑）</summary><div class="exp-b">封測（報價 +30–50%）→ 被動元件（修正中）→ 功率元件（缺貨、主流）→ 導線架 → CCL → Wafer（驗證較淺）。個股層除功率缺貨事實外多為結構性標註，未逐一驗證。另註：電源 / 散熱 / 連接器層由另一研究框架「台灣 AI 電力鏈」覆蓋，本框架不重複研究，僅保留交叉引用節點。</div></details>
+</section>
+
+<!-- ============ PART 6 ============ -->
+<section class="part" id="p6">
+  <div class="eyebrow rv">PART 06 · ALPHA FRAMEWORK</div>
+  <h2 class="pt rv">Alpha 框架：不問誰最好，只問什麼還沒被定價</h2>
+  <p class="pd rv">這不是選股流程，而是研究資源的配置流程。每一步都可證偽、可重評。</p>
+
+  <div class="flow rv">
+    <div class="fl-s"><div class="fn">STEP 1</div><h5>Expectation Gap</h5><p>市場定價了什麼、還沒定價什麼</p></div><div class="fl-a">→</div>
+    <div class="fl-s"><div class="fn">STEP 2</div><h5>Catalyst</h5><p>有無明確公告日的事件</p></div><div class="fl-a">→</div>
+    <div class="fl-s"><div class="fn">STEP 3</div><h5>Research Priority</h5><p>證據可補性 × 證偽成本</p></div><div class="fl-a">→</div>
+    <div class="fl-s"><div class="fn">STEP 4</div><h5>Evidence Quality</h5><p>法說 &gt; 公告 &gt; 券商 &gt; 媒體 &gt; 社群</p></div><div class="fl-a">→</div>
+    <div class="fl-s"><div class="fn">STEP 5</div><h5>Alpha Score</h5><p>排序研究工時，不是排序買點</p></div><div class="fl-a">→</div>
+    <div class="fl-s"><div class="fn">STEP 6</div><h5>Decision</h5><p>深研 / 等觸發 / 只監測</p></div>
+  </div>
+
+  <div class="formula rv">Alpha Score ＝ <span class="cu">低估分</span> ×（10 −<span class="cu"> 反映分</span>）÷ 10</div>
+
+  <h3 class="st rv"><span class="tick"></span>Alpha Score 排序（滿分 10；分數＝研究假說排序工具）</h3>
+  <div class="bars rv" id="alphaBars">
+    <div class="bar-r"><div class="b-name">中釉<span class="tk">1809 · 化學品</span></div><div class="b-track"><div class="b-fill" data-w="100"></div></div><div class="b-v">4.2</div></div>
+    <div class="bar-r"><div class="b-name">長興<span class="tk">1717 · 樹脂/膠材</span></div><div class="b-track"><div class="b-fill" data-w="93"></div></div><div class="b-v">3.9</div></div>
+    <div class="bar-r"><div class="b-name">鉅橡<span class="tk">8074 · 鑽針耗材</span></div><div class="b-track"><div class="b-fill" data-w="71"></div></div><div class="b-v">3.0</div></div>
+    <div class="bar-r"><div class="b-name">國碩<span class="tk">2406 · PCB 化學品</span></div><div class="b-track"><div class="b-fill" data-w="60"></div></div><div class="b-v">2.5</div></div>
+    <div class="bar-r"><div class="b-name">聯茂<span class="tk">6213 · CCL</span></div><div class="b-track"><div class="b-fill" data-w="55"></div></div><div class="b-v">2.3</div></div>
+    <div class="bar-r"><div class="b-name">定穎投控<span class="tk">3715 · PCB 二線</span></div><div class="b-track"><div class="b-fill" data-w="52"></div></div><div class="b-v">2.2</div></div>
+    <div class="bar-r"><div class="b-name">台玻<span class="tk">1802 · 玻纖布</span></div><div class="b-track"><div class="b-fill" data-w="50"></div></div><div class="b-v">2.1</div></div>
+    <div class="bar-r"><div class="b-name">榮科<span class="tk">4989 · 銅箔</span></div><div class="b-track"><div class="b-fill" data-w="48"></div></div><div class="b-v">2.0</div></div>
+    <div class="bar-r"><div class="b-name">大量<span class="tk">3167 · PCB 設備</span></div><div class="b-track"><div class="b-fill" data-w="48"></div></div><div class="b-v">2.0</div></div>
+    <div class="bar-r na"><div class="b-name">環球晶<span class="tk">6488 · Wafer</span></div><div class="b-track"></div><div class="b-v">N/A</div></div>
+    <div class="bar-r dim"><div class="b-name">國精化<span class="tk">4722 · 樹脂</span></div><div class="b-track"><div class="b-fill" data-w="29"></div></div><div class="b-v">1.2</div></div>
+    <div class="bar-r dim"><div class="b-name">金居<span class="tk">8358 · 銅箔</span></div><div class="b-track"><div class="b-fill" data-w="24"></div></div><div class="b-v">1.0</div></div>
+    <div class="bar-r dim"><div class="b-name">尖點<span class="tk">8021 · 鑽針</span></div><div class="b-track"><div class="b-fill" data-w="19"></div></div><div class="b-v">0.8</div></div>
+    <div class="bar-r dim"><div class="b-name">富喬<span class="tk">1815 · 玻纖</span></div><div class="b-track"><div class="b-fill" data-w="14"></div></div><div class="b-v">0.6</div></div>
+    <div class="bar-r dim"><div class="b-name">台光電<span class="tk">2383 · CCL</span></div><div class="b-track"><div class="b-fill" data-w="10"></div></div><div class="b-v">0.4</div></div>
+    <div class="bar-r dim"><div class="b-name">台燿<span class="tk">6274 · CCL</span></div><div class="b-track"><div class="b-fill" data-w="10"></div></div><div class="b-v">0.4</div></div>
+    <div class="bar-r dim"><div class="b-name">德宏<span class="tk">5475 · 石英布</span></div><div class="b-track"><div class="b-fill" data-w="7"></div></div><div class="b-v">0.3</div></div>
+  </div>
+
+  <div class="callout warn rv"><div class="cl-t">讀法警告</div>
+    <p><strong>Alpha Score 高 ≠ 買進。</strong>它只回答「研究資源該往哪投」。中釉 4.2 分的正確解讀是「值得花 10 小時建模驗證」，不是「值得建倉」。環球晶的 N/A 是刻意的：報價證據（U10）未補前拒絕評分——這就是紀律。</p>
+  </div>
+
+  <h3 class="st rv"><span class="tick"></span>預期差的三個結構性結論</h3>
+  <div class="disc rv">
+    <div class="di"><b>一階的預期差是「負向不對稱」。</b>上行已在目標價裡，下行（2027H2 反轉）不在共識模型裡——這不是做空訊號，而是倉位管理訊號：一階只適合回檔後參與、且必須綁定證偽線。</div>
+    <div class="di"><b>二階的預期差是「覆蓋差而非認知差」。</b>中釉／鉅橡／長興不是沒人知道，是沒人建模。補上量化模型之後，預期差可能兌現也可能證偽——這正是研究該做的事。</div>
+    <div class="di"><b>最乾淨的預期差是事件型。</b>聯茂 M9 認證、榮科 HVLP 認證放量、國碩部門拆分——有明確公告日、可證偽、不依賴宏觀假設。</div>
+  </div>
+</section>
+
+<!-- ============ PART 7 ============ -->
+<section class="part" id="p7">
+  <div class="eyebrow rv">PART 07 · RESEARCH QUEUE</div>
+  <h2 class="pt rv">研究佇列：Tier 1 / 2 / 3</h2>
+  <p class="pd rv">這是研究工時的排程，不是持股名單。Tier 1＝本季深研；Tier 2＝觸發器滿足才升級；Tier 3＝只跟事件，不投工時。</p>
+
+  <div class="tier-h rv"><span class="t-tag">TIER 1</span><span>本季內完成單一標的深度 memo · 5 家</span></div>
+  <div class="q-c rv"><div class="q-n">聯茂<span class="tk">6213 · CCL</span></div><p>全名單最乾淨的事件型預期差：M9 認證＝三雄比價收斂，落地與否 12 個月內必見分曉。</p></div>
+  <div class="q-c rv"><div class="q-n">中釉<span class="tk">1809 · 化學品</span></div><p>覆蓋最低 × 位置最深：全鏈唯一無人建模的節點——補上模型後，兌現或證偽都有研究價值。</p></div>
+  <div class="q-c rv"><div class="q-n">台玻<span class="tk">1802 · 玻纖布</span></div><p>雙重折價（五雄最低估值＋集團資產）＋最激進擴產：是 2026 受惠者與 2027 反轉指標的同一載體。</p></div>
+  <div class="q-c rv"><div class="q-n">金居<span class="tk">8358 · 銅箔</span></div><p>2027E EPS 18.04 是全鏈最可證偽的具體數字——驗證它比尋找新標的更有價值。</p></div>
+  <div class="q-c rv"><div class="q-n">鉅橡<span class="tk">8074 · 鑽針耗材</span></div><p>覆蓋差最大的耗材標的：與龍頭同吃層數 × 厚度紅利，覆蓋度卻不到一半。</p></div>
+
+  <div class="tier-h t2 rv"><span class="t-tag">TIER 2</span><span>條件觸發即升級 · 7 家（標註觸發器）</span></div>
+  <div class="q-c rv"><div class="q-n">長興<span class="tk">1717</span></div><p><b class="trg">觸發器：</b>電材毛利率單季跳升，或電材營收拆分揭露——傳產化工 → 電子材料的估值框架切換。</p></div>
+  <div class="q-c rv"><div class="q-n">榮科<span class="tk">4989</span></div><p><b class="trg">觸發器：</b>HVLP3/4 認證放量公告，或單季轉盈——雙向未定價，需要的是認證證據，不是觀點。</p></div>
+  <div class="q-c rv"><div class="q-n">環球晶<span class="tk">6488</span></div><p><b class="trg">觸發器：</b>報價／長約硬數據出現（補上 U10）——證據深度不足前拒絕評分。</p></div>
+  <div class="q-c rv"><div class="q-n">定穎投控<span class="tk">3715</span></div><p><b class="trg">觸發器：</b>AI 板佔比連兩季爬升——一線保守 → 二線外溢的結構已確認，幅度待驗。</p></div>
+  <div class="q-c rv"><div class="q-n">國碩<span class="tk">2406</span></div><p><b class="trg">觸發器：</b>電子化學品部門拆分揭露——拆分前純度折價合理。</p></div>
+  <div class="q-c rv"><div class="q-n">大量<span class="tk">3167</span></div><p><b class="trg">觸發器：</b>台廠 PCB 擴產訂單密集公告——capex 端領先耗材半個身位。</p></div>
+  <div class="q-c rv"><div class="q-n">國精化<span class="tk">4722</span></div><p><b class="trg">觸發器：</b>投顧導流退潮＋首份正式券商覆蓋出現——避免在行銷漏斗裡做「獨立研究」的錯覺。</p></div>
+
+  <div class="tier-h t3 rv"><span class="t-tag">TIER 3</span><span>母體監測 · 只跟事件</span></div>
+  <div class="t3-g rv">
+    <div class="t3-c"><h6>一階領漲群（台光電／台燿／富喬／建榮／德宏／尖點）</h6><p>升級條件：回檔至季線附近且證偽線未觸發 → 啟動回檔參與研究。</p></div>
+    <div class="t3-c"><h6>載板三雄（欣興／南電／景碩）</h6><p>升級條件：缺口 21–27% 完成二源驗證（U15）→ 建立載板層預期差矩陣。</p></div>
+    <div class="t3-c"><h6>PCB 一線（金像電／健鼎／臻鼎／華通）</h6><p>升級條件：毛利剪刀差反向（CCL 跌價）→ 健鼎／臻鼎升級為受惠研究。</p></div>
+    <div class="t3-c"><h6>功率／被動／Wafer／封測／未上市監測</h6><p>各自等硬報價、法人連續買超或上市計畫等事件；出現即建節點驗證。</p></div>
+  </div>
+
+  <details class="exp rv"><summary>落選說明（紀律記錄）：為什麼最紅的名字不在佇列裡</summary><div class="exp-b">台光電／台燿——研究已飽和，等回檔而非等新資訊；德宏／建榮——題材定價 9/10，研究的邊際價值低於等待的價值；國精化——敘事污染期，等導流退潮再研究；尖點——商業模式最好但已充分定價，降級為毛利率監測項。<strong>反映分 ≥ 8 的標的禁止投入新增研究工時——研究資源和資金一樣要配置。</strong></div></details>
+</section>
+
+<!-- ============ PART 8 ============ -->
+<section class="part" id="p8">
+  <div class="eyebrow rv">PART 08 · UNKNOWN LIST</div>
+  <h2 class="pt rv">Research Backlog：15 件承認不知道的事</h2>
+  <p class="pd rv">這是整份研究的特色，也是防火牆——任何依賴 U 項目的結論在證據補上前，一律降級處理。以下依優先級排列。</p>
+
+  <h3 class="st rv"><span class="tick"></span>最高優先 ★★★★★</h3>
+  <div class="u-g">
+    <div class="u-c top rv"><div class="u-h"><span class="u-id">U1</span><span class="stars">★★★★★</span></div><h5>AI Server 真正需求速度 vs 重複下單比例</h5><div class="u-row"><span class="u-k">不知道什麼</span>「缺貨」是真需求還是庫存幻影（被動元件 2021–22 殷鑑不遠）。</div><div class="u-row"><span class="u-k">需要什麼證據</span>ODM 月出貨、CSP 自建 rack 數、交期方向變化（拉長→縮短）。</div></div>
+    <div class="u-c top rv"><div class="u-h"><span class="u-id">U2</span><span class="stars">★★★★★</span></div><h5>Low Loss 材料實際 ASP 曲線（M7/M8/M9）</h5><div class="u-row"><span class="u-k">不知道什麼</span>只有漲幅 %，沒有絕對價格 → 無法建營收模型。</div><div class="u-row"><span class="u-k">需要什麼證據</span>券商拆解、法說 Q&amp;A、產業調研。</div></div>
+    <div class="u-c top rv"><div class="u-h"><span class="u-id">U4</span><span class="stars">★★★★★</span></div><h5>Glass Cloth 全球供需量化表</h5><div class="u-row"><span class="u-k">不知道什麼</span>只有日東紡 +20%（2027H2）與台玻 4→12 條線；缺全球 bridge → 無法為 2027 反轉定時。</div><div class="u-row"><span class="u-k">需要什麼證據</span>各廠分規格（Low-Dk / T-glass / Q）產能投放表。</div></div>
+    <div class="u-c top rv"><div class="u-h"><span class="u-id">U8</span><span class="stars">★★★★★</span></div><h5>聯茂 M9 認證時程</h5><div class="u-row"><span class="u-k">不知道什麼</span>三雄中最大的單一重估選擇權，落地時間未知。</div><div class="u-row"><span class="u-k">需要什麼證據</span>客戶認證公告、Q2 法說。</div></div>
+    <div class="u-c top rv"><div class="u-h"><span class="u-id">U11</span><span class="stars">★★★★★</span></div><h5>中系高階認證進度</h5><div class="u-row"><span class="u-k">不知道什麼</span>2027 供給反轉的最大變數（巨石 46 億人民幣投資、菲利華、生益/建滔 M7+）。</div><div class="u-row"><span class="u-k">需要什麼證據</span>認證通過消息、中系出貨實績。</div></div>
+    <div class="u-c top rv"><div class="u-h"><span class="u-id">U14</span><span class="stars">★★★★★</span></div><h5>CSP capex guidance 最新版</h5><div class="u-row"><span class="u-k">不知道什麼</span>年增 43% 預估是否存續——整條鏈的需求母數。</div><div class="u-row"><span class="u-k">需要什麼證據</span>四大 CSP 財報（7 月底–8 月密集）。</div></div>
+  </div>
+
+  <h3 class="st rv"><span class="tick"></span>高優先 ★★★★</h3>
+  <div class="u-g">
+    <div class="u-c rv"><div class="u-h"><span class="u-id">U3</span><span class="stars">★★★★</span></div><h5>Resin 供需量化表（PPE/HC/PSMA）</h5><div class="u-row"><span class="u-k">下一步</span>建全球產能 bridge：JSR、SABIC、聖泉、長春——判斷 2027 是否轉過剩。</div></div>
+    <div class="u-c rv"><div class="u-h"><span class="u-id">U5</span><span class="stars">★★★★</span></div><h5>銅箔缺口二源驗證</h5><div class="u-row"><span class="u-k">下一步</span>400–600 噸/月為單一來源；追三井/古河擴產公告與設備交期。</div></div>
+    <div class="u-c rv"><div class="u-h"><span class="u-id">U6</span><span class="stars">★★★★</span></div><h5>GB300 導入速度</h5><div class="u-row"><span class="u-k">下一步</span>M8 需求的直接母數；追 ODM 拉貨節奏、NVIDIA guidance。</div></div>
+    <div class="u-c rv"><div class="u-h"><span class="u-id">U7</span><span class="stars">★★★★</span></div><h5>ASIC 滲透率曲線</h5><div class="u-row"><span class="u-k">下一步</span>ASIC UBB 用 M8 → 第二需求引擎；追博通/Marvell 財報、CSP 自研晶片出貨。</div></div>
+    <div class="u-c rv"><div class="u-h"><span class="u-id">U10</span><span class="stars">★★★★</span></div><h5>Wafer 報價硬數據</h5><div class="u-row"><span class="u-k">下一步</span>T7 唯一「證據深度不足」項；追報價與長約動態、8 吋稼動率。</div></div>
+  </div>
+
+  <details class="exp rv"><summary>其餘四項 ★★★（U9 / U12 / U13 / U15）</summary><div class="exp-b">
+    <p><strong>U9 法人實際持股變化</strong>——決定功率/被動族群是「短線輪動」還是「建倉中」；需投信/外資買賣超週資料。</p>
+    <p><strong>U12 PCB 廠毛利剪刀差</strong>——漲價轉嫁極限的溫度計；需金像電/健鼎 vs CCL 廠逐季毛利率對照。</p>
+    <p><strong>U13 全名單市值/估值精確快照</strong>——每次更新迴圈必補，否則預期差評分失去錨。</p>
+    <p><strong>U15 載板/PCB 層缺口與定價狀態</strong>——Rubin 載板 +75%、缺口 21–27% 為引述；需 ABF 三雄法說二源確認。</p>
+  </div></details>
+
+  <div class="callout rv"><div class="cl-t">FIREWALL RULE</div>
+    <p>Unknown List 是防火牆：任何結論若依賴 U 項目，必須明文標註；<em class="hl">U 項目補上前拒絕給分</em>——環球晶的 N/A 就是這條規則的執行紀錄。</p>
+  </div>
+</section>
+
+<!-- ============ PART 9 ============ -->
+<section class="part" id="p9">
+  <div class="eyebrow rv">PART 09 · LIVING FRAMEWORK</div>
+  <h2 class="pt rv">Research Loop：這份研究不會結束，只會更新</h2>
+  <p class="pd rv">Playbook 的真正產出不是名單，是這個更新協定——目標是每次法說、每次平台發表，都能在 30 分鐘內完成一次框架增量更新，而不是重做研究。</p>
+
+  <div class="loop-wrap rv" role="img" aria-label="三個更新迴圈環繞三條證偽線的循環圖">
+    <div class="loop-ring"></div>
+    <span class="loop-arr a1">➤</span><span class="loop-arr a2">➤</span><span class="loop-arr a3">➤</span>
+    <div class="loop-core"><div class="lo-t">CORE · 三條證偽線</div><p>任一觸發 → 24 小時內<br>全部 Confirmed 判定重審</p></div>
+    <div class="loop-c p1"><div class="lo-t">LOOP A · 月度</div><h5>每月 10–15 日 · 約 30 分鐘</h5><p>六家月營收、E-glass 現貨價、Low-Dk 交期、HVLP 缺口更新 → 記錄證偽線狀態與 Tier 異動</p></div>
+    <div class="loop-c p2"><div class="lo-t">LOOP B · 季度</div><h5>法說季 · 約半天</h5><p>五家法說指引 vs 預期差矩陣、CSP capex、毛利剪刀差 → Alpha Score 全表重評＋Tier 升降級</p></div>
+    <div class="loop-c p3"><div class="lo-t">LOOP C · 事件驅動</div><h5>觸發即執行</h5><p>NVIDIA 發表/財報、中系認證消息、Tier 2 觸發器滿足、新的「神祕標的」型素材 → 套用證偽篩子</p></div>
+  </div>
+
+  <h3 class="st rv"><span class="tick"></span>三條證偽線（任一出現，全部 Confirmed 重審）</h3>
+  <div class="fals rv">
+    <div class="fa-c"><div class="fa-n">FALSIFIER ①</div><p>任一 CCL 廠<strong>月營收月增轉負</strong>——傳導鏈的第一道裂縫。</p></div>
+    <div class="fa-c"><div class="fa-n">FALSIFIER ②</div><p><strong>E-glass 現貨價轉弱</strong>——排擠效應的即時溫度計，領先高階價格。</p></div>
+    <div class="fa-c"><div class="fa-n">FALSIFIER ③</div><p><strong>Low-Dk 交期明顯縮短</strong>——重複下單現形、題材退潮的訊號。</p></div>
+  </div>
+
+  <h3 class="st rv"><span class="tick"></span>恆常紀律（不隨版本變動）</h3>
+  <div class="disc rv">
+    <div class="di"><b>證據層級不可逾越：</b>公司法說/財報 &gt; 交易所公告 &gt; 券商投顧報告 &gt; 財經媒體 &gt; 社群轉述。社群素材一律最低層級。</div>
+    <div class="di"><b>Unknown List 是防火牆：</b>依賴 U 項目的結論必須明文標註；證據補上前拒絕給分。</div>
+    <div class="di"><b>反映分 ≥ 8 禁止投入新增研究工時：</b>只允許等回檔——研究資源和資金一樣要配置。</div>
+    <div class="di"><b>每次更新必補市值/估值快照（U13）：</b>否則預期差評分失去錨。</div>
+    <div class="di"><b>雙向記錄：</b>每次 Tier 升降、每次評分修改，記錄「當時依據什麼證據」——讓未來可以審計自己的判斷品質。這是這套系統與帶單漏斗的根本差異。</div>
+    <div class="di"><b>研究宇宙邊界：</b>電源/散熱/連接器層由「台灣 AI 電力鏈」框架覆蓋，本框架不重複研究。</div>
+  </div>
+
+  <details class="exp rv"><summary>三情境工作假設（Bull ~25% / Base ~50% / Bear ~25%）</summary><div class="exp-b">
+    <p><strong>Bull（~25%）：</strong>capex 上修＋Rubin 準時＋中系卡關＋交期維持 30 週+ → 一階續創高、二階補漲。此情境的陷阱是追高——孟恭框架在 Bull 情境依然適用：嚴禁追高、等季線給回檔。</p>
+    <p><strong>Base（~50%）：</strong>漲價延續至 2027H1 後放緩；一階高位寬幅震盪，預期差向事件型標的集中；2027H2 起市場開始為供給反轉定價。操作含義：一階只做回檔參與＋證偽線止損。</p>
+    <p><strong>Bear（~25%）：</strong>以下任二成立即切換——capex 下修／Kyber+Vera Rubin 確認遞延／中系提前放量／交期轉縮短。風險最大依序：剛轉盈+極高 PE 的題材股、籌碼結構已壞的高 beta、領漲一階、純題材二階。執行紀律：證偽線任一觸發即啟動切換，不等第二條確認。</p>
+  </div></details>
+</section>
+
+<!-- ============ FINAL ============ -->
+<section class="part" id="final">
+  <div class="eyebrow rv">FINAL · KEY TAKEAWAYS</div>
+  <h2 class="pt rv">Key Takeaways</h2>
+  <p class="pd rv">沒有 Investment Recommendation。這份研究留下的是四件更耐用的東西。</p>
+
+  <div class="kt">
+    <div class="kt-c rv"><h4>研究最大的成果不是找到一檔股票。</h4><p>而是建立了一套可持續驗證、可持續證偽、可持續更新的研究方法——32 家母體、預期差矩陣、三條證偽線、三個更新迴圈。</p></div>
+    <div class="kt-c rv"><h4>取其產業事實，棄其選股暗示。</h4><p>任何「族群是真的 → 有一檔沒人知道 → 私訊拿筆記」結構的素材，都套用同一個篩子：查覆蓋、補證據、設證偽線、等時機。</p></div>
+    <div class="kt-c rv"><h4>這套系統的優勢不是預測更準，而是認錯更快。</h4><p>三條證偽線任一觸發，24 小時內全部 Confirmed 判定重審——「需要重審」不該是一句警語，而該是一個排程。</p></div>
+    <div class="kt-c rv"><h4>Unknown 是資產，不是缺陷。</h4><p>15 項承認不知道的事，比任何一個答案都更能保護研究品質——證據補上前拒絕給分，是這份研究與行銷漏斗的根本差異。</p></div>
+  </div>
+
+  <div class="fin rv">
+    <div class="foil"></div>
+    <p class="big">市場會持續產生「族群是真的、但有一檔沒人知道」的素材。<br>這套系統的回應永遠一樣——<br><span class="cu">Alpha 不在資訊裡，在流程裡。</span></p>
+    <div class="src">SOURCES：《CCL 供應鏈 Thesis 驗證報告》·《AI Infra × CCL Alpha Playbook v1.0》（2026-07-09）<br>證據層級：公司法說/財報 &gt; 交易所公告 &gt; 券商投顧報告 &gt; 財經媒體 &gt; 社群轉述<br>個人研究 · 非投資建議</div>
+  </div>
+</section>
+
+</div>
+</main>
+
+<script>
+(function(){
+  // progress bar
+  var prog=document.getElementById('progress');
+  function upProg(){
+    var h=document.documentElement;
+    var p=h.scrollTop/(h.scrollHeight-h.clientHeight);
+    prog.style.width=(p*100)+'%';
+  }
+  window.addEventListener('scroll',upProg,{passive:true});upProg();
+
+  // reveal on scroll
+  var rvEls=document.querySelectorAll('.rv');
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+    },{threshold:.08,rootMargin:'0px 0px -6% 0px'});
+    rvEls.forEach(function(el){io.observe(el);});
+  }else{rvEls.forEach(function(el){el.classList.add('in');});}
+
+  // alpha bars grow when visible
+  var bars=document.getElementById('alphaBars');
+  if(bars&&'IntersectionObserver' in window){
+    var bio=new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){
+          bars.querySelectorAll('.b-fill').forEach(function(f,i){
+            setTimeout(function(){f.style.width=f.getAttribute('data-w')+'%';},i*55);
+          });
+          bio.disconnect();
+        }
+      });
+    },{threshold:.25});
+    bio.observe(bars);
+  }else if(bars){
+    bars.querySelectorAll('.b-fill').forEach(function(f){f.style.width=f.getAttribute('data-w')+'%';});
+  }
+
+  // scrollspy for TOC + mobile nav
+  var ids=['cover','p1','p2','p3','p4','p5','p6','p7','p8','p9','final'];
+  var links=document.querySelectorAll('#toc a.tlink, #mnav a');
+  function setActive(id){
+    links.forEach(function(a){
+      a.classList.toggle('on',a.getAttribute('href')==='#'+id);
+    });
+  }
+  if('IntersectionObserver' in window){
+    var sio=new IntersectionObserver(function(es){
+      es.forEach(function(e){if(e.isIntersecting){setActive(e.target.id);}});
+    },{rootMargin:'-38% 0px -55% 0px'});
+    ids.forEach(function(id){var el=document.getElementById(id);if(el)sio.observe(el);});
+  }
+  setActive('cover');
+})();
+</script>
+</body>
+</html>
