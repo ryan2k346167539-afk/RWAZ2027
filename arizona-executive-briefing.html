@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>亞利桑那州：可承接的產業平台｜Executive Briefing</title>
+<style>
+:root{
+  --navy:#0E2A47;
+  --navy-deep:#071A2E;
+  --navy-soft:#1C3E60;
+  --sand:#E6D9C0;
+  --sand-pale:#F5EFE3;
+  --teal:#0E7C7B;
+  --teal-bright:#12A0A0;
+  --copper:#B45309;
+  --copper-bright:#D97316;
+  --paper:#FBFAF7;
+  --white:#FFFFFF;
+  --ink:#15202B;
+  --slate:#54626F;
+  --slate-light:#7C8896;
+  --rule:#DCE0E5;
+  --rule-soft:#EAEDF0;
+
+  --display:"Songti TC","Noto Serif CJK TC","Noto Serif TC",Georgia,"Times New Roman","SimSun",serif;
+  --body:"PingFang TC","Noto Sans CJK TC","Noto Sans TC","Microsoft JhengHei",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  --mono:ui-monospace,"SF Mono","Roboto Mono",Menlo,Consolas,monospace;
+
+  --wrap:1120px;
+  --gap:clamp(18px,2.4vw,32px);
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:96px}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--body);font-size:16px;line-height:1.75;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+img{max-width:100%}
+a{color:var(--teal);text-underline-offset:3px}
+:focus-visible{outline:2.5px solid var(--copper-bright);outline-offset:3px;border-radius:2px}
+
+/* ---------- progress + nav ---------- */
+.progress{position:fixed;top:0;left:0;height:3px;width:100%;background:transparent;z-index:60}
+.progress__bar{height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--copper-bright));transition:width .08s linear}
+
+.topbar{
+  position:sticky;top:0;z-index:50;background:rgba(251,250,247,.94);
+  backdrop-filter:saturate(140%) blur(8px);border-bottom:1px solid var(--rule);
+}
+.topbar__in{max-width:var(--wrap);margin:0 auto;padding:10px clamp(16px,4vw,32px);
+  display:flex;align-items:center;gap:18px;justify-content:space-between}
+.brand{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--navy);white-space:nowrap;font-weight:600}
+.brand span{color:var(--copper)}
+.nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav a{
+  font-size:12.5px;color:var(--slate);text-decoration:none;padding:7px 10px;border-radius:4px;
+  white-space:nowrap;border-bottom:2px solid transparent;transition:color .2s,border-color .2s
+}
+.nav a:hover{color:var(--navy)}
+.nav a.is-active{color:var(--navy);font-weight:600;border-bottom-color:var(--copper-bright)}
+
+/* ---------- layout ---------- */
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 clamp(16px,4vw,32px)}
+section{padding:clamp(48px,6vw,78px) 0;border-bottom:1px solid var(--rule-soft)}
+section:last-of-type{border-bottom:none}
+
+.eyebrow{
+  font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--teal);font-weight:600;display:flex;align-items:center;gap:10px;margin:0 0 14px
+}
+.eyebrow::before{content:"";width:26px;height:2px;background:var(--copper-bright);flex:none}
+h2{font-family:var(--display);font-size:clamp(25px,3.3vw,38px);line-height:1.32;
+  margin:0 0 14px;color:var(--navy);font-weight:700;letter-spacing:.01em}
+h3{font-size:17px;margin:0 0 8px;color:var(--navy);font-weight:700;letter-spacing:.01em}
+h4{font-size:14px;margin:0 0 6px;color:var(--navy);font-weight:700}
+.lede{font-size:clamp(15.5px,1.5vw,17px);color:var(--slate);max-width:70ch;margin:0 0 30px;line-height:1.85}
+p{margin:0 0 14px}
+.muted{color:var(--slate)}
+.small{font-size:13.5px;line-height:1.7}
+
+/* ---------- hero ---------- */
+.hero{
+  background:
+    radial-gradient(1000px 460px at 85% -10%,rgba(18,160,160,.20),transparent 62%),
+    radial-gradient(760px 420px at 8% 105%,rgba(217,115,22,.16),transparent 60%),
+    linear-gradient(168deg,var(--navy-deep),var(--navy) 55%,#123252 100%);
+  color:#EAF1F7;border-bottom:none;padding:clamp(46px,6.5vw,80px) 0 clamp(40px,5vw,62px)
+}
+.hero .eyebrow{color:var(--sand)}
+.hero .eyebrow::before{background:var(--copper-bright)}
+.hero h1{
+  font-family:var(--display);font-weight:700;color:#fff;letter-spacing:.015em;
+  font-size:clamp(29px,4.6vw,52px);line-height:1.26;margin:0 0 22px;max-width:19ch
+}
+.hero h1 em{font-style:normal;color:var(--sand);
+  border-bottom:3px solid var(--copper-bright);padding-bottom:2px}
+.hero__thesis{font-size:clamp(15px,1.55vw,17.5px);line-height:1.9;color:#C9D8E6;max-width:66ch;margin:0 0 34px}
+.hero__thesis strong{color:#fff;font-weight:600}
+
+.heroNums{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:0 0 26px}
+.numCard{
+  background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.16);
+  border-radius:3px;padding:18px 18px 16px;text-align:left;color:inherit;
+  font:inherit;cursor:pointer;width:100%;display:block;
+  border-left:3px solid var(--teal-bright);transition:background .2s,transform .2s,border-color .2s
+}
+.numCard:hover,.numCard[aria-expanded="true"]{background:rgba(255,255,255,.11);border-left-color:var(--copper-bright)}
+.numCard__k{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--sand);display:block;margin-bottom:9px}
+.numCard__v{font-family:var(--display);font-size:clamp(28px,3.6vw,42px);line-height:1;color:#fff;font-weight:700;display:block}
+.numCard__u{font-size:12px;color:#A9BFD2;display:block;margin-top:2px}
+.numCard__l{font-size:13.5px;color:#D5E2ED;display:block;margin-top:10px;line-height:1.6}
+.numCard__note{
+  font-size:12.5px;color:#B7CCDD;line-height:1.65;margin-top:11px;padding-top:11px;
+  border-top:1px dashed rgba(255,255,255,.25);display:none
+}
+.numCard[aria-expanded="true"] .numCard__note{display:block}
+.numCard__hint{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:#8AA6BE;
+  margin-top:10px;display:block;text-transform:uppercase}
+
+.heroMeta{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;
+  font-size:12.5px;color:#9FB6CA;border-top:1px solid rgba(255,255,255,.16);padding-top:18px}
+.pill{display:inline-flex;align-items:center;gap:7px;background:rgba(217,115,22,.18);
+  border:1px solid rgba(217,115,22,.45);color:#F2C69A;border-radius:100px;padding:4px 13px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase}
+
+/* ---------- causal chain ---------- */
+.chain{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:6px 0 26px}
+.chain__step{
+  background:var(--white);border:1px solid var(--rule);border-top:3px solid var(--navy-soft);
+  border-radius:3px;padding:15px 13px;position:relative;display:flex;flex-direction:column;gap:7px
+}
+.chain__step:nth-child(n+5){border-top-color:var(--copper-bright)}
+.chain__n{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--slate-light)}
+.chain__t{font-size:13.5px;font-weight:700;color:var(--navy);line-height:1.5}
+.chain__d{font-size:12.5px;color:var(--slate);line-height:1.6}
+.chain__step::after{
+  content:"";position:absolute;right:-7px;top:50%;width:10px;height:10px;
+  border-top:1.5px solid var(--slate-light);border-right:1.5px solid var(--slate-light);
+  transform:translateY(-50%) rotate(45deg);z-index:2;background:var(--paper)
+}
+.chain__step:last-child::after{display:none}
+
+.mech{
+  background:var(--sand-pale);border-left:3px solid var(--copper);border-radius:0 3px 3px 0;
+  padding:18px 22px;margin:0
+}
+.mech h4{color:var(--copper);font-family:var(--mono);font-size:11px;letter-spacing:.13em;
+  text-transform:uppercase;margin-bottom:8px}
+.mech p{margin:0;font-size:14.5px;line-height:1.85;color:#3A4652}
+
+/* ---------- glance ---------- */
+.glance{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--gap)}
+.gcard{background:var(--white);border:1px solid var(--rule);border-radius:4px;
+  padding:22px 24px 20px;display:flex;flex-direction:column}
+.gcard__h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+  border-bottom:1px solid var(--rule);padding-bottom:11px;margin-bottom:14px}
+.gcard__h h3{margin:0}
+.gcard__tag{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal)}
+.stat{display:flex;gap:14px;align-items:baseline;padding:8px 0;border-bottom:1px dotted var(--rule)}
+.stat:last-of-type{border-bottom:none}
+.stat__v{font-family:var(--display);font-size:21px;font-weight:700;color:var(--navy);
+  min-width:5.6em;line-height:1.3;flex:none}
+.stat__l{font-size:13.5px;color:var(--slate);line-height:1.6}
+.sowhat{margin-top:14px;padding-top:13px;border-top:2px solid var(--sand);
+  font-size:13.5px;line-height:1.75;color:#3A4652}
+.sowhat b{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--copper);display:block;margin-bottom:5px}
+
+/* ---------- stack ---------- */
+.stack{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.layer{
+  display:grid;grid-template-columns:190px 1fr;gap:0;
+  background:var(--white);border:1px solid var(--rule);border-radius:4px;overflow:hidden
+}
+.layer__side{background:var(--navy);color:#fff;padding:20px 20px;display:flex;
+  flex-direction:column;justify-content:center;gap:6px}
+.layer:nth-child(2) .layer__side{background:var(--navy-soft)}
+.layer:nth-child(3) .layer__side{background:var(--teal)}
+.layer:nth-child(4) .layer__side{background:#7C5A2E}
+.layer__n{font-family:var(--mono);font-size:10px;letter-spacing:.14em;opacity:.75}
+.layer__side h3{color:#fff;margin:0;font-size:16px}
+.layer__side .en{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;opacity:.8}
+.layer__body{padding:18px 22px}
+.layer__body p{font-size:14px;line-height:1.8;color:#3A4652;margin:0 0 12px}
+.layer__body p:last-child{margin-bottom:0}
+.tools{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:4px}
+.tool{border:1px solid var(--rule);border-left:3px solid var(--teal);border-radius:0 3px 3px 0;padding:12px 14px}
+.tool h4{font-size:13px;margin-bottom:4px}
+.tool .en{font-family:var(--mono);font-size:10px;color:var(--slate-light);letter-spacing:.05em;display:block;margin-bottom:6px}
+.tool p{font-size:12.5px;line-height:1.65;margin:0;color:var(--slate)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{font-size:11.5px;background:var(--sand-pale);border:1px solid var(--sand);
+  color:#5C4A2E;border-radius:100px;padding:3px 10px}
+
+.takeaway{
+  background:var(--navy);color:#E8F0F7;border-radius:4px;padding:24px 26px;
+  border-left:4px solid var(--copper-bright)
+}
+.takeaway h4{color:var(--sand);font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;margin-bottom:9px}
+.takeaway p{margin:0;font-size:15.5px;line-height:1.85;color:#fff;font-family:var(--display)}
+
+/* ---------- clusters ---------- */
+.clusters{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);margin-bottom:26px}
+.cluster{background:var(--white);border:1px solid var(--rule);border-radius:4px;overflow:hidden;
+  display:flex;flex-direction:column}
+.cluster__top{padding:20px 24px 16px;border-bottom:1px solid var(--rule)}
+.cluster--phx .cluster__top{background:linear-gradient(120deg,#0E2A47,#1C4470);color:#fff}
+.cluster--tuc .cluster__top{background:linear-gradient(120deg,#7A4A1A,#A8641F);color:#fff}
+.cluster__top h3{color:#fff;font-size:19px;margin-bottom:3px;font-family:var(--display)}
+.cluster__top .en{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;opacity:.85}
+.cluster__fn{margin-top:12px;font-size:13px;line-height:1.65;color:rgba(255,255,255,.9)}
+.cluster__body{padding:18px 24px 22px;flex:1}
+.sub{margin-bottom:16px}
+.sub__h{display:flex;align-items:center;gap:9px;margin-bottom:7px}
+.sub__badge{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;background:var(--sand-pale);
+  border:1px solid var(--sand);color:#6B5530;padding:2px 8px;border-radius:2px;white-space:nowrap}
+.sub__h h4{margin:0}
+.sub ul{margin:0;padding-left:18px}
+.sub li{font-size:13.5px;line-height:1.72;color:#3A4652;margin-bottom:4px}
+.sub li b{color:var(--navy)}
+.corr{
+  background:#FDF6EC;border:1px solid #EBD9BE;border-radius:3px;padding:11px 14px;
+  font-size:12.5px;line-height:1.65;color:#6B5530;margin-top:12px
+}
+.corr b{color:var(--copper);font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;display:block;margin-bottom:4px}
+
+.mapbox{display:grid;grid-template-columns:280px 1fr;gap:var(--gap);align-items:center;
+  background:var(--white);border:1px solid var(--rule);border-radius:4px;padding:22px 24px}
+.mapcap{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--slate-light);
+  text-align:center;margin-top:8px;text-transform:uppercase}
+
+/* ---------- opportunities ---------- */
+.opps{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap)}
+.opp{background:var(--white);border:1px solid var(--rule);border-radius:4px;
+  display:flex;flex-direction:column;overflow:hidden}
+.opp__h{padding:18px 20px 15px;background:var(--sand-pale);border-bottom:1px solid var(--sand)}
+.opp__n{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--copper);
+  text-transform:uppercase;display:block;margin-bottom:6px}
+.opp__h h3{font-size:16.5px;margin-bottom:6px;line-height:1.45}
+.opp__logic{font-size:13px;line-height:1.65;color:#5C4A2E;margin:0;font-family:var(--display)}
+.opp__b{padding:16px 20px 20px;flex:1}
+.field{margin-bottom:13px}
+.field:last-child{margin-bottom:0}
+.field__k{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--teal);display:block;margin-bottom:3px}
+.field__v{font-size:13px;line-height:1.7;color:#3A4652;margin:0}
+.field--risk .field__k{color:var(--copper)}
+.fitline{margin-top:14px;padding-top:12px;border-top:1px solid var(--rule);font-size:12px;color:var(--slate-light);line-height:1.65}
+
+/* ---------- decisions ---------- */
+.decisions{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.dec{display:flex;gap:16px;background:var(--white);border:1px solid var(--rule);
+  border-radius:4px;padding:18px 20px;align-items:flex-start}
+.dec__n{font-family:var(--display);font-size:30px;line-height:1;color:var(--sand);
+  font-weight:700;flex:none;width:38px}
+.dec h3{font-size:15px;margin-bottom:5px;line-height:1.5}
+.dec p{font-size:13.5px;line-height:1.75;color:var(--slate);margin:0}
+.dec:last-child{grid-column:1/-1}
+
+/* ---------- accordion / evidence ---------- */
+.acc{border:1px solid var(--rule);border-radius:4px;overflow:hidden;background:var(--white)}
+details{border-bottom:1px solid var(--rule-soft)}
+details:last-child{border-bottom:none}
+summary{
+  cursor:pointer;padding:14px 20px;font-weight:600;font-size:14.5px;color:var(--navy);
+  list-style:none;display:flex;align-items:center;gap:12px;transition:background .15s
+}
+summary::-webkit-details-marker{display:none}
+summary:hover{background:var(--sand-pale)}
+summary::before{
+  content:"+";font-family:var(--mono);font-size:15px;color:var(--copper);
+  width:18px;flex:none;text-align:center;font-weight:700
+}
+details[open]>summary{background:var(--sand-pale)}
+details[open]>summary::before{content:"–"}
+.acc__idx{font-family:var(--mono);font-size:10.5px;color:var(--slate-light);letter-spacing:.1em;flex:none}
+.acc__body{padding:6px 20px 22px 50px;font-size:13.5px;line-height:1.8;color:#3A4652}
+.acc__body h4{margin:16px 0 6px}
+.acc__body h4:first-child{margin-top:4px}
+.acc__body ul{margin:0 0 10px;padding-left:19px}
+.acc__body li{margin-bottom:4px}
+.acc__body p{margin:0 0 10px}
+
+table{border-collapse:collapse;width:100%;margin:6px 0 14px;font-size:13px}
+th,td{border:1px solid var(--rule);padding:7px 11px;text-align:left;vertical-align:top}
+th{background:var(--sand-pale);font-weight:700;color:var(--navy);font-size:12.5px}
+td.num{font-family:var(--mono);white-space:nowrap}
+
+.tag{display:inline-block;font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;
+  text-transform:uppercase;padding:2px 7px;border-radius:2px;margin-left:6px;vertical-align:middle;
+  border:1px solid;white-space:nowrap}
+.tag--slide{color:#6B5530;border-color:#DCC8A4;background:#FBF4E8}
+.tag--verified{color:#0B6362;border-color:#A8D4D3;background:#EAF6F6}
+.tag--framing{color:#4A5A6B;border-color:#C6D0DA;background:#EFF3F7}
+.tag--unclear{color:#8A4B12;border-color:#E4C09A;background:#FCEFE0}
+.tag--fix{color:#9A3412;border-color:#E8BCA6;background:#FDEEE6}
+
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin-bottom:18px;font-size:12px;color:var(--slate)}
+.legend span.tag{margin-left:0;margin-right:4px}
+
+.srcList{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:4px}
+.src{border:1px solid var(--rule);border-left:3px solid var(--teal);border-radius:0 3px 3px 0;
+  padding:11px 14px;font-size:12.5px;line-height:1.6}
+.src__org{font-weight:700;color:var(--navy);display:block}
+.src__t{color:var(--slate);display:block;margin:2px 0 4px}
+.src__u{font-size:11.5px;word-break:break-all}
+.src__for{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;color:var(--copper);
+  text-transform:uppercase;display:block;margin-top:5px}
+
+/* ---------- footer / totop ---------- */
+footer{background:var(--navy-deep);color:#9FB6CA;padding:30px 0;font-size:12.5px;line-height:1.8}
+footer strong{color:#fff}
+.totop{
+  position:fixed;right:20px;bottom:20px;z-index:55;opacity:0;pointer-events:none;
+  background:var(--navy);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:50%;
+  width:44px;height:44px;cursor:pointer;font-size:17px;line-height:1;
+  transition:opacity .25s,transform .25s,background .2s;font-family:var(--mono)
+}
+.totop.show{opacity:1;pointer-events:auto}
+.totop:hover{background:var(--copper);transform:translateY(-2px)}
+
+.skip{position:absolute;left:-9999px;top:0;background:var(--navy);color:#fff;padding:10px 16px;z-index:99}
+.skip:focus{left:8px;top:8px}
+
+/* ---------- responsive ---------- */
+@media (max-width:1000px){
+  .chain{grid-template-columns:repeat(3,1fr)}
+  .chain__step:nth-child(3)::after{display:none}
+  .opps{grid-template-columns:1fr}
+  .tools{grid-template-columns:1fr}
+  .mapbox{grid-template-columns:1fr}
+  .srcList{grid-template-columns:1fr}
+}
+@media (max-width:820px){
+  .heroNums{grid-template-columns:1fr}
+  .glance{grid-template-columns:1fr}
+  .clusters{grid-template-columns:1fr}
+  .decisions{grid-template-columns:1fr}
+  .layer{grid-template-columns:1fr}
+  .layer__side{padding:14px 18px;flex-direction:row;align-items:center;gap:12px;flex-wrap:wrap}
+  .acc__body{padding-left:20px}
+  .brand{display:none}
+}
+@media (max-width:560px){
+  .chain{grid-template-columns:1fr}
+  .chain__step::after{display:none}
+  .stat{flex-direction:column;gap:0}
+  .stat__v{min-width:0}
+  table{font-size:12px}
+  th,td{padding:6px 8px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}
+}
+
+@media print{
+  .topbar,.progress,.totop{display:none!important}
+  body{background:#fff;font-size:11pt}
+  .hero{background:#fff!important;color:#000!important;border-bottom:2px solid #000}
+  .hero h1,.hero__thesis,.numCard__v{color:#000!important}
+  .hero .eyebrow,.numCard__k,.numCard__l,.numCard__u,.heroMeta{color:#333!important}
+  .numCard{border:1px solid #999!important;background:#fff!important}
+  .numCard__note{display:block!important}
+  details{break-inside:avoid}
+  details>summary::before{content:""}
+  details:not([open])>.acc__body{display:block}
+  section{break-inside:auto;padding:18px 0;border-bottom:1px solid #ccc}
+  .layer__side,.cluster__top,.takeaway{background:#eee!important;color:#000!important}
+  .layer__side h3,.cluster__top h3,.takeaway p,.takeaway h4{color:#000!important}
+  a{color:#000;text-decoration:underline}
+}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">跳至主要內容</a>
+<div class="progress" role="presentation"><div class="progress__bar" id="bar"></div></div>
+
+<header class="topbar">
+  <div class="topbar__in">
+    <div class="brand">Arizona <span>/</span> Executive Briefing</div>
+    <nav class="nav" id="nav" aria-label="章節導覽">
+      <a href="#s1">導讀</a>
+      <a href="#s2">為何是現在</a>
+      <a href="#s3">量化基礎</a>
+      <a href="#s4">落地支援</a>
+      <a href="#s5">兩大聚落</a>
+      <a href="#s6">台灣機會</a>
+      <a href="#s7">決策啟示</a>
+      <a href="#s8">完整資料</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ================= SECTION 1 ================= -->
+<section class="hero" id="s1">
+  <div class="wrap">
+    <p class="eyebrow">亞利桑那州｜經貿環境、政策工具與產業聚落</p>
+    <h1>亞利桑那的價值，不是一個廠址，而是<em>一套可承接的產業平台</em></h1>
+    <p class="hero__thesis">
+      聯邦製造回流政策決定了「要在美國生產」，但沒有決定「在哪一州生產」。
+      亞利桑那把聯邦方向、州級招商工具、跨州人才體系、物流與自貿區，
+      以及大鳳凰城與土桑兩個性質互補的產業聚落，
+      整合成一組<strong>能讓企業從設廠、招募、培訓到擴產都在同一州內被協調</strong>的落地能力。
+      對台灣半導體與國防科技業者而言，這是可評估的切入條件，而不是單純的補貼誘因。
+    </p>
+
+    <div class="heroNums">
+      <button type="button" class="numCard" aria-expanded="false">
+        <span class="numCard__k">Trade · 2025 出口</span>
+        <span class="numCard__v">444<span class="numCard__u" style="display:inline;font-size:.45em"> 億美元</span></span>
+        <span class="numCard__l">年增 37%，成長率全美第 2（全美平均 +5.7%）</span>
+        <span class="numCard__note">由 2024 年的 324 億美元躍升。成長來自新增先進製造產能開始出貨，而非單一年度的價格波動。</span>
+        <span class="numCard__hint">點選看說明</span>
+      </button>
+      <button type="button" class="numCard" aria-expanded="false">
+        <span class="numCard__k">Investment · 2025 FDI</span>
+        <span class="numCard__v">1,077<span class="numCard__u" style="display:inline;font-size:.45em"> 億美元</span></span>
+        <span class="numCard__l">55 件外資項目、逾 25,000 個預計新增職缺</span>
+        <span class="numCard__note">口徑為 fDi Markets 統計之「宣布投資額」，非已到位資本。2020–2025 累計宣布外資逾 1,957 億美元，居全美第 1。</span>
+        <span class="numCard__hint">點選看說明</span>
+      </button>
+      <button type="button" class="numCard" aria-expanded="false">
+        <span class="numCard__k">Taiwan · 雙邊貿易</span>
+        <span class="numCard__v">212<span class="numCard__u" style="display:inline;font-size:.45em"> 億美元</span></span>
+        <span class="numCard__l">台灣為亞利桑那第 2 大貿易夥伴，僅次於墨西哥</span>
+        <span class="numCard__note">其中亞利桑那自台灣進口 167 億美元（第 1 大進口來源）、對台出口 45 億美元。台灣目前主要是供料方，而非在地生產方。</span>
+        <span class="numCard__hint">點選看說明</span>
+      </button>
+    </div>
+
+    <div class="heroMeta">
+      <span class="pill">3–5 分鐘主閱讀路徑</span>
+      <span>主路徑共 7 個區塊，完整原始資料收於文末可展開層</span>
+      <span>資料基準：2025 年度｜官方發布 2026 年 2 月</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SECTION 2 ================= -->
+<section id="s2">
+  <div class="wrap">
+    <p class="eyebrow">Why Arizona, Why Now</p>
+    <h2>從聯邦政策方向，到一個州真的接得住</h2>
+    <p class="lede">
+      製造回流與關稅政策改變的是投資的「國別」；決定投資落在「哪一州」的，是土地與電力、既有製造基礎、許可速度、人才管線，以及州政府能否把獎勵、培訓與基礎設施包成一份可談的方案。
+    </p>
+
+    <div class="chain">
+      <div class="chain__step"><span class="chain__n">01</span><span class="chain__t">地緣政治與美中科技競爭</span><span class="chain__d">供應鏈風險由成本考量轉為國安考量。</span></div>
+      <div class="chain__step"><span class="chain__n">02</span><span class="chain__t">America First 與關稅工具</span><span class="chain__d">提高境外生產的稅務與政治成本。</span></div>
+      <div class="chain__step"><span class="chain__n">03</span><span class="chain__t">先進製造投資轉向美國</span><span class="chain__d">半導體、AI 運算、先進製造、能源優先。</span></div>
+      <div class="chain__step"><span class="chain__n">04</span><span class="chain__t">企業需要能立即動工的州</span><span class="chain__d">聯邦不指定地點，各州競爭承接條件。</span></div>
+      <div class="chain__step"><span class="chain__n">05</span><span class="chain__t">亞利桑那以既有基礎承接</span><span class="chain__d">數十年半導體與國防產業底盤＋州級工具。</span></div>
+      <div class="chain__step"><span class="chain__n">06</span><span class="chain__t">資本、出口與人才同步集中</span><span class="chain__d">投資、產能與供應鏈需求在同一區域疊加。</span></div>
+    </div>
+
+    <div class="mech">
+      <h4>中間機制｜這一步常被跳過</h4>
+      <p>
+        亞利桑那並非因政策宣示而受惠。實質條件是：Intel 在 Chandler 已營運四十年、土桑有既成的國防與光學人才、州政府可用單一基金同時處理獎勵、培訓與基礎設施協商，加上低天災風險與大面積可開發土地。這讓聯邦方向能被轉換成「三年內可以出貨」的專案——這才是它與其他候選州的差別。
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SECTION 3 ================= -->
+<section id="s3">
+  <div class="wrap">
+    <p class="eyebrow">Arizona at a Glance</p>
+    <h2>四組數字，各自回答一個不同的問題</h2>
+    <p class="lede">
+      數據平鋪成十幾張卡片，無法判斷輕重。以下依貿易、投資、連結、產業縱深分組，每組只回答一件事：它對企業決策代表什麼。
+    </p>
+
+    <div class="glance">
+
+      <div class="gcard">
+        <div class="gcard__h"><h3>貿易動能</h3><span class="gcard__tag">Trade</span></div>
+        <div class="stat"><span class="stat__v">444 億</span><span class="stat__l">2025 年出口額（美元），年增 37%</span></div>
+        <div class="stat"><span class="stat__v">全美第 2</span><span class="stat__l">出口成長率排名（全美平均 +5.7%）</span></div>
+        <div class="stat"><span class="stat__v">574 億</span><span class="stat__l">2025 年進口額（美元），年增 36%</span></div>
+        <div class="stat"><span class="stat__v">212 億</span><span class="stat__l">台灣—亞利桑那雙邊貿易總額（美元）</span></div>
+        <div class="sowhat"><b>這代表什麼？</b>
+          出口與進口同步大增，是新增產能上線的典型訊號：先大量進料，再開始出貨。台灣目前的角色偏向「供料方」——亞利桑那自台灣進口 167 億美元，對台出口僅 45 億美元。
+        </div>
+      </div>
+
+      <div class="gcard">
+        <div class="gcard__h"><h3>投資集中度</h3><span class="gcard__tag">Investment</span></div>
+        <div class="stat"><span class="stat__v">1,077 億</span><span class="stat__l">2025 年外資宣布投資額（美元）</span></div>
+        <div class="stat"><span class="stat__v">55 件</span><span class="stat__l">2025 年外資項目數，逾 25,000 個預計職缺</span></div>
+        <div class="stat"><span class="stat__v">1,957 億</span><span class="stat__l">2020–2025 累計宣布外資（美元），全美第 1</span></div>
+        <div class="stat"><span class="stat__v">日 15／加 14／台 7</span><span class="stat__l">項目數前三大來源國（件）</span></div>
+        <div class="sowhat"><b>這代表什麼？</b>
+          「領先全美」指的是宣布投資規模，不是已完工資本。對供應鏈業者而言，這代表未來三到五年將有大量廠務、設備安裝、材料與維運需求陸續釋出，而且時間點可預估。
+        </div>
+      </div>
+
+      <div class="gcard">
+        <div class="gcard__h"><h3>物流連結</h3><span class="gcard__tag">Connectivity</span></div>
+        <div class="stat"><span class="stat__v">約 13 萬</span><span class="stat__l">州內公路里程（英里）：I-10／I-40／I-17／I-8／I-19</span></div>
+        <div class="stat"><span class="stat__v">2 條</span><span class="stat__l">一級鐵路：Union Pacific、BNSF</span></div>
+        <div class="stat"><span class="stat__v">80+ 座</span><span class="stat__l">機場，含天港、梅薩關口、土桑國際</span></div>
+        <div class="stat"><span class="stat__v">6 個</span><span class="stat__l">美墨陸路關口，並設多個聯邦自貿區（FTZ）</span></div>
+        <div class="sowhat"><b>這代表什麼？</b>
+          一日車程可達洛杉磯、聖地牙哥、拉斯維加斯與艾爾帕索。FTZ 允許外國商品免除或延後繳納關稅，對「進口料件、在地組裝再出貨」的模式直接降低關稅曝險——這是實質工具，不只是便利性。
+        </div>
+      </div>
+
+      <div class="gcard">
+        <div class="gcard__h"><h3>產業縱深</h3><span class="gcard__tag">Industry Depth</span></div>
+        <div class="stat"><span class="stat__v">全美第 1</span><span class="stat__l">金屬礦石出口 27 億美元（+19.9%）</span></div>
+        <div class="stat"><span class="stat__v">全美第 3</span><span class="stat__l">電腦設備出口 90 億美元（+205%）</span></div>
+        <div class="stat"><span class="stat__v">全美第 5</span><span class="stat__l">半導體與電子零組件出口 63 億美元（+84%）</span></div>
+        <div class="stat"><span class="stat__v">第 8／第 10</span><span class="stat__l">導航量測與醫電儀器 24 億／航太零組件 56 億（美元）</span></div>
+        <div class="sowhat"><b>這代表什麼？</b>
+          兩種性質不同的機會並存：半導體與電腦設備的爆發式成長反映新產能開出；儀器與航太零組件的穩定排名則指向土桑既有的國防光學實力。前者搶時間，後者搶資格。
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= SECTION 4 ================= -->
+<section id="s4">
+  <div class="wrap">
+    <p class="eyebrow">The Arizona Execution Stack</p>
+    <h2>落地支援不是一項補助，而是四層可協調的資源</h2>
+    <p class="lede">
+      企業設廠的實際痛點依序是：資本缺口、招不到人、物流成本、跨單位協商曠日費時。亞利桑那的投資環境，應被理解為對應這四個痛點的四層堆疊。
+    </p>
+
+    <div class="stack">
+
+      <div class="layer">
+        <div class="layer__side">
+          <span class="layer__n">Layer 01</span>
+          <h3>資本與獎勵</h3>
+          <span class="en">Capital &amp; Incentives</span>
+        </div>
+        <div class="layer__body">
+          <p>三項工具針對的企業階段完全不同，不應混為一談：</p>
+          <div class="tools">
+            <div class="tool">
+              <h4>州級招商基金</h4>
+              <span class="en">Arizona Competes Fund</span>
+              <p>處理大型投資與就業案：吸引外資、擴廠、保留高薪職缺，並可同時納入人才培訓與基礎設施協商。支持對象包含台積電、Intel、Amkor、LG Energy Solution。大型案通常再結合地方與聯邦資源。</p>
+            </div>
+            <div class="tool">
+              <h4>州級創新基金</h4>
+              <span class="en">Arizona Innovation Challenge</span>
+              <p>提供科技新創非股權資金（non-dilutive），獲選者可獲至少 5 萬美元補助與企業導師、加速器輔導，並銜接 Venture Scale 等後續募資計畫。聚焦先進材料、先進製造、太空與國防、生命科學、潔淨能源、IT 軟硬體。</p>
+            </div>
+            <div class="tool">
+              <h4>天使投資稅收抵免</h4>
+              <span class="en">Angel Investment Tax Credit</span>
+              <p>對符合資格的州內小型企業投資人提供州所得稅額抵免，目的是擴大早期私人資本供給，鼓勵領域包含 AI、半導體、機器人與深度科技。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="layer">
+        <div class="layer__side">
+          <span class="layer__n">Layer 02</span>
+          <h3>人才體系</h3>
+          <span class="en">Talent</span>
+        </div>
+        <div class="layer__body">
+          <p><b>Talent Ready AZ</b> 建立州內人才管線：由產業界與高等教育機構共同設計課程，涵蓋 K–12 STEM、學徒制、在職訓練與再培訓，對接先進製造、潔淨能源、資訊科技、航太國防與醫療。</p>
+          <p><b>NNME Southwest</b>（微電子教育國家網絡西南區域節點）處理的是跨州協作：由亞利桑那商務局召集、2026 年 5 月獲聯邦正式指定，集結 47 個成員，橫跨亞利桑那、南加州、科羅拉多、新墨西哥與猶他五州，負責課程與雇主需求對接。由美國國家科學基金會與商務部支持、SEMI Foundation 營運，每個區域節點五年內最高可獲 2,000 萬美元支持。</p>
+          <div class="chips">
+            <span class="chip">產學課程對接</span><span class="chip">跨州人才流動</span><span class="chip">學徒制</span><span class="chip">技師與設備維護</span><span class="chip">再培訓</span>
+          </div>
+          <p class="small muted" style="margin-top:10px">為什麼這層重要：SEMI Foundation 與 McKinsey 推估，美國到 2030 年將短缺約 12.7 萬至 15.7 萬名半導體與微電子人力。人力瓶頸，而非設備，是擴產的主要風險。</p>
+        </div>
+      </div>
+
+      <div class="layer">
+        <div class="layer__side">
+          <span class="layer__n">Layer 03</span>
+          <h3>基礎設施</h3>
+          <span class="en">Infrastructure</span>
+        </div>
+        <div class="layer__body">
+          <p>約 13 萬英里公路（I-10、I-40、I-17、I-8、I-19、US 60、US 93）與 Union Pacific、BNSF 兩條一級鐵路；80 座以上機場提供高時效航空貨運；6 個美墨陸路關口（諾加利斯為最大陸路口岸，另有聖路易斯、道格拉斯等）；並設有鳳凰城、土桑等多個聯邦自貿區，允許外國商品免除或延後繳納關稅，並可在區內倉儲、加工與製造。</p>
+        </div>
+      </div>
+
+      <div class="layer">
+        <div class="layer__side">
+          <span class="layer__n">Layer 04</span>
+          <h3>制度協調</h3>
+          <span class="en">Institutional Coordination</span>
+        </div>
+        <div class="layer__body">
+          <p>前三層的價值取決於能否進入同一份談判。實際運作是：州商務局主導協商，地方政府提供土地、用水與許可，聯邦資源（CHIPS 相關計畫、NSF、商務部）銜接資本與人才，大學與社區學院承接課程與技師培訓，龍頭企業提供需求規格。獎勵、培訓與基礎設施因此可被打包成單一方案，而非分頭申請。</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="takeaway">
+      <h4>Takeaway</h4>
+      <p>亞利桑那的優勢不是任何一項補助，而是企業從設廠、招募、培訓、物流到擴產所需的多層支援，可以在同一州內被協調成一份方案。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SECTION 5 ================= -->
+<section id="s5">
+  <div class="wrap">
+    <p class="eyebrow">Two Clusters, Two Strategic Functions</p>
+    <h2>大鳳凰城負責量，土桑負責規格</h2>
+    <p class="lede">
+      兩個聚落常被合稱為「亞利桑那的產業優勢」，但產業功能、客戶結構與進入門檻完全不同。分開理解，才能判斷該進哪一個。
+    </p>
+
+    <div class="clusters">
+
+      <div class="cluster cluster--phx">
+        <div class="cluster__top">
+          <h3>大鳳凰城半導體聚落</h3>
+          <span class="en">Greater Phoenix Semiconductor Cluster</span>
+          <p class="cluster__fn">戰略功能：<b>大規模先進製造能力</b>。涵蓋晶圓製造、封測、上游材料與設備，形成一條龍體系與可擴張的工程人才庫。</p>
+        </div>
+        <div class="cluster__body">
+
+          <div class="sub">
+            <div class="sub__h"><span class="sub__badge">東谷 East Valley</span><h4>成熟與先進製程、產學研發</h4></div>
+            <ul>
+              <li><b>Chandler</b>｜Intel 的 Ocotillo 園區，營運 Fab 12、22、32、42，並新建 <b>Fab 52 與 Fab 62</b>；Fab 52 已投入 18A 製程量產，是 Intel 在美國最先進的產線。</li>
+              <li><b>Tempe</b>｜亞利桑那州立大學（ASU）校區所在，基礎研究與產學技轉中心；Waymo 自駕車在此進行大規模道路測試。</li>
+              <li><b>Mesa、Gilbert</b>｜配套製造、封測與供應商腹地。</li>
+            </ul>
+          </div>
+
+          <div class="sub">
+            <div class="sub__h"><span class="sub__badge">北谷與西谷 North / West</span><h4>先進製程與先進封裝旗艦</h4></div>
+            <ul>
+              <li><b>North Phoenix</b>｜台積電亞利桑那 <b>Fab 21</b> 廠區，第一期已量產 4／5 奈米級製程，後續各期導入 3 奈米及更先進節點。</li>
+              <li><b>Peoria</b>｜Amkor 宣布投資數十億美元興建大型先進封裝廠，專為台積電後段製程需求布局，補足在地封裝價值鏈。</li>
+              <li><b>Glendale</b>｜西谷擴張腹地與物流節點。</li>
+            </ul>
+          </div>
+
+          <div class="corr">
+            <b>資料修正</b>
+            原始投影片將 Fab 52 與 Fab 62 同時列於台積電北谷段落。經企業官方資料核對，<b>Fab 52／62 為 Intel 位於 Chandler 的 Ocotillo 園區新廠</b>；台積電在亞利桑那的廠區編號為 <b>Fab 21</b> 各期。本頁已依官方資料調整。
+          </div>
+        </div>
+      </div>
+
+      <div class="cluster cluster--tuc">
+        <div class="cluster__top">
+          <h3>土桑國防與光學聚落</h3>
+          <span class="en">Tucson Defense &amp; Optics Cluster</span>
+          <p class="cluster__fn">戰略功能：<b>高可靠度技術能力</b>。國防系統整合、太空酬載、感測與光學設計，客戶結構以政府與國防主承包商為主。</p>
+        </div>
+        <div class="cluster__body">
+
+          <div class="sub">
+            <div class="sub__h"><span class="sub__badge">國防航太</span><h4>系統整合與極限應用</h4></div>
+            <ul>
+              <li><b>戰略打擊與防禦</b>｜精準導引飛彈與高超音速武器研發，核心業者為 RTX Raytheon；另有 Leidos 等系統服務商。</li>
+              <li><b>極限太空工程</b>｜低溫與高輻射環境下運作的衛星酬載系統。</li>
+              <li><b>無人系統與感測</b>｜軍規無人載具與監控系統整合，代表新創如 Lunasonde。</li>
+              <li><b>測試場域</b>｜土桑位於一條跨州國防測試廊帶上：亞利桑那境內有 Yuma Proving Ground 與 Fort Huachuca，鄰州新墨西哥則有 White Sands Missile Range。</li>
+            </ul>
+          </div>
+
+          <div class="sub">
+            <div class="sub__h"><span class="sub__badge">光學 Optics Valley</span><h4>從科研基礎擴散到商用</h4></div>
+            <ul>
+              <li><b>巨型光學鏡片</b>｜亞利桑那大學 Steward Observatory Mirror Lab 具備巨型天文望遠鏡非球面鏡製造技術。</li>
+              <li><b>矽光子</b>｜低功耗、高頻寬傳輸技術，直接對應 AI 資料中心的互連需求。</li>
+              <li><b>光學模擬與設計</b>｜Breault Research Organization 等機構主導全球光學工程師使用的光機設計與光路模擬工具。</li>
+              <li><b>元件供應</b>｜Edmund Optics 等精密光學廠商，並有全州逾 300 家光電相關企業／機構的產業社群。</li>
+            </ul>
+          </div>
+
+          <div class="corr">
+            <b>資料修正</b>
+            土桑光學聚落的學研核心為<b>亞利桑那大學（University of Arizona）Wyant 光學科學學院</b>（1964 年設立）與其 Steward Observatory Mirror Lab；亞利桑那州立大學（ASU）位於 Tempe，屬大鳳凰城聚落。原簡報此處疑有混用。
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="mapbox">
+      <div>
+        <svg viewBox="0 0 280 340" role="img" aria-label="亞利桑那州兩大產業聚落相對位置策略示意圖" style="width:100%;height:auto">
+          <polygon points="42,24 258,24 258,286 148,286 118,254 96,236 76,190 54,146 58,86"
+                   fill="#F5EFE3" stroke="#C9B896" stroke-width="1.5"/>
+          <line x1="42" y1="120" x2="258" y2="120" stroke="#C9CFD6" stroke-width="1" stroke-dasharray="4 4"/>
+          <text x="248" y="114" font-size="8.5" fill="#8B96A2" text-anchor="end" font-family="monospace">I-40</text>
+          <line x1="70" y1="200" x2="230" y2="120" stroke="#C9CFD6" stroke-width="1" stroke-dasharray="4 4"/>
+          <text x="228" y="132" font-size="8.5" fill="#8B96A2" text-anchor="end" font-family="monospace">I-10</text>
+
+          <circle cx="150" cy="176" r="26" fill="#0E2A47" opacity=".10"/>
+          <circle cx="150" cy="176" r="7" fill="#0E2A47"/>
+          <text x="164" y="172" font-size="11" fill="#0E2A47" font-weight="700">大鳳凰城</text>
+          <text x="164" y="185" font-size="8.5" fill="#54626F" font-family="monospace">SEMICONDUCTOR</text>
+
+          <circle cx="186" cy="248" r="21" fill="#B45309" opacity=".13"/>
+          <circle cx="186" cy="248" r="6" fill="#B45309"/>
+          <text x="198" y="245" font-size="11" fill="#B45309" font-weight="700">土桑</text>
+          <text x="198" y="258" font-size="8.5" fill="#8A6A3E" font-family="monospace">DEFENSE / OPTICS</text>
+
+          <circle cx="192" cy="284" r="3.5" fill="#0E7C7B"/>
+          <text x="200" y="288" font-size="8.5" fill="#0E7C7B" font-family="monospace">NOGALES 關口</text>
+          <circle cx="82" cy="222" r="3.5" fill="#0E7C7B"/>
+          <text x="90" y="226" font-size="8.5" fill="#0E7C7B" font-family="monospace">YUMA</text>
+
+          <text x="150" y="304" font-size="9" fill="#8B96A2" text-anchor="middle" font-family="monospace">MEXICO BORDER · 6 PORTS OF ENTRY</text>
+        </svg>
+        <p class="mapcap">Strategic schematic｜策略示意圖，非精確地理比例</p>
+      </div>
+      <div>
+        <h3>兩者不應分開理解</h3>
+        <p class="small" style="color:#3A4652">
+          大鳳凰城提供的是<b>規模</b>：以良率與交期論勝負的可擴張製造網絡，客戶是晶圓廠與封測廠。土桑提供的是<b>規格</b>：以可靠度、環境耐受與系統驗證論勝負的國防、太空與光學能力，客戶是政府與主承包商。
+        </p>
+        <p class="small" style="color:#3A4652;margin-bottom:0">
+          對台商而言，這是兩條不同的進入路徑：進大鳳凰城的門檻是產能、品質與在地服務；進土桑的門檻是資格、合規與長週期驗證。兩者可並行，但不能共用同一套商務模式。
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SECTION 6 ================= -->
+<section id="s6">
+  <div class="wrap">
+    <p class="eyebrow">Taiwan Opportunity Map</p>
+    <h2>三條可執行的切入路徑</h2>
+    <p class="lede">
+      關鍵轉變是角色而非地點：台灣是亞利桑那第一大進口來源（167 億美元），目前以出貨方式參與。下一階段的問題是，要不要、以及如何成為在地供應能力的一部分。
+    </p>
+
+    <div class="opps">
+
+      <div class="opp">
+        <div class="opp__h">
+          <span class="opp__n">Pathway 01</span>
+          <h3>半導體在地化供應鏈</h3>
+          <p class="opp__logic">從服務單一客戶，轉向建立北美在地供應能力。</p>
+        </div>
+        <div class="opp__b">
+          <div class="field"><span class="field__k">Why Arizona</span>
+            <p class="field__v">台積電 Fab 21 各期、Intel Ocotillo 新廠與 Amkor 先進封裝廠同時擴建，材料、設備、廠務、備品與工程服務需求在同一區域集中釋出。</p></div>
+          <div class="field"><span class="field__k">Taiwan Advantage</span>
+            <p class="field__v">既有客戶關係、量產良率經驗、快速工程反應能力，以及對台積電後段製程規格的熟悉度。</p></div>
+          <div class="field"><span class="field__k">Entry Route</span>
+            <p class="field__v">先以在地服務據點或合資承接廠務、備品與維運，再評估設廠；同步進行 Arizona Competes Fund 的擴廠與培訓協商，並以 FTZ 降低料件關稅曝險。</p></div>
+          <div class="field field--risk"><span class="field__k">Key Constraint</span>
+            <p class="field__v">技師與設備維護人力短缺（全美 2030 年短缺推估 12.7–15.7 萬人）、美國工會與勞動法規、以及在地成本結構與台灣的差距。</p></div>
+          <p class="fitline">適合：材料、設備、零組件、廠務工程、自動化、封裝測試、工程服務業者</p>
+        </div>
+      </div>
+
+      <div class="opp">
+        <div class="opp__h">
+          <span class="opp__n">Pathway 02</span>
+          <h3>國防、無人系統與高可靠度製造</h3>
+          <p class="opp__logic">透過土桑國防生態切入美國高規格市場。</p>
+        </div>
+        <div class="opp__b">
+          <div class="field"><span class="field__k">Why Arizona</span>
+            <p class="field__v">土桑集中飛彈系統整合、太空酬載與無人系統能力，並位於橫跨亞利桑那與新墨西哥的國防測試廊帶；該州航太零組件出口居全美第 10、導航量測儀器居第 8。</p></div>
+          <div class="field"><span class="field__k">Taiwan Advantage</span>
+            <p class="field__v">感測、通訊、飛控、光電模組與高可靠度 EMS 的成本與交期優勢，加上台灣國防自主需求形成的雙向合作誘因。</p></div>
+          <div class="field"><span class="field__k">Entry Route</span>
+            <p class="field__v">從次階供應商（Tier 2／3）切入 RTX Raytheon、Leidos 等主承包商供應鏈，或與 Lunasonde 一類新創共同開發；同時建立美國法人、資安與出口管制合規架構。</p></div>
+          <div class="field field--risk"><span class="field__k">Key Constraint</span>
+            <p class="field__v">國防資格門檻最高：ITAR／EAR 出口管制、CMMC 資安要求、人員身分限制與長達數年的驗證週期。資格取得本身就是主要投資。</p></div>
+          <p class="fitline">適合：感測器、通訊、飛控、光電、無人載具零組件、航太電子、高可靠度 EMS 業者</p>
+        </div>
+      </div>
+
+      <div class="opp">
+        <div class="opp__h">
+          <span class="opp__n">Pathway 03</span>
+          <h3>光學、矽光子與 AI 基礎設施</h3>
+          <p class="opp__logic">把台灣製造能力與土桑光學研發、美國 AI 資本支出接起來。</p>
+        </div>
+        <div class="opp__b">
+          <div class="field"><span class="field__k">Why Arizona</span>
+            <p class="field__v">土桑同時具備矽光子研究、光學設計模擬工具與精密光學社群；美國 AI 資料中心的資本支出正把高速光互連需求推向量產規模。</p></div>
+          <div class="field"><span class="field__k">Taiwan Advantage</span>
+            <p class="field__v">光學模組、高速傳輸元件與光電整合的量產能力，正是研發端最缺的一環——把實驗室規格轉成可交付的成本結構。</p></div>
+          <div class="field"><span class="field__k">Entry Route</span>
+            <p class="field__v">以產學合作或聯合開發切入亞利桑那大學光學科學學院與在地光電企業，並可用 Arizona Innovation Challenge、Angel Investment Tax Credit 參與早期布局。</p></div>
+          <div class="field field--risk"><span class="field__k">Key Constraint</span>
+            <p class="field__v">技術路線與客戶規格尚未收斂，投入時點難判斷；智財歸屬須在初期談定，否則量產階段議價能力有限。</p></div>
+          <p class="fitline">適合：矽光子、高速傳輸、光學模組、精密光學、AI 資料中心零組件、光電整合業者</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= SECTION 7 ================= -->
+<section id="s7">
+  <div class="wrap">
+    <p class="eyebrow">What This Means for Decision-Makers</p>
+    <h2>五個可以直接用在決策會議上的結論</h2>
+
+    <div class="decisions">
+      <div class="dec"><span class="dec__n">01</span><div>
+        <h3>把亞利桑那當成產業平台評估，不是「台積電設廠的那一州」</h3>
+        <p>只看一家客戶，會低估可承接的需求範圍，也會誤判自身議價位置。該評估的是整層供應鏈需求的釋出時序。</p>
+      </div></div>
+
+      <div class="dec"><span class="dec__n">02</span><div>
+        <h3>大鳳凰城與土桑是兩種商務模式，不能共用一套進入策略</h3>
+        <p>前者拚產能、良率與在地服務反應；後者拚資格、合規與驗證耐力。資源配置與 KPI 都應分開設計。</p>
+      </div></div>
+
+      <div class="dec"><span class="dec__n">03</span><div>
+        <h3>補貼降低初始成本，但決定長期成敗的是人才與客戶關係</h3>
+        <p>州級工具能協助設廠與培訓，但無法代替企業建立在地技師管線、售後能力與法遵體系。這些是長期成本，須提前編列。</p>
+      </div></div>
+
+      <div class="dec"><span class="dec__n">04</span><div>
+        <h3>台灣企業最缺的不是製造技術，而是在地商務開發與合規營運</h3>
+        <p>包含美國法人架構、勞動與工會關係、出口管制與資安認證、國防資格取得，以及能與州政府、大學談判的在地團隊。</p>
+      </div></div>
+
+      <div class="dec"><span class="dec__n">05</span><div>
+        <h3>時間窗口由投資宣布節奏決定，不是由政策口號決定</h3>
+        <p>1,077 億美元屬「宣布投資額」而非已到位資本，需求會分批釋出。追蹤各案動工與設備進場時點，比追蹤政策新聞更能決定進場時機。</p>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SECTION 8 ================= -->
+<section id="s8">
+  <div class="wrap">
+    <p class="eyebrow">Full Evidence &amp; Detail</p>
+    <h2>完整資料層</h2>
+    <p class="lede">
+      以下收錄原始簡報整理的完整內容、查證後的修正說明與來源清單。此層不計入主管主閱讀路徑，供後續查核與撰稿使用。
+    </p>
+
+    <div class="legend">
+      <span><span class="tag tag--verified">已查證</span>經官方來源核對</span>
+      <span><span class="tag tag--slide">原簡報陳述</span>沿用投影片，未另行查證</span>
+      <span><span class="tag tag--framing">分析框架</span>非官方制度名稱</span>
+      <span><span class="tag tag--fix">已修正</span>與官方資料不符，已調整</span>
+      <span><span class="tag tag--unclear">口徑待確認</span>定義或來源未完全確認</span>
+    </div>
+
+    <div class="acc">
+
+      <details>
+        <summary><span class="acc__idx">01</span>完整經貿數據</summary>
+        <div class="acc__body">
+          <h4>總體貿易<span class="tag tag--verified">已查證</span></h4>
+          <ul>
+            <li>2025 年出口額 444 億美元，自 2024 年的 324 億美元成長 37%，成長率全美第 2；同期全美出口成長 5.7%。</li>
+            <li>2025 年進口額 574 億美元，年增 36%。</li>
+            <li>台灣超越加拿大與中國，成為亞利桑那第 2 大貿易夥伴（僅次於墨西哥），雙邊貿易總額逾 212 億美元。</li>
+          </ul>
+          <h4>主要出口品項全美排名<span class="tag tag--verified">已查證</span></h4>
+          <table>
+            <thead><tr><th>品項</th><th>全美排名</th><th>金額</th><th>年增</th></tr></thead>
+            <tbody>
+              <tr><td>金屬礦石</td><td>1</td><td class="num">27 億美元</td><td class="num">+19.9%</td></tr>
+              <tr><td>電腦設備</td><td>3</td><td class="num">90 億美元</td><td class="num">+205%</td></tr>
+              <tr><td>半導體與其他電子零組件</td><td>5</td><td class="num">63 億美元</td><td class="num">+84%</td></tr>
+              <tr><td>導航、量測、醫電與控制儀器</td><td>8</td><td class="num">24 億美元</td><td class="num">+14%</td></tr>
+              <tr><td>航太零組件與產品</td><td>10</td><td class="num">56 億美元</td><td class="num">+4.3%</td></tr>
+            </tbody>
+          </table>
+          <p class="small muted">註：後兩項未出現在原始投影片整理中，為本次查證時自官方新聞稿補入，因其直接支撐土桑國防與光學聚落的敘事。</p>
+          <h4>其他<span class="tag tag--slide">原簡報陳述</span></h4>
+          <p>投影片另引用亞利桑那／鳳凰城的創新相關排名：新創企業最佳城市（鳳凰城）、半導體產業投資與生態系集中度全美第 1、技術與創新製造淨就業成長率全美第 4、高科技與創新製造業資產及產值成長率全美第 1。上述排名之發布機構與統計口徑未於照片中辨識，未另行查證。另據亞利桑那商務局向外部簡報之資料，2025 年該州半導體製造就業人數 24,431 人，居全美第 4。</p>
+        </div>
+      </details>
+
+      <details>
+        <summary><span class="acc__idx">02</span>出口目的地與進口來源排名</summary>
+        <div class="acc__body">
+          <h4>2025 年主要出口目的地<span class="tag tag--verified">已查證</span></h4>
+          <table>
+            <thead><tr><th>排名</th><th>國家／地區</th><th>金額</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>墨西哥 Mexico</td><td class="num">146 億美元</td></tr>
+              <tr><td>2</td><td>台灣 Taiwan</td><td class="num">45 億美元</td></tr>
+              <tr><td>3</td><td>加拿大 Canada</td><td class="num">28 億美元</td></tr>
+              <tr><td>4</td><td>荷蘭 Netherlands</td><td class="num">24 億美元</td></tr>
+              <tr><td>5</td><td>德國 Germany</td><td class="num">16 億美元</td></tr>
+            </tbody>
+          </table>
+          <h4>2025 年主要進口來源<span class="tag tag--verified">已查證</span></h4>
+          <table>
+            <thead><tr><th>排名</th><th>國家／地區</th><th>金額</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>台灣 Taiwan</td><td class="num">167 億美元</td></tr>
+              <tr><td>2</td><td>墨西哥 Mexico</td><td class="num">140 億美元</td></tr>
+              <tr><td>3</td><td>中國 China</td><td class="num">28 億美元</td></tr>
+              <tr><td>4</td><td>馬來西亞 Malaysia</td><td class="num">28 億美元</td></tr>
+              <tr><td>5</td><td>加拿大 Canada</td><td class="num">28 億美元</td></tr>
+            </tbody>
+          </table>
+          <p class="small muted">原始投影片僅呈現排名，未列金額；金額為本次查證時補入，用以說明台亞貿易 212 億美元的組成結構。</p>
+        </div>
+      </details>
+
+      <details>
+        <summary><span class="acc__idx">03</span>FDI 外國直接投資</summary>
+        <div class="acc__body">
+          <h4>口徑確認<span class="tag tag--verified">已查證</span></h4>
+          <ul>
+            <li>依 fDi Markets 統計，2025 年亞利桑那吸引 <b>55 件</b>外國直接投資項目，投資總額 <b>1,077 億美元</b>，預計創造逾 <b>25,000 個</b>新職缺。</li>
+            <li>此數字為<b>宣布投資額（announced investment）</b>，非已完工或已到位資本。</li>
+            <li>「領先全美」的正確語境為：2020 至 2025 年間，亞利桑那以逾 <b>1,957 億美元</b>的累計宣布外資，居全美各州之首。</li>
+          </ul>
+          <h4>2025 年 FDI 專案主要來源國（依項目數）<span class="tag tag--verified">已查證</span></h4>
+          <table>
+            <thead><tr><th>排名</th><th>國家</th><th>項目數</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>日本 Japan</td><td class="num">15</td></tr>
+              <tr><td>2</td><td>加拿大 Canada</td><td class="num">14</td></tr>
+              <tr><td>3</td><td>台灣 Taiwan</td><td class="num">7</td></tr>
+            </tbody>
+          </table>
+          <h4>2025 年 FDI 資本支出主要來源國<span class="tag tag--unclear">口徑待確認</span></h4>
+          <p>原始投影片列出資本支出別排名為：1 台灣、2 南韓、3 日本、4 荷蘭、5 加拿大。亞利桑那商務局公開新聞稿未列出此一分項排名，來源應為 fDi Markets 原始資料庫。此排名與上述「項目數」排名為兩種不同口徑，不應混用。</p>
+        </div>
+      </details>
+
+      <details>
+        <summary><span class="acc__idx">04</span>三項產業政策完整說明</summary>
+        <div class="acc__body">
+          <h4>州級招商基金 Arizona Competes Fund<span class="tag tag--slide">原簡報陳述</span></h4>
+          <ul>
+            <li>用途：吸引外商投資、鼓勵企業擴廠、保留高薪就業、人才培訓、基礎設施、大型投資案協商。</li>
+            <li>大型案通常結合地方政府資源與聯邦資源支持。</li>
+            <li>投影片列舉支持對象：TSMC、Intel、Amkor Technology、LG Energy Solution。</li>
+          </ul>
+          <h4>州級創新基金 Arizona Innovation Challenge<span class="tag tag--slide">原簡報陳述</span></h4>
+          <ul>
+            <li>目的：支持科技企業取得非股權投資（non-dilutive funding），推動商業化。</li>
+            <li>聚焦產業：先進材料、先進製造、太空與國防、生命科學、潔淨能源、IT 軟硬體。</li>
+            <li>獲選企業可獲至少 5 萬美元補助、企業導師與加速器輔導，近年並結合 Venture Scale 等創業計畫協助後續募資。</li>
+            <li>投影片頁尾可辨識來源：<code>azcommerce.com/start-up/arizona-innovation-challenge/</code></li>
+          </ul>
+          <h4>州天使投資稅收抵免 Angel Investment Tax Credit<span class="tag tag--unclear">口徑待確認</span></h4>
+          <ul>
+            <li>目標：擴大對州內特定小型企業的早期投資，提供投資抵減優惠，可用以降低州所得稅負。</li>
+            <li>鼓勵投資領域：AI、半導體、機器人、深度科技及其他新創。</li>
+            <li>投影片中抵免比例、資格條件與完整敘述遭前方人員遮擋，未完整辨識；本頁未自行補造內容。</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary><span class="acc__idx">05</span>人才政策完整說明</summary>
+        <div class="acc__body">
+          <h4>Talent Ready AZ<span class="tag tag--slide">原簡報陳述</span></h4>
+          <ul>
+            <li>目標：透過居民教育與培訓使其取得高薪工作，建立完整人才培育體系，並以未來高成長產業為核心。</li>
+            <li>目標產業：先進製造業、潔淨能源、資訊科技、航太國防、醫療等。</li>
+            <li>執行方式：產業界與高等教育機構緊密合作。</li>
+            <li>培育項目：K–12 STEM 教育、學徒制（Apprenticeship）、在職訓練（Upskilling）、再培訓（Reskilling）。</li>
+            <li>投影片頁尾網址片段辨識為亞利桑那州經濟機會辦公室（Arizona Office of Economic Opportunity）／Talent Ready AZ 相關頁面。</li>
+          </ul>
+          <h4>NNME Southwest 微電子教育國家網絡西南區域節點<span class="tag tag--verified">已查證</span></h4>
+          <ul>
+            <li>正式名稱：National Network for Microelectronics Education (NNME) Southwest Regional Node。</li>
+            <li>2026 年 5 月 27 日於 JA BizTown 正式宣布獲指定為 NNME 首批四個區域節點之一。</li>
+            <li>由亞利桑那商務局（ACA）召集，成員 47 個，涵蓋高教機構、微電子雇主、勞動力組織、K–12 與 STEM 夥伴、經濟發展機構與社區組織。</li>
+            <li>覆蓋五州：亞利桑那、<b>南加州</b>、科羅拉多、新墨西哥、猶他。（原簡報記為「加州」，官方口徑為南加州。）</li>
+            <li>角色分工：由美國國家科學基金會（NSF）與商務部支持、SEMI Foundation 營運；ACA 為西南節點主導單位。</li>
+            <li>資源規模：每個區域節點五年內最高可獲 2,000 萬美元支持。亞利桑那大學預計五年獲 150 萬美元擴充半導體無塵室訓練，其開發的 SemiSphere 教育內容平台獲選為全網絡共用工具。</li>
+            <li>產業夥伴（官方公布，含原簡報遮擋部分）：Intel、TSMC Arizona、Amkor、Micron、Applied Materials、Lam Research、Nikon、Synopsys、Arm、Northrop Grumman、RTX（Raytheon Advanced Technology）、Teledyne、HRL Laboratories、Tower Semiconductor、Muse Semiconductor、Western Design Center，以及 Los Alamos／Sandia 國家實驗室等。</li>
+            <li>背景：SEMI Foundation 與 McKinsey 分析推估，美國至 2030 年將短缺約 12.7 萬至 15.7 萬名半導體與微電子人力。</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary><span class="acc__idx">06</span>基礎設施完整說明</summary>
+        <div class="acc__body">
+          <h4>地理位置<span class="tag tag--slide">原簡報陳述</span></h4>
+          <p>位於美國西南部內陸，擁有多條州際高速公路與橫貫大陸鐵路。投影片註記：一日車程內可達加州洛杉磯、聖地牙哥、內華達州拉斯維加斯、德州艾爾帕索等地。</p>
+          <h4>公路與鐵路</h4>
+          <ul>
+            <li>州際公路與高速公路近 13 萬英里，包括 I-10、I-40、I-17、I-8、I-19、US 60、US 93。</li>
+            <li>兩條一級鐵路：Union Pacific（UP）、BNSF。</li>
+          </ul>
+          <h4>機場</h4>
+          <p>超過 80 個機場，提供高價值、時效性航空貨運。投影片列舉：鳳凰城天港國際機場（Sky Harbor）、梅薩關口機場（Mesa Gateway）、土桑國際機場（Tucson）。</p>
+          <h4>陸路跨境關口</h4>
+          <p>設有 6 個與墨西哥相接壤的供應鏈出入境口岸。投影片列舉：諾加利斯（Nogales，描述為最大美墨陸路口岸）、聖路易斯（San Luis，鄰近加州與墨西哥邊境）、道格拉斯（Douglas，位於東南部）。其餘關口未在照片中完整辨識。</p>
+          <h4>聯邦自貿區（FTZ）</h4>
+          <p>設有多個活躍的聯邦自貿區，允許外國商品免除或延後繳納關稅，並可在區內倉儲、加工與製造。投影片列舉鳳凰城 FTZ、土桑 FTZ，另有西部其他 FTZ 名稱被遮擋。頁尾網址片段：<code>azcommerce.com/logistics.php</code></p>
+        </div>
+      </details>
+
+      <details>
+        <summary><span class="acc__idx">07</span>大鳳凰城半導體聚落詳細內容</summary>
+        <div class="acc__body">
+          <h4>聚落整體<span class="tag tag--slide">原簡報陳述</span></h4>
+          <ul>
+            <li>擁有完整半導體生態圈與大規模量產能力，形成涵蓋製造、封測、上游材料與設備的一條龍體系，並具備充沛人才庫。</li>
+            <li>核心區域——東谷：Chandler、Gilbert、Tempe、Mesa；北谷與西谷：North Phoenix、Peoria、Glendale。</li>
+            <li>分工定位：東谷以晶圓製造與成熟製程為主；北谷與西谷以先進製程與先進封裝為主。</li>
+          </ul>
+          <h4>東谷<span class="tag tag--fix">已修正</span></h4>
+          <ul>
+            <li><b>Chandler</b>｜Intel 的 Ocotillo 園區，營運 Fab 12、Fab 22、Fab 32、Fab 42；2021 年宣布約 200 億美元擴建，新建 <b>Fab 52 與 Fab 62</b>。Fab 52 已投入 18A 製程量產（RibbonFET 與 PowerVia），是 Intel 在美國最先進的產線。</li>
+            <li><b>Tempe</b>｜亞利桑那州立大學（ASU）校區所在，定位為基礎研究、產學合作與高階工程研發人才中心；Waymo 自駕車在此進行大規模道路測試。</li>
+          </ul>
+          <h4>北谷與西谷<span class="tag tag--fix">已修正</span></h4>
+          <ul>
+            <li><b>North Phoenix</b>｜台積電亞利桑那廠區編號為 <b>Fab 21</b>，分期建設；第一期已量產 4／5 奈米級製程，後續各期導入 3 奈米及更先進節點。</li>
+            <li><b>Peoria</b>｜Amkor 宣布投資數十億美元興建大型先進封裝廠，專為台積電後段製程需求布局，補足在地封裝服務價值鏈。</li>
+          </ul>
+          <h4>修正說明</h4>
+          <p>原始投影片在台積電北谷段落記載「近期加碼投資擴建 Fab 52 與 Fab 62」。經 Intel 官方新聞資料室、Chandler 市政府新聞稿與多家產業媒體核對，<b>Fab 52 與 Fab 62 為 Intel 於 Chandler Ocotillo 園區的新建廠</b>，與台積電無關。本頁已依官方企業資料調整廠區歸屬。</p>
+        </div>
+      </details>
+
+      <details>
+        <summary><span class="acc__idx">08</span>土桑國防與光學聚落詳細內容</summary>
+        <div class="acc__body">
+          <h4>聚落整體<span class="tag tag--slide">原簡報陳述</span></h4>
+          <ul>
+            <li>核心區域：Tucson、Pima County、Oro Valley。</li>
+            <li>擁有全球知名的「光學谷（Optics Valley）」，專注尖端防衛導彈系統製造、太空探索科技、先進生技與儀器製造，結合高附加價值的軍工、光學與醫療科研。</li>
+            <li>聚焦領域：國防光電、雷射、感測器、衛星酬載、光通訊、矽光子。</li>
+          </ul>
+          <h4>國防航太技術</h4>
+          <ul>
+            <li>戰略打擊與防禦系統：精準導引飛彈、高超音速武器研發。</li>
+            <li>極限太空工程：低溫與高輻射環境下運作的衛星酬載系統。</li>
+            <li>無人機與感測控制：軍事級無人載具（UAV）與監控系統整合。</li>
+            <li>投影片列舉廠商：RTX Raytheon、Leidos、Lunasonde（部分名稱影像不清）。</li>
+          </ul>
+          <h4>光電與光學技術</h4>
+          <ul>
+            <li>巨型光學鏡片研製：巨型天文望遠鏡用非球面鏡片製造技術。</li>
+            <li>矽光子（Silicon Photonics）：低功耗、高頻寬傳輸技術。</li>
+            <li>光學模擬與光學設計：全球光學光路模擬軟體研發基地，主導全球光學工程師使用的光機設計工具。</li>
+            <li>投影片列舉機構與廠商：UA Steward Observatory Mirror Lab、Edmund Optics、Breault Research Organization（部分名稱被遮擋）。</li>
+          </ul>
+          <h4>修正與釐清<span class="tag tag--fix">已修正</span></h4>
+          <ul>
+            <li><b>學研核心機構</b>：原簡報記為「亞利桑那州立大學」。經核對，土桑光學聚落的學研核心為<b>亞利桑那大學（University of Arizona）James C. Wyant 光學科學學院</b>（1964 年設立為 Optical Sciences Center），以及隸屬該校的 Steward Observatory Mirror Lab。亞利桑那州立大學（ASU）位於 Tempe，屬大鳳凰城聚落。</li>
+            <li><b>「美國戰爭部」用語</b>：此為原簡報用字，並非誤植或過時名稱。2025 年 9 月 5 日第 14347 號行政命令授權美國國防部使用「Department of War（戰爭部）」作為非法定文件中的次要名稱；法定名稱仍為 Department of Defense（國防部），須經國會立法始能正式變更。本頁主敘事採「美國國防部」為主要稱謂。</li>
+            <li><b>White Sands 關聯</b>：White Sands Missile Range 位於<b>新墨西哥州</b>，並非與土桑相鄰。正確描述為：土桑位於一條橫跨南亞利桑那與新墨西哥的國防測試廊帶上，亞利桑那境內的相關設施包括 Yuma Proving Ground 與 Fort Huachuca。本頁已改寫，未沿用「鄰近」的表述。</li>
+            <li><b>「300 家以上光電企業」</b>：此一數量級與亞利桑那光學產業協會（Arizona Optics Industry Association）逾 300 個會員企業與機構之規模相符，惟該協會為<b>全州性</b>組織，非僅涵蓋土桑。本頁以「全州逾 300 家光電相關企業／機構」表述。</li>
+            <li><b>「Strike Photonics」</b>：原簡報小結中列舉之此一公司名稱，未能於本次查證範圍內確認為實際存在之土桑光電企業，可能為影像辨識誤差。本頁主敘事未採用該名稱。<span class="tag tag--unclear">口徑待確認</span></li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary><span class="acc__idx">09</span>台灣布局原始建議（投影片小結）</summary>
+        <div class="acc__body">
+          <h4>核心結論<span class="tag tag--slide">原簡報陳述</span></h4>
+          <p>「就近市場並運用海外資源，掌握半導體與國防商機。」</p>
+          <h4>大鳳凰城：以台積電為核心，完備半導體供應鏈</h4>
+          <ul>
+            <li>以台積電為核心，充分掌握美國《CHIPS and Science Act》及州政府招商資源。</li>
+            <li>逐步完整移入半導體供應鏈製造體系，包括下世代先進製程與先進封裝技術。</li>
+            <li>建立從前段晶圓製造到後段先進封測的產線，逐步複製台灣完整的半導體供應鏈，形成難以被取代的「海外第二矽島」生態系。</li>
+            <li>台廠可強化與亞利桑那州立大學（ASU）的產學合作，及早布局高階工程研發人才。</li>
+          </ul>
+          <h4>土桑：結合台灣國防技術需求，互補合作共同發展</h4>
+          <ul>
+            <li>台廠可與 RTX Raytheon、Leidos、Lunasonde 等公司合作，成為國防科技、太空衛星、無人機等系統或零組件供應商。</li>
+            <li>鏈結美國光學谷（Optics Valley）廠商技術，共同開發下世代 AI 高速傳輸矽光子，並逐步擴大至商用領域。</li>
+          </ul>
+          <p class="small muted">本頁第六區的三條機會路徑，即以上述原始建議為基礎，補入進入方式（Entry Route）與關鍵限制（Key Constraint）兩個決策必要欄位後改寫而成。原始建議本身未做刪減。</p>
+        </div>
+      </details>
+
+      <details>
+        <summary><span class="acc__idx">10</span>資料限制與修正說明</summary>
+        <div class="acc__body">
+          <h4>「美國西南科技製造走廊」<span class="tag tag--framing">分析框架</span></h4>
+          <p>原簡報以德州與亞利桑那共同構成「美國西南科技製造走廊」為敘事框架。查無聯邦或州政府層級以此為名的正式制度或區域劃分，因此本頁未將其寫成官方認定的架構，改以「逐步成形的區域製造廊帶」表述。值得注意的是，這一區域概念目前<b>最接近制度化的載體是 NNME Southwest</b>——一個涵蓋亞利桑那、南加州、科羅拉多、新墨西哥與猶他的五州節點，由聯邦資源支持並由亞利桑那商務局主導。該節點的官方說明亦將此區域描述為橫跨微電子完整價值鏈的擴張走廊。</p>
+          <h4>「Dallas–Plano–Sherman–Fort Worth」<span class="tag tag--fix">已修正</span></h4>
+          <p>此組地名出現在原投影片的亞利桑那產業聚落頁面，但四者皆為德州都會區，與大鳳凰城聚落無地理關聯。研判為版面誤植或跨頁比較性文字殘留。本頁主敘事已將其移除，大鳳凰城聚落改以實際城市（Chandler、Tempe、Mesa、Gilbert、North Phoenix、Peoria、Glendale）呈現。</p>
+          <h4>照片辨識限制（原整理文件所列）</h4>
+          <ol>
+            <li>第一張背景投影片左側段落開頭被畫面裁切。</li>
+            <li>FDI 頁面下方部分來源國專案數受到前方人員遮擋。</li>
+            <li>Angel Investment Tax Credit 的抵免比例、資格與完整敘述未完全顯示。</li>
+            <li>NNME Southwest 參與企業名單有部分被遮擋（本次已依官方新聞稿補齊）。</li>
+            <li>六個美墨跨境關口僅辨識出部分名稱。</li>
+            <li>聯邦自貿區名單未完整顯示。</li>
+            <li>土桑光學企業與機構名單有部分被遮擋。</li>
+            <li>投影片中個別公司名稱、Fab 編號與政策成立年份需以官方來源驗證（本次已處理 Fab 編號與 NNME 成立時間）。</li>
+            <li>「美國戰爭部」用字（本次已釐清，非誤植）。</li>
+          </ol>
+          <p class="small muted">本頁未對任何遭遮擋而無法辨識的公司名稱、政策條款或數字進行補造。凡未能查證者，均以「口徑待確認」標示。</p>
+        </div>
+      </details>
+
+      <details>
+        <summary><span class="acc__idx">11</span>投影片頁序對照</summary>
+        <div class="acc__body">
+          <table>
+            <thead><tr><th>照片</th><th>內容</th><th>對應本頁區塊</th></tr></thead>
+            <tbody>
+              <tr><td class="num">IMG_5839</td><td>背景：美國政策方向挑戰</td><td>Section 2</td></tr>
+              <tr><td class="num">IMG_5840</td><td>背景：美國逐步發展出新型區域創新生態</td><td>Section 2／完整資料 10</td></tr>
+              <tr><td class="num">IMG_5843</td><td>亞利桑那州的經貿概況</td><td>Section 1、3</td></tr>
+              <tr><td class="num">IMG_5844</td><td>投資環境（1）：產業政策</td><td>Section 4 Layer 01</td></tr>
+              <tr><td class="num">IMG_5845</td><td>投資環境（2）：人才政策</td><td>Section 4 Layer 02</td></tr>
+              <tr><td class="num">IMG_5846</td><td>投資環境（3）：基礎設施</td><td>Section 3、4 Layer 03</td></tr>
+              <tr><td class="num">IMG_5847</td><td>產業群聚：二大聚落</td><td>Section 5</td></tr>
+              <tr><td class="num">IMG_5848</td><td>大鳳凰城半導體聚落</td><td>Section 5／完整資料 07</td></tr>
+              <tr><td class="num">IMG_5849</td><td>土桑國防與光學聚落</td><td>Section 5／完整資料 08</td></tr>
+              <tr><td class="num">IMG_5850</td><td>小結：對台灣布局的啟發</td><td>Section 6／完整資料 09</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+      <details>
+        <summary><span class="acc__idx">12</span>Sources 補橋資料來源</summary>
+        <div class="acc__body">
+          <p class="small muted">以下來源僅用於修補敘事斷橋與釐清高風險項目。原始 MD 中的數字、政策名稱與公司名稱，除本頁明確標示「已修正」者外，均沿用原整理內容。</p>
+          <div class="srcList">
+
+            <div class="src">
+              <span class="src__org">Arizona Commerce Authority</span>
+              <span class="src__t">Arizona Emerges as a Global Economic Powerhouse（2026 年 2 月 24 日）</span>
+              <a class="src__u" href="https://www.azcommerce.com/news-events/news/2026/2/2025-international-trade/" target="_blank" rel="noopener">azcommerce.com/news-events/news/2026/2/2025-international-trade/</a>
+              <span class="src__for">支持：出口／進口金額、品項排名、貿易夥伴、FDI 口徑與 1,957 億累計投資</span>
+            </div>
+
+            <div class="src">
+              <span class="src__org">Arizona Commerce Authority</span>
+              <span class="src__t">NNME Southwest 區域節點指定新聞稿（2026 年 5 月 27 日）</span>
+              <a class="src__u" href="https://www.azcommerce.com/news-events/news/2026/5/nnme-southwest/" target="_blank" rel="noopener">azcommerce.com/news-events/news/2026/5/nnme-southwest/</a>
+              <span class="src__for">支持：NNME Southwest 成立時間、召集單位、成員與產業夥伴</span>
+            </div>
+
+            <div class="src">
+              <span class="src__org">SEMI Foundation／U.S. National Science Foundation</span>
+              <span class="src__t">首批四個 NNME 區域節點啟動新聞稿（2026 年 5 月）</span>
+              <a class="src__u" href="https://www.semi.org/en/semi-press-release/semi-foundation-and-the-us-national-science-foundation-launch-first-four-regional-nodes-of-the-national-network-for-microelectronics-education-nnme" target="_blank" rel="noopener">semi.org（NNME 首批區域節點）</a>
+              <span class="src__for">支持：五州覆蓋範圍、每節點 2,000 萬美元、2030 年人力短缺推估</span>
+            </div>
+
+            <div class="src">
+              <span class="src__org">NNME</span>
+              <span class="src__t">NNME Southwest 節點官方頁面</span>
+              <a class="src__u" href="https://nnme.org/nnme-southwest/" target="_blank" rel="noopener">nnme.org/nnme-southwest/</a>
+              <span class="src__for">支持：完整產業與機構夥伴名單、區域走廊定位</span>
+            </div>
+
+            <div class="src">
+              <span class="src__org">University of Arizona</span>
+              <span class="src__t">U of A joins national semiconductor workforce training hub（2026 年 6 月）</span>
+              <a class="src__u" href="https://news.arizona.edu/news/u-joins-national-semiconductor-workforce-training-hub" target="_blank" rel="noopener">news.arizona.edu</a>
+              <span class="src__for">支持：亞利桑那大學於 NNME 中的角色、SemiSphere 平台</span>
+            </div>
+
+            <div class="src">
+              <span class="src__org">University of Arizona</span>
+              <span class="src__t">Wyant College of Optical Sciences 學院沿革</span>
+              <a class="src__u" href="https://optics.arizona.edu/our-college/our-history/optical-sciences-center-osc" target="_blank" rel="noopener">optics.arizona.edu</a>
+              <span class="src__for">支持：土桑光學學研核心機構修正（UA 而非 ASU）、1964 年設立</span>
+            </div>
+
+            <div class="src">
+              <span class="src__org">Intel Corporation</span>
+              <span class="src__t">Press Kit: Intel Builds Arizona（Ocotillo 園區擴建）</span>
+              <a class="src__u" href="https://newsroom.intel.com/press-kit/press-kit-intel-builds-arizona" target="_blank" rel="noopener">newsroom.intel.com</a>
+              <span class="src__for">支持：Fab 52／62 歸屬 Intel Chandler Ocotillo 園區</span>
+            </div>
+
+            <div class="src">
+              <span class="src__org">City of Chandler</span>
+              <span class="src__t">Intel breaks ground on two new semiconductor factories（2021 年 9 月）</span>
+              <a class="src__u" href="https://www.chandleraz.gov/news-center/intel-breaks-ground-two-new-semiconductor-factories" target="_blank" rel="noopener">chandleraz.gov</a>
+              <span class="src__for">支持：Fab 52／62 動工時間與地點</span>
+            </div>
+
+            <div class="src">
+              <span class="src__org">Tom's Hardware</span>
+              <span class="src__t">Intel's Fab 52 vs TSMC's Arizona facilities（2025 年 12 月）</span>
+              <a class="src__u" href="https://www.tomshardware.com/tech-industry/semiconductors/intels-fab-52-is-bigger-and-better-equipped-than-tsmcs-arizona-facilities-intels-production-volumes-dwarf-tsmcs-operations-in-the-u-s" target="_blank" rel="noopener">tomshardware.com</a>
+              <span class="src__for">支持：Fab 52 投入 18A 量產、與台積電 Fab 21 各期之區分</span>
+            </div>
+
+            <div class="src">
+              <span class="src__org">The White House</span>
+              <span class="src__t">Executive Order 14347: Restoring the United States Department of War（2025 年 9 月 5 日）</span>
+              <a class="src__u" href="https://www.whitehouse.gov/presidential-actions/2025/09/restoring-the-united-states-department-of-war/" target="_blank" rel="noopener">whitehouse.gov</a>
+              <span class="src__for">支持：「戰爭部」為次要名稱、法定名稱仍為國防部</span>
+            </div>
+
+            <div class="src">
+              <span class="src__org">U.S. Army</span>
+              <span class="src__t">White Sands Missile Range 官方頁面</span>
+              <a class="src__u" href="https://home.army.mil/wsmr/" target="_blank" rel="noopener">home.army.mil/wsmr/</a>
+              <span class="src__for">支持：WSMR 位於新墨西哥州，非與土桑相鄰</span>
+            </div>
+
+            <div class="src">
+              <span class="src__org">Physics Today（AIP）</span>
+              <span class="src__t">Shining a light on Tucson's Optics Valley</span>
+              <a class="src__u" href="https://physicstoday.aip.org/news/shining-a-light-on-tucsons-optics-valley" target="_blank" rel="noopener">physicstoday.aip.org</a>
+              <span class="src__for">支持：亞利桑那光學產業協會逾 300 家會員之全州性質</span>
+            </div>
+
+            <div class="src">
+              <span class="src__org">Arizona Technology Council</span>
+              <span class="src__t">Arizona export surge explained（2026 年 5 月）</span>
+              <a class="src__u" href="https://www.aztechcouncil.org/news/my-view-arizona-export-surge-explained/" target="_blank" rel="noopener">aztechcouncil.org</a>
+              <span class="src__for">支持：半導體製造就業 24,431 人、全美第 4</span>
+            </div>
+
+            <div class="src">
+              <span class="src__org">Tucson Local Media／Tucson Weekly</span>
+              <span class="src__t">Southern Arizona is building a next-generation defense ecosystem（2026 年）</span>
+              <a class="src__u" href="https://www.tucsonweekly.com/newsopinion/curr/ai-space-and-hypersonics-southern-arizona-is-building-a-next-generation-defense-ecosystem/" target="_blank" rel="noopener">tucsonweekly.com</a>
+              <span class="src__for">支持：跨州國防測試廊帶（Yuma、Fort Huachuca、White Sands）</span>
+            </div>
+
+          </div>
+        </div>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p style="margin:0 0 6px"><strong>亞利桑那州經貿、投資環境與產業聚落｜Executive Briefing</strong></p>
+    <p style="margin:0">
+      主敘事依據現場拍攝之 10 張投影片整理文件建立；標示「已修正」與「已查證」之項目經官方來源核對，來源列於完整資料層第 12 項。
+      貿易與投資數據基準年為 2025 年，由亞利桑那商務局於 2026 年 2 月發布。凡影像遮擋而無法辨識之內容，均未補造。
+    </p>
+  </div>
+</footer>
+
+<button class="totop" id="totop" type="button" aria-label="回到頁面頂端">↑</button>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---- scroll progress ---- */
+  var bar = document.getElementById('bar');
+  var totop = document.getElementById('totop');
+
+  function onScroll(){
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    var pct = max > 0 ? (h.scrollTop || document.body.scrollTop) / max * 100 : 0;
+    bar.style.width = pct.toFixed(2) + '%';
+    if ((h.scrollTop || document.body.scrollTop) > 500) { totop.classList.add('show'); }
+    else { totop.classList.remove('show'); }
+  }
+  var ticking = false;
+  window.addEventListener('scroll', function(){
+    if (!ticking){ window.requestAnimationFrame(function(){ onScroll(); ticking = false; }); ticking = true; }
+  }, {passive:true});
+  onScroll();
+
+  /* ---- back to top ---- */
+  totop.addEventListener('click', function(){
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({top:0, behavior: reduce ? 'auto' : 'smooth'});
+    var first = document.querySelector('#s1 h1');
+    if (first){ first.setAttribute('tabindex','-1'); first.focus({preventScroll:true}); }
+  });
+
+  /* ---- hero number cards: click / keyboard toggle ---- */
+  var cards = document.querySelectorAll('.numCard');
+  Array.prototype.forEach.call(cards, function(c){
+    c.addEventListener('click', function(){
+      var open = c.getAttribute('aria-expanded') === 'true';
+      c.setAttribute('aria-expanded', open ? 'false' : 'true');
+      var hint = c.querySelector('.numCard__hint');
+      if (hint){ hint.textContent = open ? '點選看說明' : '點選收合'; }
+    });
+  });
+
+  /* ---- active section in nav via IntersectionObserver ---- */
+  var links = document.querySelectorAll('#nav a');
+  var map = {};
+  Array.prototype.forEach.call(links, function(a){ map[a.getAttribute('href').slice(1)] = a; });
+
+  function setActive(id){
+    Array.prototype.forEach.call(links, function(a){ a.classList.remove('is-active'); a.removeAttribute('aria-current'); });
+    if (map[id]){ map[id].classList.add('is-active'); map[id].setAttribute('aria-current','true'); }
+  }
+
+  if ('IntersectionObserver' in window){
+    var visible = {};
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ visible[en.target.id] = en.isIntersecting ? en.intersectionRatio : 0; });
+      var best = null, bestVal = 0;
+      Object.keys(visible).forEach(function(k){ if (visible[k] > bestVal){ bestVal = visible[k]; best = k; } });
+      if (best){ setActive(best); }
+    }, {rootMargin:'-100px 0px -55% 0px', threshold:[0,.15,.4,.75,1]});
+    Array.prototype.forEach.call(document.querySelectorAll('main section[id]'), function(s){ io.observe(s); });
+  } else {
+    setActive('s1');
+  }
+
+  /* ---- keep the active nav item scrolled into view on narrow screens ---- */
+  var nav = document.getElementById('nav');
+  var lastActive = null;
+  setInterval(function(){
+    var cur = nav.querySelector('a.is-active');
+    if (cur && cur !== lastActive && nav.scrollWidth > nav.clientWidth){
+      lastActive = cur;
+      var left = cur.offsetLeft - nav.clientWidth/2 + cur.clientWidth/2;
+      nav.scrollTo({left: left, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'});
+    }
+  }, 400);
+
+  /* ---- open all accordions before printing, restore after ---- */
+  var opened = [];
+  window.addEventListener('beforeprint', function(){
+    opened = [];
+    Array.prototype.forEach.call(document.querySelectorAll('details'), function(d){
+      if (!d.open){ opened.push(d); d.open = true; }
+    });
+    Array.prototype.forEach.call(cards, function(c){ c.setAttribute('aria-expanded','true'); });
+  });
+  window.addEventListener('afterprint', function(){
+    opened.forEach(function(d){ d.open = false; });
+    opened = [];
+  });
+})();
+</script>
+
+</body>
+</html>
