@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>美國無人機政策與供應鏈 — 中文版簡報</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --page:#F7F4EF;
+    --ink:#1B2437;
+    --ink-soft:#56637A;
+    --rule:#E3DED4;
+    --card:#FFFFFF;
+    --orange:#C0562A;
+    --blue:#33507A;
+    --green:#3E6B53;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:#DCD7CD;
+    font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+    color:var(--ink);
+    padding:28px 16px;
+  }
+  .deck{display:flex;flex-direction:column;align-items:center;gap:28px;}
+  .slide{
+    position:relative;
+    width:1280px;
+    height:722px;
+    background:var(--page);
+    border-radius:14px;
+    overflow:hidden;
+    box-shadow:0 10px 34px rgba(27,36,55,.18);
+    padding:44px 68px 0;
+  }
+  .topbar{
+    position:absolute;top:0;left:0;right:0;height:9px;
+    background:linear-gradient(90deg,var(--ink) 0%,var(--ink) 22%,var(--orange) 22%,var(--orange) 100%);
+  }
+  .eyebrow{
+    color:var(--orange);
+    font-weight:700;
+    font-size:13px;
+    letter-spacing:.14em;
+    margin-bottom:14px;
+  }
+  h1{
+    font-size:40px;
+    line-height:1.25;
+    font-weight:900;
+    letter-spacing:-.01em;
+    margin:0 0 14px;
+  }
+  .sub{
+    color:var(--ink-soft);
+    font-size:16.5px;
+    line-height:1.65;
+    max-width:1000px;
+    margin:0 0 26px;
+  }
+
+  /* ---- stat row ---- */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:30px;}
+  .stat{
+    background:var(--card);
+    border:1px solid var(--rule);
+    border-radius:7px;
+    padding:18px 16px 16px;
+    text-align:center;
+  }
+  .stat .num{font-size:26px;font-weight:900;line-height:1.1;margin-bottom:8px;}
+  .stat .lab{font-size:12.5px;color:var(--ink-soft);line-height:1.5;}
+  .c-orange{color:var(--orange);}
+  .c-blue{color:var(--blue);}
+  .c-ink{color:#3B4557;font-weight:500 !important;}
+
+  /* ---- two columns ---- */
+  .cols{display:grid;grid-template-columns:1fr 1px 1fr;gap:0 40px;}
+  .divider{background:var(--rule);}
+  h2{font-size:19px;font-weight:900;margin:0 0 18px;}
+  ul{list-style:none;margin:0;padding:0;}
+  li{
+    position:relative;
+    padding-left:22px;
+    margin-bottom:16px;
+    font-size:14.5px;
+    line-height:1.6;
+    color:#3B4557;
+  }
+  li::before{
+    content:"";position:absolute;left:2px;top:8px;
+    width:8px;height:8px;border-radius:50%;
+  }
+  .left li::before{background:var(--orange);}
+  .right li::before{background:var(--green);}
+  li b{color:var(--ink);font-weight:700;}
+
+  /* ---- banner ---- */
+  .banner{
+    position:absolute;left:68px;right:68px;bottom:96px;
+    background:var(--ink);
+    color:#fff;
+    border-radius:6px;
+    text-align:center;
+    font-weight:700;
+    font-size:16px;
+    padding:20px 24px;
+    line-height:1.5;
+  }
+
+  /* ---- flow row (slide 1) ---- */
+  .flow{display:flex;align-items:center;gap:0;margin:6px 0 34px;}
+  .node{
+    width:180px;height:78px;border-radius:5px;
+    color:#fff;font-weight:700;font-size:14.5px;
+    display:flex;align-items:center;justify-content:center;text-align:center;
+    line-height:1.45;padding:0 12px;
+  }
+  .n1{background:var(--ink);}
+  .n2{background:#3F5A85;}
+  .n3{background:#C4692F;}
+  .n4{background:var(--green);}
+  .arrow{
+    flex:1;height:2px;background:#B9B3A7;position:relative;margin:0 14px;
+  }
+  .arrow::after{
+    content:"";position:absolute;right:-1px;top:-4px;
+    border-left:9px solid #B9B3A7;
+    border-top:5px solid transparent;
+    border-bottom:5px solid transparent;
+  }
+
+  /* ---- verdict ---- */
+  .verdict{
+    position:absolute;left:68px;right:68px;bottom:96px;
+    background:#fff;border:1px solid var(--rule);border-radius:7px;
+    padding:24px 28px;display:flex;gap:24px;align-items:flex-start;
+  }
+  .tag{
+    background:var(--ink);color:#fff;font-size:11.5px;font-weight:700;
+    letter-spacing:.12em;padding:9px 16px;border-radius:4px;white-space:nowrap;margin-top:2px;
+  }
+  .verdict h3{margin:0 0 10px;font-size:19px;font-weight:900;}
+  .verdict p{margin:0;font-size:14px;line-height:1.7;color:#3B4557;}
+
+  /* ---- footer ---- */
+  .foot{
+    position:absolute;left:68px;right:68px;bottom:26px;
+    border-top:1px solid var(--rule);
+    padding-top:14px;
+    display:flex;justify-content:space-between;
+    font-size:11.5px;color:#8B8579;
+  }
+
+  @media print{
+    body{background:#fff;padding:0;}
+    .deck{gap:0;}
+    .slide{border-radius:0;box-shadow:none;page-break-after:always;}
+  }
+</style>
+</head>
+<body>
+<div class="deck">
+
+  <!-- ================= SLIDE 01 ================= -->
+  <section class="slide">
+    <div class="topbar"></div>
+    <div class="eyebrow">政策查證</div>
+    <h1>美國無人機政策已從「資格篩選」轉向「市場重構」</h1>
+    <p class="sub">最關鍵的發現：美國並未全面禁止中國無人機，而是關閉了新設備的授權閘門，並把聯邦需求導向受信任供應商。</p>
+
+    <div class="flow">
+      <div class="node n1">戰場規模<br>的需求</div>
+      <div class="arrow"></div>
+      <div class="node n2">法律上的<br>排他性</div>
+      <div class="arrow"></div>
+      <div class="node n3">零組件<br>來源可溯</div>
+      <div class="arrow"></div>
+      <div class="node n4">受信任<br>生產體系</div>
+    </div>
+
+    <div class="cols">
+      <div class="left">
+        <ul>
+          <li><b>2025 年 12 月 22 日 FCC 行動：</b>所有外國製造的 UAS 及八類指定關鍵零組件，一律進入 Covered List 授權閘門。</li>
+          <li><b>不是全面禁飛：</b>既有私人持有的 DJI／外國無人機仍可續飛，韌體支援至少保障至 2029 年 1 月。</li>
+          <li><b>聯邦經費才是硬底線：</b>ASDA／FAR 規則限制的是聯邦機關、承包商、分包商與補助受款者。</li>
+        </ul>
+      </div>
+      <div class="divider"></div>
+      <div class="right">
+        <ul>
+          <li><b>Blue UAS 不是法律：</b>它是國防部的審查／核可清單機制，如今同時扮演 FCC 的安全港角色。</li>
+          <li><b>沒有已生效的「Drone Dominance Act」：</b>真正的法源是 EO 14307、國防部無人機主導計畫、NDAA 條款與 FAR 條款。</li>
+          <li><b>為什麼是現在：</b>烏克蘭式消耗戰經濟 ＋ DJI／Autel 法定觸發條款 ＋ 美國 2027 年 20 萬架以上小型 UAS 目標。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="verdict">
+      <div class="tag">查證結論</div>
+      <div>
+        <h3>方向判斷正確，但法律描述經常失準。</h3>
+        <p>政策轉向確實發生，但「中國無人機／零組件已被禁止」的說法過於籠統。精確的市場效應是：新機種進入市場、聯邦採購資格、以及受信任零組件的來源證明，已成為三道決定性閘門。</p>
+      </div>
+    </div>
+
+    <div class="foot"><span>資料來源：使用者提供之查證報告 · 研究截止：2026 年 7 月</span><span>01</span></div>
+  </section>
+
+  <!-- ================= SLIDE 02 ================= -->
+  <section class="slide">
+    <div class="topbar"></div>
+    <div class="eyebrow">供應鏈意涵</div>
+    <h1>瓶頸在「合格零組件」，不在機體</h1>
+    <p class="sub">機會正往上游移動：可稽核電子件、馬達、電池、RF／資料鏈、磁石、PCB／SMT 產能與認證通過量。</p>
+
+    <div class="stats">
+      <div class="stat"><div class="num c-orange">4–5%</div><div class="lab">美國佔全球 PCB 製造產出比重</div></div>
+      <div class="stat"><div class="num c-orange">90%+</div><div class="lab">中國佔全球稀土磁石製造比重</div></div>
+      <div class="stat"><div class="num c-blue">11 億美元</div><div class="lab">美國國防部無人機主導計畫規模</div></div>
+      <div class="stat"><div class="num c-ink">1 / 165+</div><div class="lab">Blue UAS 零組件清單中的台灣入列數</div></div>
+    </div>
+
+    <div class="cols">
+      <div class="left">
+        <h2>近期市場效應</h2>
+        <ul>
+          <li><b>沒有可信的單一「80–90% 依賴」數據：</b>應改用分層證據 — PCB、磁石、電芯、馬達與 RF。</li>
+          <li><b>商用市場的擠壓不等於全面禁飛：</b>壓力來自機隊汰換、備品供應、新機種上市與公部門補助案限制。</li>
+          <li><b>國防與公共安全需求先動：</b>聯邦經費吸收合規成本，並獎勵可稽核的 BoM。</li>
+          <li><b>12–24 個月：</b>有條件核准、在地化、認證排隊與零組件短缺將主導市場。</li>
+          <li><b>3–5 年：</b>市場分流 — 受信任的公部門層 vs. 既有的私部門層。</li>
+        </ul>
+      </div>
+      <div class="divider"></div>
+      <div class="right">
+        <h2>台灣 × 亞利桑那合作模式</h2>
+        <ul>
+          <li><b>台灣製造：</b>PCB、SMT、感測器、精密零件、電源電子與部分馬達。</li>
+          <li><b>亞利桑那整合：</b>最終組裝、美方掌控韌體、系統整合與合規包裝。</li>
+          <li><b>亞利桑那認證：</b>測試、驗證與試飛場域取得，是最具防禦力的州級資產。</li>
+          <li><b>主要但書：</b>台灣生產不等於自動符合 Buy American、Blue UAS 或 FCC 豁免要求。</li>
+          <li><b>策略要點：</b>機會在無人機底下那層「受信任零組件」，而非單純的整機組裝。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="banner">最具防禦力的敘事：台灣製造、美國整合、亞利桑那認證 — 搭配可追溯零組件與美方掌控韌體。</div>
+
+    <div class="foot"><span>資料來源：使用者提供之查證報告 · 研究截止：2026 年 7 月</span><span>02</span></div>
+  </section>
+
+</div>
+</body>
+</html>
