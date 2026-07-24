@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arizona 軍事行動與 A&amp;D 能力簡報</title>
+<style>
+  :root{
+    --navy:#0E2340;
+    --navy-2:#17385F;
+    --navy-3:#254B77;
+    --orange:#E27122;
+    --gold:#F2A93B;
+    --sky:#5FA8D3;
+    --cream:#F5F2EB;
+    --paper:#FFFFFF;
+    --ink:#12203A;
+    --muted:#5B6B80;
+    --line:#D9D3C7;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:#2A3342;font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei","Hiragino Sans GB",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  #deck{display:flex;flex-direction:column;align-items:center;gap:28px;padding:28px 0}
+  .frame{width:100%;max-width:1600px;position:relative}
+  .frame::before{content:"";display:block;padding-top:56.25%}
+  .slide{
+    position:absolute;top:0;left:0;width:1600px;height:900px;
+    transform-origin:top left;background:var(--cream);color:var(--ink);
+    display:flex;flex-direction:column;overflow:hidden;
+    box-shadow:0 18px 50px rgba(0,0,0,.35);
+  }
+
+  /* ---------- shared chrome ---------- */
+  .eyebrow{font-size:14px;letter-spacing:.22em;text-transform:uppercase;color:var(--orange);font-weight:700}
+  .rule{height:4px;background:linear-gradient(90deg,var(--orange) 0 22%,var(--navy-3) 22% 100%)}
+  h1{font-size:44px;line-height:1.22;font-weight:800;color:var(--navy);letter-spacing:-.01em}
+  h1 .accent{color:var(--orange)}
+  .lede{font-size:20px;line-height:1.5;color:var(--navy-2);font-weight:500;max-width:1180px}
+  .footer{
+    margin-top:auto;border-top:1px solid var(--line);padding-top:10px;
+    display:flex;justify-content:space-between;align-items:flex-end;gap:24px;
+    font-size:12.5px;color:var(--muted);line-height:1.5;
+  }
+  .footer b{color:var(--navy-2);font-weight:700}
+  .pageno{font-size:12.5px;color:var(--navy-3);font-weight:700;white-space:nowrap}
+
+  /* ---------- slide 1 ---------- */
+  .s1{padding:44px 60px 26px}
+  .s1 .head{display:flex;gap:40px;align-items:flex-end;justify-content:space-between}
+  .s1 .thesis{
+    background:var(--navy);color:#fff;padding:14px 20px;border-left:6px solid var(--orange);
+    font-size:16px;line-height:1.55;width:430px;flex:none;font-weight:500;
+  }
+  .s1 .thesis b{color:var(--gold)}
+
+  .chain{display:flex;align-items:stretch;margin:26px 0 22px;border:1px solid var(--line);background:var(--paper)}
+  .node{flex:1;padding:12px 14px 13px;position:relative;text-align:center}
+  .node + .node{border-left:1px solid var(--line)}
+  .node .en{font-size:19px;font-weight:800;letter-spacing:.12em;color:var(--navy)}
+  .node .cn{font-size:13.5px;color:var(--muted);margin-top:3px;line-height:1.4}
+  .node .bar{height:5px;margin:0 -14px 10px;margin-top:-12px}
+  .n1 .bar{background:var(--navy-3)}
+  .n2 .bar{background:var(--sky)}
+  .n3 .bar{background:var(--orange)}
+  .n4 .bar{background:var(--gold)}
+  .n5 .bar{background:var(--navy)}
+  .node .arrow{position:absolute;right:-9px;top:50%;transform:translateY(-50%);z-index:2;
+    width:16px;height:16px;background:var(--cream);border-right:1px solid var(--line);border-top:1px solid var(--line);
+    rotate:45deg}
+
+  .heroes{display:flex;flex-direction:column;gap:14px}
+  .row-a{display:flex;gap:14px}
+  .row-b{display:flex;gap:14px}
+  .card{background:var(--paper);border:1px solid var(--line);border-top:5px solid var(--navy-3);padding:14px 18px 13px;display:flex;flex-direction:column}
+  .card.big{flex:1;border-top-color:var(--orange);padding:18px 22px 16px}
+  .card.sm{flex:1}
+  .num{font-weight:800;color:var(--orange);line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .big .num{font-size:82px}
+  .sm .num{font-size:44px;color:var(--navy-2)}
+  .sm .num.dual{font-size:31px;line-height:1.18}
+  .sm .num.text{font-size:27px;line-height:1.15}
+  .num .u{font-size:.42em;font-weight:700;letter-spacing:0;margin-left:4px;color:inherit}
+  .fac{font-size:15px;font-weight:800;color:var(--navy);margin-top:9px;line-height:1.3}
+  .big .fac{font-size:19px;margin-top:12px}
+  .tag{font-size:13px;color:var(--orange);font-weight:700;margin-top:4px;line-height:1.35}
+  .big .tag{font-size:15.5px}
+  .desc{font-size:12.5px;color:var(--muted);margin-top:6px;line-height:1.45}
+  .big .desc{font-size:14px;margin-top:8px}
+
+  .support{display:flex;gap:0;margin-top:14px;border:1px dashed var(--line);background:rgba(255,255,255,.55)}
+  .support div{flex:1;padding:9px 16px;font-size:12.5px;color:var(--navy-2);line-height:1.45}
+  .support div + div{border-left:1px dashed var(--line)}
+  .support b{color:var(--navy);font-weight:800}
+
+  /* ---------- slide 2 ---------- */
+  .s2{padding:36px 52px 22px}
+  .s2 .head2{display:flex;justify-content:space-between;align-items:flex-end;gap:36px}
+  .s2 h1{font-size:38px}
+  .legend{display:flex;gap:14px;flex:none;align-items:center}
+  .lg{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;color:var(--navy-2);white-space:nowrap}
+  .dot{width:11px;height:11px;flex:none}
+  .c-test{background:var(--sky)} .c-train{background:var(--orange)}
+  .c-sus{background:var(--gold)} .c-ready{background:var(--navy-3)}
+
+  .sechead{display:flex;align-items:center;gap:12px;margin:16px 0 9px}
+  .sechead .n{background:var(--navy);color:#fff;font-size:15px;font-weight:800;padding:2px 9px}
+  .sechead .t{font-size:16px;font-weight:800;color:var(--navy);letter-spacing:.02em}
+  .sechead .s{font-size:12.5px;color:var(--muted)}
+  .sechead .ln{flex:1;height:1px;background:var(--line)}
+
+  .grid6{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:11px}
+  .inst{background:var(--paper);border:1px solid var(--line);padding:11px 13px 10px;display:flex;flex-direction:column}
+  .inst .top{display:flex;gap:6px;margin-bottom:6px}
+  .chip{font-size:9.5px;font-weight:800;letter-spacing:.08em;color:#fff;padding:2px 6px;line-height:1.35}
+  .chip.test{background:var(--sky)} .chip.train{background:var(--orange)}
+  .chip.sus{background:#C98A17} .chip.ready{background:var(--navy-3)}
+  .inst .nm{font-size:15px;font-weight:800;color:var(--navy);line-height:1.28}
+  .inst .br{font-size:10.5px;color:var(--muted);font-weight:700;letter-spacing:.06em;margin-top:2px;text-transform:uppercase}
+  .inst .fn{font-size:12px;color:var(--navy-2);line-height:1.4;margin-top:6px;padding-bottom:6px;border-bottom:1px solid #ECE7DD}
+  .inst ul{list-style:none;margin-top:6px}
+  .inst li{font-size:11.5px;color:var(--muted);line-height:1.42;padding-left:11px;position:relative}
+  .inst li::before{content:"";position:absolute;left:0;top:7px;width:5px;height:1.5px;background:var(--orange)}
+  .inst li b{color:var(--navy);font-weight:800}
+
+  .impact{margin-top:16px;background:var(--navy);color:#fff;display:flex;align-items:stretch}
+  .impact .val{padding:13px 26px;display:flex;flex-direction:column;justify-content:center;flex:none;border-right:1px solid rgba(255,255,255,.18)}
+  .impact .val .v{font-size:46px;font-weight:800;color:var(--gold);line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .impact .val .l{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#C7D6E6;margin-top:6px;font-weight:700}
+  .impact .note{padding:12px 22px;display:flex;flex-direction:column;justify-content:center;gap:5px}
+  .impact .note .src{font-size:12.5px;font-weight:800;color:var(--gold);letter-spacing:.02em}
+  .impact .note .cav{font-size:11.5px;line-height:1.5;color:#DCE4EE}
+
+  @media print{
+    html,body{background:#fff}
+    #deck{gap:0;padding:0}
+    .frame{max-width:none}
+    .slide{box-shadow:none;page-break-after:always}
+    @page{size:1600px 900px;margin:0}
+  }
+</style>
+</head>
+<body>
+<div id="deck">
+
+  <!-- ================= SLIDE 1 ================= -->
+  <div class="frame"><div class="slide s1" data-slide>
+    <div class="head">
+      <div>
+        <div class="eyebrow">Arizona Aerospace &amp; Defense · Military Operations</div>
+        <h1 style="margin-top:10px">Arizona 不只是國防製造重鎮，<br>更是美國<span class="accent">下一代戰力的測試與訓練平台</span></h1>
+        <p class="lede" style="margin-top:12px">6 座主要軍事設施與 4 個 National Guard operations，共同串聯從開發、測試、訓練到戰備維持的完整國防能力鏈。</p>
+      </div>
+      <div class="thesis">
+        Arizona 的軍事資產數量不多，但功能高度互補：<b>每一項能力都對應一個具全美、甚至全球級地位的設施</b>，而非分散的基地清單。
+      </div>
+    </div>
+
+    <div class="chain">
+      <div class="node n1"><div class="bar"></div><div class="en">DEVELOP</div><div class="cn">開發與系統整合</div><div class="arrow"></div></div>
+      <div class="node n2"><div class="bar"></div><div class="en">TEST</div><div class="cn">武器、電子戰與無人系統測試</div><div class="arrow"></div></div>
+      <div class="node n3"><div class="bar"></div><div class="en">TRAIN</div><div class="cn">美軍與盟國飛行員訓練</div><div class="arrow"></div></div>
+      <div class="node n4"><div class="bar"></div><div class="en">SUSTAIN</div><div class="cn">航空器儲存、零件回收與再生</div><div class="arrow"></div></div>
+      <div class="node n5"><div class="bar"></div><div class="en">DEPLOY</div><div class="cn">空中加油、國土防空與即時戰備</div></div>
+    </div>
+
+    <div class="heroes">
+      <div class="row-a">
+        <div class="card big">
+          <div class="num">75<span class="u">%</span></div>
+          <div class="fac">Luke Air Force Base</div>
+          <div class="tag">全球 F-35 飛行員訓練核心</div>
+          <div class="desc">全球約 75% 的 F-35 飛行員由 Luke AFB 負責訓練；為美國空軍規模最大的戰鬥機聯隊。</div>
+        </div>
+        <div class="card big">
+          <div class="num">80<span class="u">%</span></div>
+          <div class="fac">Marine Corps Air Station Yuma</div>
+          <div class="tag">海軍陸戰隊航空戰備核心</div>
+          <div class="desc">支援約 80% 的美國海軍陸戰隊空對地航空訓練，並執行航空武器戰術與作戰測試。</div>
+        </div>
+      </div>
+      <div class="row-b">
+        <div class="card sm">
+          <div class="num">2,500<span class="u">sq. mi.</span></div>
+          <div class="fac">Fort Huachuca</div>
+          <div class="tag">電子戰、通訊與 C5ISR 驗證</div>
+          <div class="desc">受保護電子測試場域；另有 946 sq. mi. 限制空域。</div>
+        </div>
+        <div class="card sm">
+          <div class="num text">Longest<br>in the U.S.</div>
+          <div class="fac">Yuma Proving Ground</div>
+          <div class="tag">遠程火力與新世代武器測試</div>
+          <div class="desc">擁有全美最長的陸上火砲測試射程。</div>
+        </div>
+        <div class="card sm">
+          <div class="num dual">3,200 <span class="u">Aircraft</span><br>6,100 <span class="u">Engines</span></div>
+          <div class="fac">AMARG at Davis-Monthan AFB</div>
+          <div class="tag">國家級航空器儲存與再生能力</div>
+          <div class="desc">平均保存約 3,200 架航空器與 6,100 具發動機。</div>
+        </div>
+        <div class="card sm">
+          <div class="num">75<span class="u">+ F-16s</span></div>
+          <div class="fac">162nd Wing</div>
+          <div class="tag">訓練與國土防空</div>
+          <div class="desc">維持 75 架以上 F-16，執行 24/7 NORAD 即時戰備任務。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="support">
+      <div><b>Fort Huachuca</b>｜U.S. Army 官方稱其為世界最大的 UAS training center。</div>
+      <div><b>AMARG</b>｜每年回收約 US$250–300 million 的航空器零組件，回流美國國防供應鏈。</div>
+    </div>
+
+    <div class="footer">
+      <div><b>Sources:</b> Arizona DEMA / Maguire Company、U.S. Army、U.S. Air Force、U.S. Marine Corps、Arizona National Guard、U.S. Naval Observatory。各設施數據來自各單位目前可取得之官方資料，年份可能不同。</div>
+      <div class="pageno">01 / 02</div>
+    </div>
+  </div></div>
+
+  <!-- ================= SLIDE 2 ================= -->
+  <div class="frame"><div class="slide s2" data-slide>
+    <div class="head2">
+      <div>
+        <div class="eyebrow">10 Principal Military Operations</div>
+        <h1 style="margin-top:8px">10 個主要軍事行動，<br>形成 Arizona 完整的<span class="accent">國防能力底座</span></h1>
+      </div>
+      <div>
+        <p class="lede" style="font-size:16px;text-align:right;margin-bottom:10px">同一設施可同時承擔多種能力角色；下方色籤標示其在能力鏈中的定位。</p>
+        <div class="legend" style="justify-content:flex-end">
+          <span class="lg"><i class="dot c-test"></i>TEST &amp; VALIDATE</span>
+          <span class="lg"><i class="dot c-train"></i>TRAIN</span>
+          <span class="lg"><i class="dot c-sus"></i>SUSTAIN</span>
+          <span class="lg"><i class="dot c-ready"></i>READINESS &amp; STRATEGIC INFRASTRUCTURE</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sechead">
+      <span class="n">6</span><span class="t">Major Military Installations</span>
+      <span class="s">主要軍事設施</span><span class="ln"></span>
+    </div>
+
+    <div class="grid6">
+      <div class="inst">
+        <div class="top"><span class="chip test">TEST</span><span class="chip train">TRAIN</span></div>
+        <div class="nm">Fort Huachuca</div>
+        <div class="br">U.S. Army</div>
+        <div class="fn">軍事情報、電子戰、C5ISR、網路互通性與 UAS 訓練</div>
+        <ul>
+          <li><b>2,500 sq. mi.</b> protected electronic ranges</li>
+          <li><b>946 sq. mi.</b> restricted airspace</li>
+          <li>U.S. Army 官方稱為 <b>world’s largest UAS training center</b></li>
+        </ul>
+      </div>
+      <div class="inst">
+        <div class="top"><span class="chip test">TEST</span></div>
+        <div class="nm">Yuma Proving Ground</div>
+        <div class="br">U.S. Army</div>
+        <div class="fn">火砲、車輛、UAS、反無人機與新型武器測試</div>
+        <ul>
+          <li><b>Longest overland artillery range</b> in the United States</li>
+          <li>Supports <b>6</b> Army Futures Command Cross-Functional Teams</li>
+          <li><b>240+ miles</b> of automotive test courses</li>
+        </ul>
+      </div>
+      <div class="inst">
+        <div class="top"><span class="chip train">TRAIN</span></div>
+        <div class="nm">Luke Air Force Base</div>
+        <div class="br">U.S. Air Force</div>
+        <div class="fn">美國及盟國 F-35、F-16 飛行員訓練</div>
+        <ul>
+          <li>Approximately <b>75%</b> of the world’s F-35 pilots</li>
+          <li><b>Largest fighter wing</b> in the U.S. Air Force</li>
+          <li><b>200+</b> F-35 pilots trained annually</li>
+        </ul>
+      </div>
+      <div class="inst">
+        <div class="top"><span class="chip sus">SUSTAIN</span></div>
+        <div class="nm">Davis-Monthan AFB / AMARG</div>
+        <div class="br">U.S. Air Force</div>
+        <div class="fn">航空作戰、航空器儲存、零件回收、維修與再生</div>
+        <ul>
+          <li><b>3,200</b> aircraft</li>
+          <li><b>6,100</b> aircraft engines</li>
+          <li><b>US$250–300M</b> in reclaimed parts annually</li>
+        </ul>
+      </div>
+      <div class="inst">
+        <div class="top"><span class="chip test">TEST</span><span class="chip train">TRAIN</span></div>
+        <div class="nm">Marine Corps Air Station Yuma</div>
+        <div class="br">U.S. Marine Corps</div>
+        <div class="fn">航空武器戰術、作戰測試與空對地訓練</div>
+        <ul>
+          <li>Approximately <b>80%</b> of Marine Corps air-to-ground aviation training</li>
+          <li><b>1M+ acres</b> of training ranges</li>
+          <li>約 <b>70</b> aviation units、<b>14,000</b> visiting personnel／年</li>
+        </ul>
+      </div>
+      <div class="inst">
+        <div class="top"><span class="chip ready">READINESS</span></div>
+        <div class="nm">U.S. Naval Observatory<br>Flagstaff Station</div>
+        <div class="br">U.S. Navy</div>
+        <div class="fn">天體測量、celestial reference frame 與軍事 PNT 基礎支援</div>
+        <ul>
+          <li><b>61-inch</b> Kaj Strand Telescope</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="sechead">
+      <span class="n">4</span><span class="t">National Guard Operations</span>
+      <span class="s">國民兵行動</span><span class="ln"></span>
+    </div>
+
+    <div class="grid4">
+      <div class="inst">
+        <div class="top"><span class="chip sus">SUSTAIN</span></div>
+        <div class="nm">161st Air Refueling Wing</div>
+        <div class="fn">KC-135 空中加油、空運與全球任務支援</div>
+        <ul>
+          <li><b>8</b> KC-135 Stratotankers</li>
+          <li><b>850+</b> Airmen</li>
+        </ul>
+      </div>
+      <div class="inst">
+        <div class="top"><span class="chip train">TRAIN</span><span class="chip ready">READINESS</span></div>
+        <div class="nm">162nd Wing</div>
+        <div class="fn">F-16 國際訓練、MQ-9 任務與 NORAD 即時戰備</div>
+        <ul>
+          <li><b>75+</b> F-16s ｜ <b>1,800+</b> members</li>
+          <li><b>24/7</b> NORAD readiness</li>
+        </ul>
+      </div>
+      <div class="inst">
+        <div class="top"><span class="chip train">TRAIN</span></div>
+        <div class="nm">Western Army Aviation Training Site</div>
+        <div class="fn">Army National Guard 旋翼機與戰術航空訓練</div>
+        <ul>
+          <li>One of only <b>four</b> Army National Guard Aviation Training Sites in the United States</li>
+        </ul>
+      </div>
+      <div class="inst">
+        <div class="top"><span class="chip ready">READINESS</span></div>
+        <div class="nm">Camp Navajo</div>
+        <div class="fn">高海拔、寒冷環境與大型陸上訓練</div>
+        <ul>
+          <li>Arizona Guard’s <b>largest</b> training location</li>
+          <li><b>28,000+ acres</b></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="impact">
+      <div class="val"><div class="v">US$15.528B</div><div class="l">Economic Impact</div></div>
+      <div class="val"><div class="v">78,780</div><div class="l">Jobs Supported</div></div>
+      <div class="note">
+        <div class="src">FY2022｜Arizona Principal Military Operations Economic Impact Study（published 2023）</div>
+        <div class="cav">此數字代表 Arizona 主要軍事行動及其相關直接、間接與衍生活動所產生的經濟影響，<b>不代表</b>全州整體 A&amp;D 產值、民間國防企業總營收或無人機產業規模。</div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div><b>Sources:</b> Arizona DEMA / Maguire Company、U.S. Army、U.S. Air Force、U.S. Marine Corps、Arizona National Guard、U.S. Naval Observatory。<br>Economic impact data: FY2022 Arizona Principal Military Operations Economic Impact Study, published 2023；其餘設施數據年份可能不同。</div>
+      <div class="pageno">02 / 02</div>
+    </div>
+  </div></div>
+
+</div>
+<script>
+  function fit(){
+    document.querySelectorAll('.frame').forEach(function(f){
+      var s = f.clientWidth / 1600;
+      f.querySelector('[data-slide]').style.transform = 'scale(' + s + ')';
+    });
+  }
+  window.addEventListener('resize', fit);
+  fit();
+</script>
+</body>
+</html>
