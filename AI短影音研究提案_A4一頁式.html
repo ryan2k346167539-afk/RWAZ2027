@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 短影音研究提案</title>
+<style>
+  @page {
+    size: A4;
+    margin: 14mm 16mm;
+  }
+  :root{
+    --text:#24343d;
+    --muted:#6f7f87;
+    --accent:#c66c4e;
+    --line:#d9e1e5;
+    --header:#163a4a;
+    --soft:#f5f7f8;
+  }
+  *{box-sizing:border-box}
+  html,body{
+    margin:0;
+    padding:0;
+    background:#eef2f4;
+    color:var(--text);
+    font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei","Heiti TC",sans-serif;
+  }
+  .page{
+    width:210mm;
+    min-height:297mm;
+    margin:0 auto;
+    background:#fff;
+    padding:14mm 16mm;
+  }
+  .title{
+    font-size:24pt;
+    font-weight:800;
+    letter-spacing:.3px;
+    line-height:1.15;
+    margin:0 0 3mm 0;
+    color:#2a3d46;
+  }
+  .subtitle{
+    font-size:11pt;
+    color:var(--muted);
+    margin:0 0 7mm 0;
+    font-weight:500;
+  }
+  .section{
+    margin:0 0 6.2mm 0;
+  }
+  .section h2{
+    margin:0 0 2.2mm 0;
+    font-size:13.5pt;
+    line-height:1.2;
+    color:var(--accent);
+    font-weight:800;
+    letter-spacing:.2px;
+  }
+  .section p{
+    margin:0;
+    font-size:11pt;
+    line-height:1.6;
+  }
+  .table-wrap{
+    margin-top:2.4mm;
+    border:1px solid var(--line);
+  }
+  table{
+    width:100%;
+    border-collapse:collapse;
+    table-layout:fixed;
+  }
+  th{
+    background:var(--header);
+    color:#fff;
+    text-align:left;
+    font-size:10.5pt;
+    padding:3.2mm 3.6mm;
+    font-weight:700;
+  }
+  td{
+    border-top:1px solid var(--line);
+    padding:3.2mm 3.6mm;
+    vertical-align:top;
+    font-size:10.4pt;
+    line-height:1.5;
+  }
+  tr:nth-child(even) td{
+    background:#fafbfb;
+  }
+  .small{
+    font-size:10.3pt !important;
+    line-height:1.55 !important;
+  }
+  .pill{
+    display:inline-block;
+    padding:1.1mm 2.4mm;
+    border:1px solid var(--line);
+    background:var(--soft);
+    border-radius:999px;
+    margin:1.2mm 1.2mm 0 0;
+    font-size:9.4pt;
+    color:#41545d;
+  }
+  .footer{
+    margin-top:6mm;
+    padding-top:3mm;
+    border-top:1px solid var(--line);
+    font-size:9.4pt;
+    color:var(--muted);
+  }
+  .em{
+    font-weight:700;
+  }
+</style>
+</head>
+<body>
+  <main class="page">
+    <h1 class="title">AI 短影音與中高齡受眾的內容偏好</h1>
+    <p class="subtitle">社群媒體探勘｜第一週小作業研究提案</p>
+
+    <section class="section">
+      <h2>研究問題</h2>
+      <p>在中文 YouTube Shorts 中，針對中高齡受眾的 AI 短影音，哪些劇情主題較常出現，哪些主題有較高的觀看與互動表現？</p>
+    </section>
+
+    <section class="section">
+      <h2>動機與預期資料平台</h2>
+      <p>近年出現大量由 AI 生成或輔助製作的短影音，常見劇情包括武俠、家庭／婆媳衝突、逆襲等。這類內容在身邊不少家長之間相當常見，因此我想先從 YouTube Shorts 觀察不同劇情主題的分布與表現。若後續能取得資料，再考慮加入小紅書作為比較。</p>
+    </section>
+
+    <section class="section">
+      <h2>需要的資料欄位</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:57%">資料欄位</th>
+              <th style="width:43%">用途</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>影片 ID、頻道、發布日期、標題、描述</td>
+              <td>辨識影片與基本來源</td>
+            </tr>
+            <tr>
+              <td>觀看數、按讚數、留言數</td>
+              <td>比較不同主題的表現</td>
+            </tr>
+            <tr>
+              <td>影片長度、hashtags</td>
+              <td>補充內容形式與搜尋條件</td>
+            </tr>
+            <tr>
+              <td>劇情主題：武俠、家庭／婆媳、逆襲、奇聞、古裝</td>
+              <td>作為主要比較變數</td>
+            </tr>
+            <tr>
+              <td>AI 特徵：AI 配音、AI 圖像／動畫</td>
+              <td>確認內容是否具有明顯 AI 製作特徵</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>初步分析方式</h2>
+      <p class="small">第一階段以 YouTube 為主，預計利用關鍵字搜尋與 YouTube Data API 蒐集公開資料。暫定搜尋詞可先從「AI 短劇、AI 動畫、武俠短劇、婆媳短劇、逆襲短劇、古裝 AI」等開始。初步分析以主題分類為核心，比較各類影片數量、平均觀看數與互動表現，不先做複雜模型。</p>
+    </section>
+
+    <section class="section">
+      <h2>資料限制與倫理問題</h2>
+      <p class="small">公開資料通常無法直接知道觀看者年齡，因此不能僅憑觀看量證明「長輩愛看」。本研究會把「中高齡受眾」視為目前的觀察與後續待驗證方向。另外，AI 內容判定可能有誤差，必要時以人工抽查確認；若分析留言，也會避免揭露使用者身分。</p>
+    </section>
+
+    <section class="section">
+      <h2>我希望 AI 協助的工作</h2>
+      <p>協助整理 API 資料、將影片依劇情主題做初步分類，並計算不同主題的觀看與互動表現。主題分類是否合理、影片是否真的屬於 AI 內容，仍由人工抽查與判斷。</p>
+    </section>
+
+    <div class="footer">
+      關鍵主題：
+      <span class="pill">武俠</span>
+      <span class="pill">婆媳／家庭衝突</span>
+      <span class="pill">逆襲</span>
+      <span class="pill">中高齡受眾</span>
+      <span class="pill">YouTube Shorts</span>
+      <span class="pill">AI 短影音</span>
+    </div>
+  </main>
+</body>
+</html>
